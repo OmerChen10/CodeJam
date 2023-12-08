@@ -3,7 +3,7 @@ from colorama import Fore, Back, Style
 
 class Logger:
 
-    logger = logging.getLogger()
+    logger = logging.getLogger("CodeJam")
     logger.setLevel(logging.DEBUG)
 
     formatter = logging.Formatter(f'[%(asctime)s] %(message)s')
