@@ -3,13 +3,15 @@ import json
 import asyncio
 import websockets
 from Logger import Logger
-
+from App import ClientHandler
 
 class ClientIO():
     """ Handles the client's messages. """
 
     def __init__(self, socket: websockets, id: int) -> None:
         self.socket = socket
+        self.id = id
+
         self.recv_buffer = []
         self.send_buffer = []
         self.handler_map = {}
@@ -22,7 +24,7 @@ class ClientIO():
         self.thread.start()
 
     
-    def eventHandler(self, handler):
+    def eventHandler(self, handler: callable):
         """ Decorator for adding an event handler. """
 
         self.handler_map[handler.__name__] = handler

@@ -2,18 +2,18 @@ import os
 import subprocess
 from Logger import Logger
 from Network import NetworkManger
-
+from App import ClientHandler
 
 class CodeJamServer():
     def __init__(self, dev_mode=False) -> None:
         self.dev_mode = dev_mode
         self.root_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-        self.nm = NetworkManger()
+        self.manager = NetworkManger()
 
 
     def run(self):
         self.start_react()
-        self.nm.start()
+        self.manager.start()
 
     
     def start_react(self):

@@ -7,14 +7,13 @@ from Network.ClientIO import ClientIO
 from Constants import NetworkConfig
 from App import ClientHandler
 
-
 class NetworkManger(threading.Thread):
     def __init__(self):
         threading.Thread.__init__(self)
         self.daemon = False
 
         self.clients: list[ClientIO] = []
-        self.client_handlers: list[ClientHandler] = []
+        self.handlers: list[ClientHandler] = []
         self.num_clients: int = 0
 
     def run(self):
@@ -40,7 +39,7 @@ class NetworkManger(threading.Thread):
         new_client = ClientIO(websocket, self.num_clients)
         # Add the client to the list of clients
         self.clients.append(new_client)
-        self.client_handlers.append(ClientHandler(self, new_client))
+        self.handlers.append(ClientHandler(self, new_client))
         await new_client.start_update_loop()  # Start the client's update loop
 
     def send_to_all_clients(self, header: int, server_msg) -> None:
