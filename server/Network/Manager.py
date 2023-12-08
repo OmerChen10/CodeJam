@@ -40,7 +40,7 @@ class NetworkManger(threading.Thread):
         new_client = ClientIO(websocket, self.num_clients)
         # Add the client to the list of clients
         self.clients.append(new_client)
-        self.client_handlers.append(ClientHandler(new_client))
+        self.client_handlers.append(ClientHandler(self, new_client))
         await new_client.start_update_loop()  # Start the client's update loop
 
     def send_to_all_clients(self, header: int, server_msg) -> None:
