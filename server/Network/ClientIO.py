@@ -2,6 +2,7 @@ import threading
 import json
 import asyncio
 import websockets
+from Logger import Logger
 
 
 class ClientIO():
@@ -46,16 +47,19 @@ class ClientIO():
                 await asyncio.sleep(0.1)
 
         except Exception:
-            print(f"[Client Handler] Client disconnected.")
+            Logger.log_info(f"[Client Handler] Client disconnected.")
 
     async def start_receiving_loop(self) -> dict:
+        try:
+            while True:
+                client_update = await self.socket.recv() # Receive a message from the client.
+                self.send_buffer.append(client_update) # Add the message to the list of received messages.
 
-        while True:
-            client_update = await self.socket.recv() # Receive a message from the client.
-            self.send_buffer.append(client_update) # Add the message to the list of received messages.
-
-            self.received_new_message.set() # Set the received new message event.
-            await asyncio.sleep(0.1)
+                self.received_new_message.set() # Set the received new message event.
+                await asyncio.sleep(0.1)
+        
+        except Exception:
+            Logger.log_info(f"[Client Handler] Client disconnected.")
 
     def receive(self):
         """ Returns the last received message. """
