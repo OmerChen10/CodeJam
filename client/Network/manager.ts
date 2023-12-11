@@ -47,7 +47,7 @@ export class NetworkManager {
         }
     }
 
-    public onEvent(event: string, callback: (data: string) => void) {
+    public onEvent(event: string, callback: (data: any) => void) {
         NetworkManager.eventHandlers.set(event, callback);
     }
 }
