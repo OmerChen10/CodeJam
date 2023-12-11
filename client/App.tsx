@@ -1,21 +1,14 @@
-import React, { useState } from "react"
-import Button from "./components/button"
+import { useRef } from "react"
 import { NetworkManager } from "./Network/manager"
+import { CodeEditor } from "./components/Editor"
+
 
 function App() {
-
-    const [text, setText] = useState<string>("")
-    const [nm, setNm] = useState<NetworkManager>(NetworkManager.getInstance())
-
-    const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setText(e.target.value)
-    }
-
+    const nm = useRef<NetworkManager>(NetworkManager.getInstance()).current
     return (    
         <div>
             <h1>CodeJam</h1>
-            <input type="text" placeholder="Enter message" onChange={handleTextChange}/>
-            <Button onClick={() => {nm.send("echo", text)}}>Send</Button>
+            <CodeEditor></CodeEditor>
         </div> 
     )
 }
