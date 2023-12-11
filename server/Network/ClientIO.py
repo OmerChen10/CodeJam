@@ -37,7 +37,6 @@ class ClientIO():
         await asyncio.gather(self.start_receiving_loop(), self.start_sending_loop())
 
     async def start_sending_loop(self):
-
         try:
             while True:
                 for msg in self.recv_buffer:  # Send all pending messages.
@@ -63,31 +62,28 @@ class ClientIO():
         except Exception:
             Logger.log_info(f"[Client Handler] Client disconnected.")
 
+    @Logger.catch_exceptions
     def receive(self):
         """ Returns the last received message. """
 
         self.received_new_message.wait() # Wait for a new message.
         self.received_new_message.clear()
 
-        try:
-            if len(self.send_buffer) == 0: return ""
-            msg = self.send_buffer.pop(0)
-            return msg
+        if len(self.send_buffer) == 0: return ""
+        msg = self.send_buffer.pop(0)
+        return msg
 
-        except Exception as e:
-            print(f"[Client Handler] Error receiving message: {e}")
-            return ""
-
-    def send(self, eventName: int, server_msg):
+    def send(self, event_name: int, server_msg):
         """ Sends a message to the client. """
 
         # Create the message. (Using json to serialize the data).
-        msg = json.dumps({"eventName": eventName, "data": server_msg}) 
+        msg = json.dumps({"eventName": event_name, "data": server_msg}) 
         self.recv_buffer.append(msg) # Add the message to the list of pending messages.
 
         self.message_sent.wait() # Wait for the message to be sent.
         self.message_sent.clear()
 
+    @Logger.catch_exceptions
     def handle_requests(self) -> None:
         """ Handles the client's requests. """
 
@@ -98,12 +94,9 @@ class ClientIO():
             header, msg_data = json.loads(msg).values()
             if header not in self.handler_map.keys(): continue
 
-            # Handle the request.
-            try:
-                self.handler_map[header](msg_data)
+            self.handler_map[header](msg_data)
 
-            except Exception as e:
-                print(f"[Client Handler] Error handling request: {e}")
+
 
 
     async def stop(self) -> None:

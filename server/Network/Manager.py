@@ -42,8 +42,8 @@ class NetworkManger(threading.Thread):
         self.handlers.append(ClientHandler(self, new_client))
         await new_client.start_update_loop()  # Start the client's update loop
 
-    def broadcast(self, header: int, server_msg) -> None:
+    def broadcast(self, event_name: str, server_msg) -> None:
         """ Sends a message to all clients. """
 
         for client in self.clients:
-            client.send(header, server_msg)
+            client.send(event_name, server_msg)

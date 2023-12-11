@@ -8,8 +8,8 @@ class ClientHandler():
         self.socket = socket
 
         @self.socket.eventHandler
-        def echo(msg):
-            self.socket.send("print", msg)
+        def editorSend(msg):
+            self.manager.broadcast()
 
 
     
