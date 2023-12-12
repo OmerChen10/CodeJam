@@ -9,7 +9,7 @@ class ClientHandler():
 
         @self.socket.eventHandler
         def editorSend(msg):
-            self.manager.broadcast()
+            self.manager.broadcast(self.socket, "editorReceive", msg)
 
 
     

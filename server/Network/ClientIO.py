@@ -80,8 +80,6 @@ class ClientIO():
         msg = json.dumps({"eventName": event_name, "data": server_msg}) 
         self.recv_buffer.append(msg) # Add the message to the list of pending messages.
 
-        self.message_sent.wait() # Wait for the message to be sent.
-        self.message_sent.clear()
 
     @Logger.catch_exceptions
     def handle_requests(self) -> None:
