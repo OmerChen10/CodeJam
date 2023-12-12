@@ -51,8 +51,8 @@ export function CodeEditor() {
             defaultLanguage="python"
             theme="vs-dark"
             options={{
-                autoClosingBrackets: "always",
-                autoClosingQuotes: "always",
+                autoClosingBrackets: "never",
+                autoClosingQuotes: "never",
                 autoIndent: "full",
                 automaticLayout: true,
                 colorDecorators: true,
