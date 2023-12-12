@@ -2,13 +2,16 @@ import { NetworkManager } from "../Network/manager";
 import { Editor } from "@monaco-editor/react";
 import { editor } from "monaco-editor";
 import { useRef } from "react";
-
+import { EditorConfig } from "../Constants";
 
 export function CodeEditor() {
 
     const nm = useRef<NetworkManager>(NetworkManager.getInstance()).current
     const editorRef = useRef<editor.IStandaloneCodeEditor>()
     const isProgrammaticChange = useRef<boolean>(false)
+
+    const duringCooldown = useRef<boolean>(false)
+    const changeBuffer = useRef<editor.IModelContentChange[]>([])
 
     const SetEditor = (ref: editor.IStandaloneCodeEditor) => {
         editorRef.current = ref
@@ -22,8 +25,16 @@ export function CodeEditor() {
             isProgrammaticChange.current = false
             return
         }
-        console.log(event.changes)
-        nm.send("editorSend", event.changes)
+        
+        changeBuffer.current.push(...event.changes) 
+        if (!duringCooldown.current) {
+            duringCooldown.current = true
+            setTimeout(() => {
+                duringCooldown.current = false
+                nm.send("editorSend", changeBuffer.current)
+                changeBuffer.current = []
+            }, EditorConfig.COOLDOWN_TIME)
+        }
     }
 
     nm.onEvent("editorReceive", (changes: editor.IModelContentChange[]) => {
@@ -52,10 +63,6 @@ export function CodeEditor() {
             }}
         onChange={SendChanges}
         onMount={SetEditor}
-        onValidate={(markers) => {
-            console.log(markers)
-
-        }}
         />
     )
 }
