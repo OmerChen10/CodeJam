@@ -11,7 +11,9 @@ export class NetworkManager {
 
     private constructor() {
         console.log("[NetworkManager] Connecting to server");
-        this.socket = new WebSocket("ws://localhost:5800");
+        // get the ip address of the server
+        let ip = window.location.hostname;
+        this.socket = new WebSocket("ws://" + ip + ":5800");
 
         this.socket.onopen = () => {
             console.log("[NetworkManager] Connected to server");
