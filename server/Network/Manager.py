@@ -40,7 +40,9 @@ class NetworkManger(threading.Thread):
         # Add the client to the list of clients
         self.clients.append(new_client)
         self.handlers.append(ClientHandler(self, new_client))
-        await new_client.start_update_loop()  # Start the client's update loop
+        
+        await asyncio.gather(new_client.start_receiving_loop(), 
+                             new_client.start_sending_loop())
 
     def broadcast(self, curr_client: ClientIO, event_name: str, server_msg) -> None:
         """ Sends a message to all clients. """
