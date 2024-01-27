@@ -31,7 +31,7 @@ export function CodeEditor() {
             duringCooldown.current = true
             setTimeout(() => {
                 duringCooldown.current = false
-                nm.send("editorSend", changeBuffer.current)
+                nm.send("editorSend", changeBuffer.current) 
                 changeBuffer.current = []
             }, EditorConfig.COOLDOWN_TIME)
         }

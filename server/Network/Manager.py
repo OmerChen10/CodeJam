@@ -44,7 +44,7 @@ class NetworkManger(threading.Thread):
         await asyncio.gather(new_client.start_receiving_loop(), 
                              new_client.start_sending_loop())
 
-    def broadcast(self, curr_client: ClientIO, event_name: str, server_msg) -> None:
+    def broadcast(self, curr_client: ClientIO, event_name: str, server_msg) -> None: 
         """ Sends a message to all clients. """
 
         for client in self.clients:

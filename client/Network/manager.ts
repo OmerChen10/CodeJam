@@ -22,7 +22,7 @@ export class NetworkManager {
         this.socket.onmessage = (msg) => {
             const event: Event = JSON.parse(msg.data);
 
-            const handler = NetworkManager.eventHandlers.get(event.eventName);
+            const handler = NetworkManager.eventHandlers.get(event.eventName); 
             if (handler) {
                 handler(event.data);
             } else {

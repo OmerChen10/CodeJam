@@ -30,11 +30,8 @@ class ClientIO():
 
                 await asyncio.sleep(0.1)
 
-        except websockets.exceptions.ConnectionClosedError:
+        except Exception:
             Logger.log_info(f"[Client Handler] Client disconnected.")
-
-        except Exception as e:
-            Logger.log_info(f"[Client Handler] An error occurred: {e}")
 
     async def start_receiving_loop(self) -> dict:
         try:
@@ -50,16 +47,13 @@ class ClientIO():
 
                 await asyncio.sleep(0.1)
         
-        except websockets.ConnectionClosedError:
-            Logger.log_error(f"[Client Handler] Client disconnected.")
-
-        except Exception as e:
-            Logger.log_error(f"[Client Handler] An error occurred: {e}")
+        except Exception:
+            Logger.log_info(f"[Client Handler] Client disconnected.")
 
 
     @Logger.catch_exceptions
     def send(self, event_name: int, server_msg):
-        """ Sends a message to the client. """
+        """ Sends a message to the client. """ 
 
         # Create the message. (Using json to serialize the data).
         msg = json.dumps({"eventName": event_name, "data": server_msg}) 
