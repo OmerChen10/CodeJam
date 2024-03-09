@@ -45,24 +45,26 @@ export function CodeEditor() {
         editorRef.current.executeEdits("Server", changes)
     })
 
-    return (
-        <Editor
-            height="90vh"
-            defaultLanguage="python"
-            theme="vs-dark"
-            options={{
-                autoClosingBrackets: "never",
-                autoClosingQuotes: "never",
-                autoIndent: "full",
-                automaticLayout: true,
-                colorDecorators: true,
-                contextmenu: true,
-                cursorBlinking: "blink",
-                cursorSmoothCaretAnimation: 'on',
-                cursorStyle: "line"
-            }}
-        onChange={SendChanges}
-        onMount={SetEditor}
-        />
+    return ((
+        <div id="editor-wrapper">
+            <Editor
+                defaultLanguage="python"
+                theme="vs-dark"
+                options={{
+                    autoClosingBrackets: "never",
+                    autoClosingQuotes: "never",
+                    autoIndent: "full",
+                    automaticLayout: true,
+                    colorDecorators: true,
+                    contextmenu: true,
+                    cursorBlinking: "blink",
+                    cursorSmoothCaretAnimation: 'on',
+                    cursorStyle: "line"
+                }}
+                onChange={SendChanges}
+                onMount={SetEditor}
+                />
+        </div>
+    )
     )
 }
