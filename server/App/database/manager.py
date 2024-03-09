@@ -60,12 +60,6 @@ class DBManager:
 
         self.execute(f"INSERT INTO permissions (project_id, project_name, user_id) VALUES {project_id, name, user_id}")
 
-    def get_project_name_by_id(self, project_id: int):
-        return self.execute(f"SELECT project_name FROM permissions WHERE project_id = {project_id}")
-    
-    def get_project_id_by_name(self, name: str):
-        return self.execute(f"SELECT project_id FROM permissions WHERE project_name = {name}")
-    
-    def add_permission(self, project_id: int, user_id: int):
-        self.execute(f"INSERT INTO permissions (project_id, user_id) VALUES {project_id, user_id}")
+    def get_projects_for_user(self, user_id: int):
+        return self.execute(f"SELECT * FROM permissions WHERE user_id = {user_id}")
     

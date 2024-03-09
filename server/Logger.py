@@ -1,4 +1,5 @@
 import logging
+import traceback
 from colorama import Fore, Back, Style
 
 class Logger:
@@ -37,7 +38,7 @@ class Logger:
                 return func(*args, **kwargs)
             
             except Exception as e:
-                Logger.log_error(f'Exception in "{func.__name__}"', f"\n {e}")
+                Logger.log_error(f'Exception in "{func.__name__}"', e)
                 
         return handle
 
