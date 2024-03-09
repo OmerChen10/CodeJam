@@ -8,7 +8,7 @@ export function LoginPage() {
     if (signup) {
         return (
             <div id="main-login">
-                <h1 id="title">CodeJam</h1>
+                <h1 id="login-title">CodeJam</h1>
                 <div id="login-container">
                     <div className="input-group mb-3">
                         <input type="text" id="username" placeholder="Username" aria-label="Username"/>
@@ -30,7 +30,7 @@ export function LoginPage() {
 
     return (
         <div id="main-login">
-            <h1 id="title">CodeJam</h1>
+            <h1 id="login-title">CodeJam</h1>
             <div id="login-container">
                 <div className="input-group mb-3">
                     <input type="text" id="username" className="form-control" placeholder="Username" aria-label="Username"/>
@@ -58,10 +58,21 @@ function createAccount() {
         toast.error("Passwords do not match");
         return;
     }
+    
+    // Check if the username and password are valid
+    if (username === "" || password === "") {
+        toast.error("Invalid username or password");
+        return;
+    }
 
     manager = NetworkManager.getInstance();
     manager.send("createUser", {username: username, password: password}, (response) => {
-        console.log("Response: ", response);
+        if (response) {
+            toast.success("Account created!");
+        }
+        else {
+            toast.error("Username already exists");
+        }
     });
 }
 

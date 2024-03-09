@@ -16,6 +16,9 @@ class ClientHandler():
 
         @self.socket.eventHandler
         def createUser(props):
+            if self.db_manager.get_user(props['username']) != []:
+                return False
+            
             self.db_manager.create_user(props['username'], props['password'])
             return True
         
@@ -23,7 +26,8 @@ class ClientHandler():
         def loginUser(props):
             password = self.db_manager.get_user(props['username'])[0][2]
             return password == props['password']
-            
+        
+
 
 
 
