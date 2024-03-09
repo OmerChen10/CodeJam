@@ -1,85 +1,45 @@
 import { useState } from "react";
-import { NetworkManager } from "../../Network/manager";
 import "./home.css"
-import { toast } from "sonner";
 
 export function HomePage() {
-    const [signup, setSignUp] = useState(false);
-    if (signup) {
-        return (
-            <div id="main-home">
-                <h1 id="title">CodeJam</h1>
-                <div id="login-container">
-                    <div className="input-group mb-3">
-                        <input type="text" id="username" placeholder="Username" aria-label="Username"/>
+    const [projectCreatorOpen, setProjectCreatorOpen] = useState(false);
+    
+    let projectCreator = null;
+    if (projectCreatorOpen) {
+        projectCreator = (
+            <div id="project-creator">
+                <div id="project-creator-container">
+                    <h1 id="project-creator-title">Create New Project</h1>
+                    <div id="project-creator-inputs">
+                        <input type="text" className="input-group mb-3" id="project-name" placeholder="Project Name" aria-label="Project Name"/>
+                        <input type="text" className="input-group mb-3" id="project-description" placeholder="Project Description" aria-label="Project Description"/>
                     </div>
-                    <div className="input-group mb-3">
-                        <input type="text" id="password" placeholder="Password" aria-label="Password"/>
-                    </div>
-                    <div className="input-group mb-3">
-                        <input type="text" id="confirm-password" placeholder="Confirm Password" aria-label="Password"/>
-                    </div>
-                    <div id="login-buttons">
-                        <button onClick={createAccount} id="submit-button" className="btn btn-secondary grey">Create Account</button>
-                        <h3 onClick={() => {setSignUp(false)}}>Back</h3>
+                    <div id="project-creator-buttons">
+                        <button id="submit-button" className="btn btn-success grey">Create Project</button>
+                        <button id="cancel-button" className="btn btn-danger" onClick={() => {setProjectCreatorOpen(false)}}>Cancel</button>
                     </div>
                 </div>
             </div>
         );
+        openProjectCreator();
     }
 
     return (
         <div id="main-home">
-            <h1 id="title">CodeJam</h1>
-            <div id="login-container">
-                <div className="input-group mb-3">
-                    <input type="text" id="username" className="form-control" placeholder="Username" aria-label="Username"/>
-                </div>
-                <div className="input-group mb-3">
-                    <input type="text" id="password" className="form-control" placeholder="Password" aria-label="Password"/>
-                </div>
-                <div id="login-buttons">
-                    <button onClick={login} id="submit-button" className="btn btn-secondary grey">Login</button>
-                    <h3 onClick={() => {setSignUp(true)}}>Create Account</h3>
+            <div id="navbar">
+                <h3 id="title">CodeJam</h3>
+            </div>
+            <div id="projects-container" className={projectCreatorOpen ? "inactive" : "active"}>
+                <div onClick={() => {setProjectCreatorOpen(true)}} className="project-button" id="create-project-button">
+                    <div className="project-button-text">Create New Project</div>
+                    <div className="plus-icon"/>
                 </div>
             </div>
+            {projectCreator}
         </div>
     );
 }
 
-function createAccount() {
-    let manager = NetworkManager.getInstance();
-    // Get the username and password from the input fields
-    let username = (document.getElementById("username") as HTMLInputElement).value;
-    let password = (document.getElementById("password") as HTMLInputElement).value;
-    let confirmPassword = (document.getElementById("confirm-password") as HTMLInputElement).value;
-
-    if (password !== confirmPassword) {
-        toast.error("Passwords do not match");
-        return;
-    }
-
-    manager = NetworkManager.getInstance();
-    manager.send("createUser", {username: username, password: password}, (response) => {
-        console.log("Response: ", response);
-    });
+function openProjectCreator() {
+    console.log("Opening project creator");
 }
-
-function login() {
-    let manager = NetworkManager.getInstance();
-    // Get the username and password from the input fields
-    let username = (document.getElementById("username") as HTMLInputElement).value;
-    let password = (document.getElementById("password") as HTMLInputElement).value;
-
-    manager = NetworkManager.getInstance();
-    manager.send("loginUser", {username: username, password: password}, (response) => {
-        if (response) {
-            toast.success("Logged in");
-        }
-        else {
-            toast.error("Invalid username or password");
-        }
-    });
-}
-
-  

@@ -1,68 +1,133 @@
 
-body, html {
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    background-color: #1c1c1b;
-}
-
 #main-home {
     width: 100%;
     height: 100%;
-    background-color: #1c1c1b;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    flex-direction: column;
 }
 
 #title {
-    font-size: 5rem;
-    margin-bottom: 1rem;
+    font-size: 3rem;
+    margin: auto;
 }
 
-#login-container {
+#projects-container {
+    width: 75%;
+    height: 70%;
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    align-items: flex-start;
+    margin: 5rem auto;
+    border-radius: 1rem;
+    background-color: #3a3b3b;
+
+}
+
+.inactive {
+    filter: blur(5px);
+    transition: 0.3s;
+    pointer-events: none;
+}
+
+.active {
+    filter: blur(0);
+    transition: 0.3s;
+}
+
+.project-button {
+    width: 10rem;
+    height: 10rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    justify-content: center;
+    padding: 1rem;
+    border-radius: 1rem;
+    background-color: #434f57;
+    margin: 1rem;
+
+}
+
+.plus-icon {
+    background: url("../../assets/images/plus.png");
+    background-size: 9rem 8rem;
+    width: 9rem;
+    height: 9rem;
+    z-index: 1;
+
+    filter: blur(0); /* No blur by default */
+    transition: filter 0.3s ease-out; /* Transition on the filter property */
+
+    z-index: 0;
+
+}
+
+.plus-icon:hover {
+    cursor: pointer;
+    /* blur the background with animation */
+    filter: blur(5px);
+    transition: 0.3s;
+}
+
+.project-button-text {
+    width: 5rem;
+    pointer-events: none;
+    position: absolute;
+    font-size: 1.5rem;
+    text-wrap: wrap;
+    text-align: center;
+    font-weight: bold;
+    opacity: 0;
+    transition: opacity 0.3s ease-out;
+    z-index: 2;
+}
+
+.project-button:hover .project-button-text {
+    opacity: 1;
+    transition: 0.3s;
+}
+
+#project-creator-container {
+    position: absolute;
+    z-index: 5;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: 25rem;
-    height: fit-content;
     gap: 1rem;
-    padding: 2rem;
+
+    width: 30rem;
+    height: 30rem;
     background-color: #434f57;
-    border-radius: 2rem;
+    border-radius: 1rem;
+
+    top: 25%;
+    left: 37.5%;
 }
 
-#login-container input {
+#project-creator-title {
+    text-decoration: underline;
+    font-size: 2.5rem;
+    font-weight: bold;
+}
+#project-creator-inputs {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+}
+#project-creator-buttons {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+}
+
+#project-creator-inputs input {
     width: 20rem;
     height: 2rem;
     border-radius: 0.5rem;
     border: none;
     font-size: 1rem;
 }
-
-#login-buttons {
-    display: flex;
-    flex-direction: row;
-    gap: 1rem;
-}
-
-#login-buttons h3 {
-    padding-top: 0.4rem;
-    text-decoration: underline;
-    font-size: 1rem;
-}
-
-#login-buttons button:hover {
-    cursor: pointer;
-}
-
-#login-buttons h3:hover {
-    cursor: pointer;
-}
-
-
-
