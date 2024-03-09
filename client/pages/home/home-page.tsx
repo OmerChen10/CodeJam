@@ -3,6 +3,7 @@ import "./home.css"
 
 export function HomePage() {
     const [projectCreatorOpen, setProjectCreatorOpen] = useState(false);
+    const [projectLiset, setProjectList] = useState([] as object[]);
     
     let projectCreator = null;
     if (projectCreatorOpen) {
