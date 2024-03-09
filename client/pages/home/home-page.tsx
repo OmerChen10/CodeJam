@@ -33,13 +33,13 @@ export function HomePage() {
             <h1 id="title">CodeJam</h1>
             <div id="login-container">
                 <div className="input-group mb-3">
-                    <input type="text" className="form-control" placeholder="Username" aria-label="Username"/>
+                    <input type="text" id="username" className="form-control" placeholder="Username" aria-label="Username"/>
                 </div>
                 <div className="input-group mb-3">
-                    <input type="text" className="form-control" placeholder="Password" aria-label="Password"/>
+                    <input type="text" id="password" className="form-control" placeholder="Password" aria-label="Password"/>
                 </div>
                 <div id="login-buttons">
-                    <button id="submit-button" className="btn btn-secondary grey">Login</button>
+                    <button onClick={login} id="submit-button" className="btn btn-secondary grey">Login</button>
                     <h3 onClick={() => {setSignUp(true)}}>Create Account</h3>
                 </div>
             </div>
@@ -60,8 +60,26 @@ function createAccount() {
     }
 
     manager = NetworkManager.getInstance();
-    manager.send("createUser", {username: username, password: password});
-    console.log("Creating account with username: ", username, " and password: ", password);
+    manager.send("createUser", {username: username, password: password}, (response) => {
+        console.log("Response: ", response);
+    });
+}
+
+function login() {
+    let manager = NetworkManager.getInstance();
+    // Get the username and password from the input fields
+    let username = (document.getElementById("username") as HTMLInputElement).value;
+    let password = (document.getElementById("password") as HTMLInputElement).value;
+
+    manager = NetworkManager.getInstance();
+    manager.send("loginUser", {username: username, password: password}, (response) => {
+        if (response) {
+            toast.success("Logged in");
+        }
+        else {
+            toast.error("Invalid username or password");
+        }
+    });
 }
 
   

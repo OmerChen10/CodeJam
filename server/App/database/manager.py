@@ -50,7 +50,7 @@ class DBManager:
 
     
     def get_user(self, username: str):
-        return self.execute(f"SELECT * FROM users WHERE username = {username}")
+        return self.execute(f"SELECT * FROM users WHERE username = '{username}'")
     
     def create_project(self, name: str, user_id: int):
 

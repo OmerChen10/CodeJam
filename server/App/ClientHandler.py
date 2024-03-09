@@ -18,6 +18,12 @@ class ClientHandler():
         def createUser(props):
             self.db_manager.create_user(props['username'], props['password'])
             return True
+        
+        @self.socket.eventHandler
+        def loginUser(props):
+            password = self.db_manager.get_user(props['username'])[0][2]
+            return password == props['password']
+            
 
 
 
