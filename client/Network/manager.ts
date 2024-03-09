@@ -41,9 +41,17 @@ export class NetworkManager {
         return NetworkManager.instance;
     }
 
-    public send(eventName: string, message: any) {
+    public send(eventName: string, message: any, callback?: (response: any) => void){
         try {
-            this.socket.send(JSON.stringify({"eventName": eventName, data: message}));
+            // Check if the massage is a json object
+            if (typeof message === "object") {
+                message = JSON.stringify(message);
+            }
+
+            this.socket.send(JSON.stringify({eventName: eventName, data: message}));
+            if (callback) {
+                this.onEvent(eventName, callback);
+            }
         } catch (error) {
             console.log("[NetworkManager] Error sending message: ", error);
         }

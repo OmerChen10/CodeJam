@@ -40,15 +40,23 @@ class ClientIO():
 
                 # Analyze the request.
                 if msg == "": continue
-                header, msg_data = json.loads(msg).values()
-                if header not in self.handler_map.keys(): continue
+                event_name, msg_data = json.loads(msg).values()
+                if event_name not in self.handler_map.keys(): continue
 
-                self.handler_map[header](msg_data)
+                # Check if the mag_data is a json string.
+                try: msg_data = json.loads(msg_data)
+                except: pass
+
+                ret = self.handler_map[event_name](msg_data)
+                if ret is not None: self.send(event_name, ret)
 
                 await asyncio.sleep(0.1)
         
-        except Exception:
+        except websockets.exceptions.ConnectionClosed:
             Logger.log_info(f"[Client Handler] Client disconnected.")
+
+        except Exception as e:
+            Logger.log_error(f"[Client Handler] An error occurred in clientIO: {e}")
 
 
     @Logger.catch_exceptions
