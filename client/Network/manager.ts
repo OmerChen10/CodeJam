@@ -29,8 +29,6 @@ export class NetworkManager {
                 console.log("[NetworkManager] No handler for event: ", event.eventName);
             }
         }
-
-        this.onEvent("print", (data) => {console.log(data)})
     }
 
     public static getInstance(): NetworkManager {
@@ -59,5 +57,9 @@ export class NetworkManager {
 
     public onEvent(event: string, callback: (data: any) => void) {
         NetworkManager.eventHandlers.set(event, callback);
+    }
+
+    public setOnConnect(callback: () => void) {
+        this.socket.onopen = callback;
     }
 }

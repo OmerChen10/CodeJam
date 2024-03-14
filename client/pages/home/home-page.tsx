@@ -1,9 +1,11 @@
 import { useState } from "react";
 import "./home.css"
+import { NetworkManager } from "../../Network/manager";
+import { toast } from "sonner";
 
 export function HomePage() {
     const [projectCreatorOpen, setProjectCreatorOpen] = useState(false);
-    const [projectLiset, setProjectList] = useState([] as object[]);
+    const [projectList, setProjectList] = useState([] as object[]);
     
     let projectCreator = null;
     if (projectCreatorOpen) {
@@ -16,13 +18,12 @@ export function HomePage() {
                         <input type="text" className="input-group mb-3" id="project-description" placeholder="Project Description" aria-label="Project Description"/>
                     </div>
                     <div id="project-creator-buttons">
-                        <button id="submit-button" className="btn btn-success grey">Create Project</button>
+                        <button id="submit-button" className="btn btn-success grey" onClick={sendCreateRequest}>Create Project</button>
                         <button id="cancel-button" className="btn btn-danger" onClick={() => {setProjectCreatorOpen(false)}}>Cancel</button>
                     </div>
                 </div>
             </div>
         );
-        openProjectCreator();
     }
 
     return (
@@ -39,8 +40,20 @@ export function HomePage() {
             {projectCreator}
         </div>
     );
-}
 
-function openProjectCreator() {
-    console.log("Opening project creator");
+    function sendCreateRequest() {
+        let projectName = (document.getElementById("project-name") as HTMLInputElement).value;
+        let projectDescription = (document.getElementById("project-description") as HTMLInputElement).value;
+
+        // Send the request to create the project
+        let nm = NetworkManager.getInstance();
+        nm.send("createProject", {name: projectName, description: projectDescription}, (response: any) => {
+            if (response.success){
+                toast.success("Project created successfully!");
+            }
+            else {
+                toast.error("Failed to create project");
+            }
+        });
+    }
 }

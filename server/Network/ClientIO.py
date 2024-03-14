@@ -50,8 +50,8 @@ class ClientIO():
                 try:
                     ret = self.handler_map[event_name](msg_data)
                 
-                except:
-                    Logger.log_error(f"[Client Handler] An error occurred in event: {event_name}")
+                except Exception as e:
+                    Logger.log_error(f"[Client Handler] An error occurred in event: {event_name}", e)
                     ret = self.send(event_name, False)
                     continue
 
