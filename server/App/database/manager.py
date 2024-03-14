@@ -25,40 +25,54 @@ class DBManager:
 
     def create_tables(self):
         self.execute(
-            "CREATE TABLE users (id INTEGER, username TEXT, password TEXT)"
+            "CREATE TABLE users (id INTEGER, username TEXT, email TEXT, password TEXT)"
         )
         self.execute(
-            "CREATE TABLE permissions (project_id INTEGER, project_name TEXT, user_id INTEGER)"
+            "CREATE TABLE permissions (project_id INTEGER, user_id INTEGER)"
         )
     
     def execute(self, query: str, *args):
         self.cursor.execute(query, args)
         self.conn.commit()
-        return self.cursor.fetchall()
+        ret = self.cursor.fetchall()
+        
+        # Check if only one value is returned.
+        if len(ret) == 1 and len(ret[0]) == 1:
+            return ret[0][0]
+        
+        elif len(ret) == 1: return ret[0]
+        elif len(ret) == 0: return None
+
+        return ret
+
+        
     
     def close(self):
         self.conn.close()
         self.cursor.close()
 
-    def create_user(self, username: str, password: str):
+    def create_user(self, username: str,  email: str, password: str):
         # Generate id
         # If the table is empty, set the id to 0.
-        if self.execute("SELECT MAX(id) FROM users")[0][0] is None:
-            user_id = 0
-        else: user_id = self.execute("SELECT MAX(id) FROM users")[0][0] + 1
-        self.execute(f"INSERT INTO users (id, username, password) VALUES {user_id, username, password}")
+        user_id = self.execute("SELECT MAX(id) FROM users")[0][0]
+        user_id = 0 if user_id is None else user_id + 1
+
+        self.execute(f"INSERT INTO users (id, username, email, password) VALUES {user_id, username, email, password}")
 
     
-    def get_user(self, username: str):
-        return self.execute(f"SELECT * FROM users WHERE username = '{username}'")
+    def get_user(self, email: str):
+        return self.execute(f"SELECT * FROM users WHERE email = '{email}'")
     
-    def create_project(self, name: str, user_id: int):
+    def create_project(self, user_id: int):
 
         # Generate id
-        project_id = self.execute("SELECT MAX(id) FROM permissions")[0][0] + 1
+        project_id = self.execute("SELECT MAX(project_id) FROM permissions")
         if project_id is None: project_id = 0
+        else: project_id = 0 if project_id is None else project_id + 1
 
-        self.execute(f"INSERT INTO permissions (project_id, project_name, user_id) VALUES {project_id, name, user_id}")
+        self.execute(f"INSERT INTO permissions (project_id, user_id) VALUES {project_id, user_id}")
+        return project_id
+
 
     def get_projects_for_user(self, user_id: int):
         return self.execute(f"SELECT * FROM permissions WHERE user_id = {user_id}")
