@@ -17,7 +17,7 @@ class ClientIO():
     
     def eventHandler(self, handler: callable):
         """ Decorator for adding an event handler. """
-
+        
         self.handler_map[handler.__name__] = handler
 
     async def start_sending_loop(self):
@@ -47,7 +47,14 @@ class ClientIO():
                 try: msg_data = json.loads(msg_data)
                 except: pass
 
-                ret = self.handler_map[event_name](msg_data)
+                try:
+                    ret = self.handler_map[event_name](msg_data)
+                
+                except:
+                    Logger.log_error(f"[Client Handler] An error occurred in event: {event_name}")
+                    ret = self.send(event_name, False)
+                    continue
+
                 if ret is not None: self.send(event_name, ret)
 
                 await asyncio.sleep(0.1)
@@ -60,11 +67,21 @@ class ClientIO():
 
 
     @Logger.catch_exceptions
-    def send(self, event_name: int, server_msg):
+    def send(self, event_name: int, response):
         """ Sends a message to the client. """ 
 
+        if type(response) == bool:
+            formattedResponse = {"success": response}
+
+        elif type(response) == dict:
+            formattedResponse = response
+            formattedResponse["success"] = True
+
+        else:
+            raise ValueError("Invalid response type.")
+        
         # Create the message. (Using json to serialize the data).
-        msg = json.dumps({"eventName": event_name, "data": server_msg}) 
+        msg = json.dumps({"eventName": event_name, "data": formattedResponse}) 
         self.send_buffer.append(msg) # Add the message to the list of pending messages.
 
 
