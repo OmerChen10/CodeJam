@@ -8,22 +8,8 @@ import { toast } from "sonner"
 
 function App() {
     // Reconnect to the server each time a state changes
-    let nm = NetworkManager.getInstance();
-
-    // FOR DEVELOPMENT ONLY
-    // AUTO LOGIN
-
-    nm.setOnConnect(() => {
-        nm.send("loginUser", {email: "omer@mail", password: "1234"}, (response: any) => {
-            if (response.success) {
-                toast.success("Auto logged in");
-            }
-            else {
-                toast.error("Error auto logging in");
-            }
-        });
-    });
-
+    NetworkManager.getInstance();
+    
     return (    
         <BrowserRouter>
             <Routes>

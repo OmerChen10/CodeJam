@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./home.css"
 import { NetworkManager } from "../../Network/manager";
 import { toast } from "sonner";
@@ -6,7 +6,25 @@ import { toast } from "sonner";
 export function HomePage() {
     const [projectCreatorOpen, setProjectCreatorOpen] = useState(false);
     const [projectList, setProjectList] = useState([] as object[]);
+    const nm = NetworkManager.getInstance();
     
+    useEffect(() => {
+        // FOR DEVELOPMENT ONLY
+        // AUTO LOGIN
+        nm.addInitCallback(() => {
+            nm.send("loginUser", {email: "omer@mail", password: "1234"}, (response: any) => {
+                if (response.success) {
+                    toast.success("Auto Logged in!");
+                }
+                else {
+                    toast.error("Failed to login");
+                }
+            });
+
+            getProjects();
+        });
+    }, []);
+
     let projectCreator = null;
     if (projectCreatorOpen) {
         projectCreator = (
@@ -53,6 +71,17 @@ export function HomePage() {
             }
             else {
                 toast.error("Failed to create project");
+            }
+        });
+    }
+
+    function getProjects() {
+        nm.send("getProjectListForUser", {}, (response: any) => {
+            if (response.success){
+                setProjectList(response.projects);
+            }
+            else {
+                toast.error("Failed to get projects");
             }
         });
     }
