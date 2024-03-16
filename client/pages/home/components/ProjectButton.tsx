@@ -1,18 +1,21 @@
 
 
 interface ButtonProps {
-    children: string;
+    name: string;
+    onEdit?: () => void;
     onDelete?: () => void;
     onOpen?: () => void;
-    onEdit?: () => void;
 }
 
-export function ProjectButton({ onOpen, onEdit, onDelete, children }: ButtonProps) {
-    // On hover, display the button pannel
+export function ProjectButton({ onEdit, onOpen, onDelete, name }: ButtonProps) {
+    // If the project name length is greater than 20, add three dots at the end
+    if (name.length > 20){
+        name = name.substring(0, 20) + "...";
+    }
 
     return (     
         <div className="project-button">
-            <div className="button-text-background">{children}</div>
+            <div className="button-text-background">{name}</div>
             <div className="project-button-util-panel">
                 <button className="btn btn-secondary" onClick={onOpen}>Open</button>
                 <button className="btn btn-secondary" onClick={onEdit}>Edit</button>

@@ -45,15 +45,13 @@ class ClientHandler():
         
         @self.socket.eventHandler
         def createProject(props):
-            print(self.account)
             project_id = self.db_manager.create_project(self.account.id)
             self.storage_manager.create_project(
                 id=project_id,
-                author=self.account.id,
+                author=self.account.name,
                 name=props["name"],
                 description=props["description"]
             )
-
             return True
 
 

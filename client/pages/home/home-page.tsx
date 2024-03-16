@@ -1,12 +1,16 @@
+import { ProjectPropEditor } from "./components/ProjectPropEditor.tsx";
+import { ProjectCreator } from "./components/ProjectCreator.tsx";
+import { ProjectButton } from "./components/ProjectButton.tsx";
+import { ProjectInterface } from "../../Constants.ts";
 import { NetworkManager } from "../../Network/manager";
 import { useEffect, useState } from "react";
-import { ProjectButton } from "./ProjectButton.tsx";
 import { toast } from "sonner";
 import "./home.css"
 
 export function HomePage() {
-    const [projectCreatorOpen, setProjectCreatorOpen] = useState(false);
+    const [popUpMenuMode, setPopUpMenuMode] = useState("none");
     const [projectList, setProjectList] = useState([] as object[]);
+    const [projectToEdit, setProjectToEdit] = useState({} as ProjectInterface);
     const nm = NetworkManager.getInstance();
     
     useEffect(() => {
@@ -26,46 +30,45 @@ export function HomePage() {
         });
     }, []);
 
-    let projectCreator = null;
-    if (projectCreatorOpen) {
-        projectCreator = (
-            <div id="project-creator">
-                <div id="project-creator-container">
-                    <h1 id="project-creator-title">Create New Project</h1>
-                    <div id="project-creator-inputs">
-                        <input type="text" className="input-group mb-3" id="project-name" placeholder="Project Name" aria-label="Project Name"/>
-                        <input type="text" className="input-group mb-3" id="project-description" placeholder="Project Description" aria-label="Project Description"/>
-                    </div>
-                    <div id="project-creator-buttons">
-                        <button id="submit-button" className="btn btn-success grey" onClick={sendCreateRequest}>Create Project</button>
-                        <button id="cancel-button" className="btn btn-danger" onClick={() => {setProjectCreatorOpen(false)}}>Cancel</button>
-                    </div>
-                </div>
-            </div>
-        );
-    }
 
-    let projectButtons = projectList.map((project: any) => {
-        return (
-            <ProjectButton key={project.id} onOpen={() => {console.log("Open")}} onEdit={() => {console.log("Edit")}} onDelete={() => {console.log("Delete")}}>
-                {project.name}
-            </ProjectButton>
-        );
-    });
+    const renderPopUp = () => {
+        switch (popUpMenuMode) {
+            case "createProject":
+                return <ProjectCreator setPopUpMenuMode={setPopUpMenuMode} sendCreateRequest={sendCreateRequest}/>
+            case "editProjectProps":
+                return <ProjectPropEditor setPopUpMenuMode={setPopUpMenuMode} project={projectToEdit}/>
+            case "none":
+                return null;
+        }
+    }
+    
+    const renderProjectButtons = () => {
+        return projectList.map((project: any) => {
+            return <ProjectButton 
+                key={project.id} 
+                name={project.name} 
+                onDelete={() => {console.log("delete")}} 
+                onOpen={() => {console.log("open")}} 
+                onEdit={() => {
+                    setProjectToEdit(project);
+                    setPopUpMenuMode("editProjectProps");
+                }}
+            />});
+    }
 
     return (
         <div id="main-home">
             <div id="navbar">
                 <h3 id="title">CodeJam</h3>
             </div>
-            <div id="projects-container" className={projectCreatorOpen ? "inactive" : "active"}>
-                <div onClick={() => {setProjectCreatorOpen(true)}} className="project-button" id="create-project-button">
+            <div id="projects-container" className={(popUpMenuMode != "none") ? "inactive" : "active"}>
+                <div onClick={() => {setPopUpMenuMode("createProject")}} className="project-button" id="create-project-button">
                     <div className="project-button-text">Create New Project</div>
                     <div className="button-text-background" id="plus-icon"/>
                 </div>
-                {projectButtons}
+                {renderProjectButtons()}
             </div>
-            {projectCreator}
+            {renderPopUp()}
         </div>
     );
 
@@ -78,9 +81,12 @@ export function HomePage() {
         nm.send("createProject", {name: projectName, description: projectDescription}, (response: any) => {
             if (response.success){
                 toast.success("Project created successfully!");
+                getProjects();
+                setPopUpMenuMode("none");
             }
             else {
                 toast.error("Failed to create project");
+                setPopUpMenuMode("none");
             }
         });
     }

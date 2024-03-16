@@ -25,6 +25,22 @@
 
 }
 
+.button-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+}
+
+.input-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+}
+
 .inactive {
     filter: blur(5px);
     transition: 0.3s;
@@ -55,10 +71,13 @@
     align-items: center;
     justify-content: center;
     font-size: 1.5rem;
-    text-wrap: wrap;
-    
+    text-wrap: stable;
+    text-overflow: clip;
+    text-size-adjust: auto;
+
     width: 10rem;
     height: 10rem;
+    padding: 5rem;
     filter: blur(0); /* No blur by default */
     transition: filter 0.3s ease-out; /* Transition on the filter property */
 }
@@ -129,7 +148,7 @@
     pointer-events: all;
 }
 
-#project-creator-container {
+.popUpWindow {
     position: absolute;
     z-index: 5;
     display: flex;
@@ -147,27 +166,36 @@
     left: 37.5%;
 }
 
-#project-creator-title {
-    text-decoration: underline;
-    font-size: 2.5rem;
-    font-weight: bold;
-}
-#project-creator-inputs {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-
-}
-#project-creator-buttons {
-    display: flex;
-    flex-direction: row;
-    gap: 1rem;
-}
-
-#project-creator-inputs input {
+.popUpWindow input {
     width: 20rem;
     height: 2rem;
     border-radius: 0.5rem;
     border: none;
     font-size: 1rem;
+}
+
+.popUpWindow h1 {
+    text-decoration: underline;
+    font-size: 2.5rem;
+    font-weight: bold;
+}
+
+/* Project Creator */
+
+#prop-editor-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+}
+
+#project-description-editor {
+    width: 20rem;
+    height: 10rem;
+    border-radius: 0.5rem;
+    border: none;
+    font-size: 1rem;
+    overflow: auto;
+    resize: none;
 }
