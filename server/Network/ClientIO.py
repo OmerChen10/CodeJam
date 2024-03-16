@@ -78,7 +78,8 @@ class ClientIO():
             formattedResponse["success"] = True
 
         else:
-            raise ValueError("Invalid response type.")
+            formattedResponse = {"success": True}
+            formattedResponse["data"] = response
         
         # Create the message. (Using json to serialize the data).
         msg = json.dumps({"eventName": event_name, "data": formattedResponse}) 

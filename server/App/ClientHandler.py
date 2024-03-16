@@ -39,7 +39,7 @@ class ClientHandler():
         @self.socket.eventHandler
         def getProjectListForUser(props):
             id_list = self.db_manager.get_projects_for_user(self.account.id)
-            id_list = [id[0] for id in id_list]
+            if type(id_list) == int: id_list = [id_list]
             return {"projects": [self.storage_manager.get_metadata(id) for id in id_list]}
             
         
@@ -52,6 +52,14 @@ class ClientHandler():
                 name=props["name"],
                 description=props["description"]
             )
+            return True
+        
+        @self.socket.eventHandler
+        def updateProjectMetadata(props):
+            self.storage_manager.update_metadata(id=props["id"], 
+                                                 name=props["name"], 
+                                                 description=props["description"], 
+                                                 author=self.account.name)
             return True
 
 

@@ -18,7 +18,7 @@ class StorageManager():
         self.update_metadata(path=path, id=id, author=author, name=name, description=description)
     
     def update_metadata(self, **kwargs):
-        with open(os.path.join(kwargs["path"], "metadata.json"), "wb") as file:
+        with open(os.path.join(StorageConfig.PROJECTS_PATH, str(kwargs["id"]), "metadata.json"), "wb") as file:
             metadata = {
                 "id": kwargs["id"],
                 "name": kwargs["name"],

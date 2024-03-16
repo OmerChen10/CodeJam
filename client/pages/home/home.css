@@ -180,6 +180,12 @@
     font-weight: bold;
 }
 
+.popUpWindow h2 {
+    text-decoration: underline;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
 /* Project Creator */
 
 #prop-editor-container {

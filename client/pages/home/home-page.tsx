@@ -26,7 +26,7 @@ export function HomePage() {
                 }
             });
 
-            getProjects();
+            fetchProjects();
         });
     }, []);
 
@@ -36,7 +36,7 @@ export function HomePage() {
             case "createProject":
                 return <ProjectCreator setPopUpMenuMode={setPopUpMenuMode} sendCreateRequest={sendCreateRequest}/>
             case "editProjectProps":
-                return <ProjectPropEditor setPopUpMenuMode={setPopUpMenuMode} project={projectToEdit}/>
+                return <ProjectPropEditor fetchProjects={fetchProjects} setPopUpMenuMode={setPopUpMenuMode} project={projectToEdit}/>
             case "none":
                 return null;
         }
@@ -81,7 +81,7 @@ export function HomePage() {
         nm.send("createProject", {name: projectName, description: projectDescription}, (response: any) => {
             if (response.success){
                 toast.success("Project created successfully!");
-                getProjects();
+                fetchProjects();
                 setPopUpMenuMode("none");
             }
             else {
@@ -91,7 +91,7 @@ export function HomePage() {
         });
     }
 
-    function getProjects() {
+    function fetchProjects() {
         nm.send("getProjectListForUser", {}, (response: any) => {
             if (response.success){
                 setProjectList(response.projects);
