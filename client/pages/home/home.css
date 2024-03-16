@@ -49,24 +49,33 @@
     background-color: #434f57;
 }
 
-.button-blur {
+.button-text-background {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    text-wrap: wrap;
+    
+    width: 10rem;
+    height: 10rem;
     filter: blur(0); /* No blur by default */
     transition: filter 0.3s ease-out; /* Transition on the filter property */
-
 }
-.button-blur:hover {
+
+.button-text-background:hover {
     cursor: pointer;
     filter: blur(5px);
     transition: 0.3s;
 }
 
-
-
 #plus-icon {
     background: url("../../assets/images/plus.png");
     background-size: 9rem 8rem;
-    width: 9rem;
-    height: 9rem;
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 10rem;
+    height: 10rem;
     z-index: 1;
 }
 
@@ -86,6 +95,38 @@
 .project-button:hover .project-button-text {
     opacity: 1;
     transition: 0.3s;
+}
+
+.project-button-util-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    width: 5rem;
+    pointer-events: none;
+    position: absolute;
+    font-size: 1.5rem;
+    text-wrap: wrap;
+    text-align: center;
+    font-weight: bold;
+    opacity: 0;
+    transition: opacity 0.3s ease-out;
+    z-index: 2;
+}
+
+.project-button-util-panel button {
+    width: 7.5rem;
+    height: 2rem;
+    border-radius: 0.5rem;
+    text-align: center;
+    font-size: 1rem;
+}
+
+.project-button:hover .project-button-util-panel {
+    opacity: 1;
+    transition: 0.3s;
+    pointer-events: all;
 }
 
 #project-creator-container {

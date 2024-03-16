@@ -45,6 +45,14 @@ export function HomePage() {
         );
     }
 
+    let projectButtons = projectList.map((project: any) => {
+        return (
+            <ProjectButton key={project.id} onOpen={() => {console.log("Open")}} onEdit={() => {console.log("Edit")}} onDelete={() => {console.log("Delete")}}>
+                {project.name}
+            </ProjectButton>
+        );
+    });
+
     return (
         <div id="main-home">
             <div id="navbar">
@@ -53,9 +61,9 @@ export function HomePage() {
             <div id="projects-container" className={projectCreatorOpen ? "inactive" : "active"}>
                 <div onClick={() => {setProjectCreatorOpen(true)}} className="project-button" id="create-project-button">
                     <div className="project-button-text">Create New Project</div>
-                    <div className="button-blur" id="plus-icon"/>
+                    <div className="button-text-background" id="plus-icon"/>
                 </div>
-                <ProjectButton onClick={() => {console.log("clicked")}}>Test Project</ProjectButton>
+                {projectButtons}
             </div>
             {projectCreator}
         </div>
