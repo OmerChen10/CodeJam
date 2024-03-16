@@ -21,6 +21,7 @@
     margin: 5rem auto;
     border-radius: 1rem;
     background-color: #3a3b3b;
+    padding: 1rem;
 
 }
 
@@ -46,29 +47,27 @@
     padding: 1rem;
     border-radius: 1rem;
     background-color: #434f57;
-    margin: 1rem;
-
 }
 
-.plus-icon {
+.button-blur {
+    filter: blur(0); /* No blur by default */
+    transition: filter 0.3s ease-out; /* Transition on the filter property */
+
+}
+.button-blur:hover {
+    cursor: pointer;
+    filter: blur(5px);
+    transition: 0.3s;
+}
+
+
+
+#plus-icon {
     background: url("../../assets/images/plus.png");
     background-size: 9rem 8rem;
     width: 9rem;
     height: 9rem;
     z-index: 1;
-
-    filter: blur(0); /* No blur by default */
-    transition: filter 0.3s ease-out; /* Transition on the filter property */
-
-    z-index: 0;
-
-}
-
-.plus-icon:hover {
-    cursor: pointer;
-    /* blur the background with animation */
-    filter: blur(5px);
-    transition: 0.3s;
 }
 
 .project-button-text {

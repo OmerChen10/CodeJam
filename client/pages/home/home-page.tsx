@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
-import "./home.css"
 import { NetworkManager } from "../../Network/manager";
+import { useEffect, useState } from "react";
+import { ProjectButton } from "./ProjectButton.tsx";
 import { toast } from "sonner";
+import "./home.css"
 
 export function HomePage() {
     const [projectCreatorOpen, setProjectCreatorOpen] = useState(false);
@@ -52,8 +53,9 @@ export function HomePage() {
             <div id="projects-container" className={projectCreatorOpen ? "inactive" : "active"}>
                 <div onClick={() => {setProjectCreatorOpen(true)}} className="project-button" id="create-project-button">
                     <div className="project-button-text">Create New Project</div>
-                    <div className="plus-icon"/>
+                    <div className="button-blur" id="plus-icon"/>
                 </div>
+                <ProjectButton onClick={() => {console.log("clicked")}}>Test Project</ProjectButton>
             </div>
             {projectCreator}
         </div>

@@ -1,6 +1,6 @@
 from Network import ClientIO
 from App.database.manager import DBManager
-from App.Projects import Project
+from App.Storage.StorageManager import StorageManager
 
 
 class ClientHandler():
@@ -11,7 +11,7 @@ class ClientHandler():
         self.db_manager: DBManager = DBManager.get_instance()
 
         self.account: Account = None
-        self.project: Project = None
+        self.storage_manager: StorageManager = StorageManager()
 
         @self.socket.eventHandler
         def editorSend(msg):
@@ -37,17 +37,23 @@ class ClientHandler():
             return True
         
         @self.socket.eventHandler
-        def getProjectListForUser(email):
-            return self.db_manager.get_projects_for_user(self.account.id)
+        def getProjectListForUser(props):
+            id_list = self.db_manager.get_projects_for_user(self.account.id)
+            id_list = [id[0] for id in id_list]
+            return {"projects": [self.storage_manager.get_metadata(id) for id in id_list]}
+            
         
         @self.socket.eventHandler
         def createProject(props):
+            print(self.account)
             project_id = self.db_manager.create_project(self.account.id)
-            self.project = Project(id=project_id, 
-                                   name=props['name'], 
-                                   description=props['description'],
-                                   author=self.account.name)
-            
+            self.storage_manager.create_project(
+                id=project_id,
+                author=self.account.id,
+                name=props["name"],
+                description=props["description"]
+            )
+
             return True
 
 

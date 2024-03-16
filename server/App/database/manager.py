@@ -36,17 +36,11 @@ class DBManager:
         self.conn.commit()
         ret = self.cursor.fetchall()
         
-        # Check if only one value is returned.
-        if len(ret) == 1 and len(ret[0]) == 1:
-            return ret[0][0]
-        
-        elif len(ret) == 1: return ret[0]
-        elif len(ret) == 0: return None
-
+        if len(ret) == 1 and len(ret[0]) == 1: return ret[0][0]
+        if len(ret) == 1: return ret[0]
+        if len(ret) == 0: return None
         return ret
 
-        
-    
     def close(self):
         self.conn.close()
         self.cursor.close()
@@ -54,7 +48,7 @@ class DBManager:
     def create_user(self, username: str,  email: str, password: str):
         # Generate id
         # If the table is empty, set the id to 0.
-        user_id = self.execute("SELECT MAX(id) FROM users")[0][0]
+        user_id = self.execute("SELECT MAX(id) FROM users")
         user_id = 0 if user_id is None else user_id + 1
 
         self.execute(f"INSERT INTO users (id, username, email, password) VALUES {user_id, username, email, password}")
@@ -75,5 +69,5 @@ class DBManager:
 
 
     def get_projects_for_user(self, user_id: int):
-        return self.execute(f"SELECT * FROM permissions WHERE user_id = {user_id}")
+        return self.execute(f"SELECT project_id FROM permissions WHERE user_id = {user_id}")
     
