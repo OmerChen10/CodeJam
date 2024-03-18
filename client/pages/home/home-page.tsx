@@ -43,11 +43,14 @@ export function HomePage() {
     }
     
     const renderProjectButtons = () => {
+        if (projectList == undefined){
+            return;
+        }
         return projectList.map((project: any) => {
             return <ProjectButton 
                 key={project.id} 
-                name={project.name} 
-                onDelete={() => {console.log("delete")}} 
+                project={project} 
+                onDelete={sendDeleteRequest} 
                 onOpen={() => {console.log("open")}} 
                 onEdit={() => {
                     setProjectToEdit(project);
@@ -77,7 +80,6 @@ export function HomePage() {
         let projectDescription = (document.getElementById("project-description") as HTMLInputElement).value;
 
         // Send the request to create the project
-        let nm = NetworkManager.getInstance();
         nm.send("createProject", {name: projectName, description: projectDescription}, (response: any) => {
             if (response.success){
                 toast.success("Project created successfully!");
@@ -86,6 +88,20 @@ export function HomePage() {
             }
             else {
                 toast.error("Failed to create project");
+                setPopUpMenuMode("none");
+            }
+        });
+    }
+
+    function sendDeleteRequest(project: ProjectInterface) {
+        nm.send("deleteProject", {"id": project.id}, (response: any) => {
+            if (response.success){
+                toast.success("Project deleted successfully!");
+                fetchProjects();
+                setPopUpMenuMode("none");
+            }
+            else {
+                toast.error("Failed to delete project");
                 setPopUpMenuMode("none");
             }
         });

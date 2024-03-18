@@ -39,6 +39,7 @@ class ClientHandler():
         @self.socket.eventHandler
         def getProjectListForUser(props):
             id_list = self.db_manager.get_projects_for_user(self.account.id)
+            if id_list is None: return True
             if type(id_list) == int: id_list = [id_list]
             return {"projects": [self.storage_manager.get_metadata(id) for id in id_list]}
             
@@ -60,6 +61,12 @@ class ClientHandler():
                                                  name=props["name"], 
                                                  description=props["description"], 
                                                  author=self.account.name)
+            return True
+        
+        @self.socket.eventHandler
+        def deleteProject(props):
+            self.db_manager.delete_project(props["id"])
+            self.storage_manager.delete_project(props["id"])
             return True
 
 

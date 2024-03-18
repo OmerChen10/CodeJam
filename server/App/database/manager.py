@@ -71,3 +71,6 @@ class DBManager:
     def get_projects_for_user(self, user_id: int):
         return self.execute(f"SELECT project_id FROM permissions WHERE user_id = {user_id}")
     
+    def delete_project(self, project_id: int):
+        self.execute(f"DELETE FROM permissions WHERE project_id = {project_id}")
+    
