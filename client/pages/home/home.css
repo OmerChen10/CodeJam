@@ -21,7 +21,24 @@
     margin: 5rem auto;
     border-radius: 1rem;
     background-color: #3a3b3b;
+    padding: 1rem;
 
+}
+
+.button-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+}
+
+.input-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
 }
 
 .inactive {
@@ -46,29 +63,39 @@
     padding: 1rem;
     border-radius: 1rem;
     background-color: #434f57;
-    margin: 1rem;
-
 }
 
-.plus-icon {
-    background: url("../../assets/images/plus.png");
-    background-size: 9rem 8rem;
-    width: 9rem;
-    height: 9rem;
-    z-index: 1;
+.button-text-background {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    text-wrap: stable;
+    text-overflow: clip;
+    text-size-adjust: auto;
 
+    width: 10rem;
+    height: 10rem;
+    padding: 5rem;
     filter: blur(0); /* No blur by default */
     transition: filter 0.3s ease-out; /* Transition on the filter property */
-
-    z-index: 0;
-
 }
 
-.plus-icon:hover {
+.button-text-background:hover {
     cursor: pointer;
-    /* blur the background with animation */
     filter: blur(5px);
     transition: 0.3s;
+}
+
+#plus-icon {
+    background: url("../../assets/images/plus.png");
+    background-size: 9rem 8rem;
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 10rem;
+    height: 10rem;
+    z-index: 1;
 }
 
 .project-button-text {
@@ -89,7 +116,39 @@
     transition: 0.3s;
 }
 
-#project-creator-container {
+.project-button-util-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    width: 5rem;
+    pointer-events: none;
+    position: absolute;
+    font-size: 1.5rem;
+    text-wrap: wrap;
+    text-align: center;
+    font-weight: bold;
+    opacity: 0;
+    transition: opacity 0.3s ease-out;
+    z-index: 2;
+}
+
+.project-button-util-panel button {
+    width: 7.5rem;
+    height: 2rem;
+    border-radius: 0.5rem;
+    text-align: center;
+    font-size: 1rem;
+}
+
+.project-button:hover .project-button-util-panel {
+    opacity: 1;
+    transition: 0.3s;
+    pointer-events: all;
+}
+
+.popUpWindow {
     position: absolute;
     z-index: 5;
     display: flex;
@@ -107,27 +166,42 @@
     left: 37.5%;
 }
 
-#project-creator-title {
-    text-decoration: underline;
-    font-size: 2.5rem;
-    font-weight: bold;
-}
-#project-creator-inputs {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-
-}
-#project-creator-buttons {
-    display: flex;
-    flex-direction: row;
-    gap: 1rem;
-}
-
-#project-creator-inputs input {
+.popUpWindow input {
     width: 20rem;
     height: 2rem;
     border-radius: 0.5rem;
     border: none;
     font-size: 1rem;
+}
+
+.popUpWindow h1 {
+    text-decoration: underline;
+    font-size: 2.5rem;
+    font-weight: bold;
+}
+
+.popUpWindow h2 {
+    text-decoration: underline;
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+/* Project Creator */
+
+#prop-editor-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+}
+
+#project-description-editor {
+    width: 20rem;
+    height: 10rem;
+    border-radius: 0.5rem;
+    border: none;
+    font-size: 1rem;
+    overflow: auto;
+    resize: none;
 }

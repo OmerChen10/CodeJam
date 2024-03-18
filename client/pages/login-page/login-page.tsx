@@ -11,13 +11,16 @@ export function LoginPage() {
                 <h1 id="login-title">CodeJam</h1>
                 <div id="login-container">
                     <div className="input-group mb-3">
-                        <input type="text" id="username" placeholder="Username" aria-label="Username"/>
+                        <input type="text" id="username" className="form-control" placeholder="Username:" aria-label="Username"/>
                     </div>
                     <div className="input-group mb-3">
-                        <input type="text" id="password" placeholder="Password" aria-label="Password"/>
+                        <input type="email" id="email" className="form-control" placeholder="Email" aria-label="Email"/>
                     </div>
                     <div className="input-group mb-3">
-                        <input type="text" id="confirm-password" placeholder="Confirm Password" aria-label="Password"/>
+                        <input type="password" id="password" className="form-control" placeholder="Password" aria-label="Password"/>
+                    </div>
+                    <div className="input-group mb-3">
+                        <input type="password" id="confirm-password" className="form-control" placeholder="Confirm Password" aria-label="Password"/>
                     </div>
                     <div id="login-buttons">
                         <button onClick={createAccount} id="submit-button" className="btn btn-secondary grey">Create Account</button>
@@ -33,10 +36,10 @@ export function LoginPage() {
             <h1 id="login-title">CodeJam</h1>
             <div id="login-container">
                 <div className="input-group mb-3">
-                    <input type="text" id="username" className="form-control" placeholder="Username" aria-label="Username"/>
+                    <input type="email" id="email" className="form-control" placeholder="Email" aria-label="Email"/>
                 </div>
                 <div className="input-group mb-3">
-                    <input type="text" id="password" className="form-control" placeholder="Password" aria-label="Password"/>
+                    <input type="password" id="password" className="form-control" placeholder="Password" aria-label="Password"/>
                 </div>
                 <div id="login-buttons">
                     <button onClick={login} id="submit-button" className="btn btn-secondary grey">Login</button>
@@ -49,8 +52,9 @@ export function LoginPage() {
 
 function createAccount() {
     let manager = NetworkManager.getInstance();
-    // Get the username and password from the input fields
+    // Get the email and password from the input fields
     let username = (document.getElementById("username") as HTMLInputElement).value;
+    let email = (document.getElementById("email") as HTMLInputElement).value;
     let password = (document.getElementById("password") as HTMLInputElement).value;
     let confirmPassword = (document.getElementById("confirm-password") as HTMLInputElement).value;
 
@@ -59,36 +63,36 @@ function createAccount() {
         return;
     }
     
-    // Check if the username and password are valid
-    if (username === "" || password === "") {
-        toast.error("Invalid username or password");
+    // Check if the email and password are valid
+    if (email === "" || password === "") {
+        toast.error("Invalid email or password");
         return;
     }
 
     manager = NetworkManager.getInstance();
-    manager.send("createUser", {username: username, password: password}, (response) => {
-        if (response) {
+    manager.send("createUser", {username: username, email: email, password: password}, (response) => {
+        if (response.success) {
             toast.success("Account created!");
         }
         else {
-            toast.error("Username already exists");
+            toast.error("Username already exists!");
         }
     });
 }
 
 function login() {
     let manager = NetworkManager.getInstance();
-    // Get the username and password from the input fields
-    let username = (document.getElementById("username") as HTMLInputElement).value;
+    // Get the email and password from the input fields
+    let email = (document.getElementById("email") as HTMLInputElement).value;
     let password = (document.getElementById("password") as HTMLInputElement).value;
 
     manager = NetworkManager.getInstance();
-    manager.send("loginUser", {username: username, password: password}, (response) => {
-        if (response) {
+    manager.send("loginUser", {email: email, password: password}, (response) => {
+        if (response.success) {
             toast.success("Logged in");
         }
         else {
-            toast.error("Invalid username or password");
+            toast.error("Invalid email or password");
         }
     });
 }

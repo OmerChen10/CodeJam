@@ -26,9 +26,10 @@ class Logger:
         Logger.logger.debug("[DEBUG] " + message)
 
     
-    def log_error(message, exception=None):
+    def log_error(message, e: Exception =None):
         print(Fore.RED + Style.BRIGHT + "[ERROR] " + Style.RESET_ALL + message)
-        Logger.logger.error("[ERROR] " + message + ":" + str(exception))
+        Logger.logger.error("[ERROR] " + message + "\n" + traceback.format_exc() if e is not None else "")
+
 
 
     @staticmethod
@@ -39,7 +40,7 @@ class Logger:
             
             except Exception as e:
                 Logger.log_error(f'Exception in "{func.__name__}"', e)
-                
+
         return handle
 
 

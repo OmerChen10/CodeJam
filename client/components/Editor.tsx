@@ -37,12 +37,12 @@ export function CodeEditor() {
         }
     }
 
-    nm.onEvent("editorReceive", (changes: editor.IModelContentChange[]) => {
+    nm.onEvent("editorReceive", (changes: object) => {
         if (editorRef.current === undefined) {
             return
         }
         isProgrammaticChange.current = true
-        editorRef.current.executeEdits("Server", changes)
+        editorRef.current.executeEdits("Server", (changes as any)["data"])
     })
 
     return ((

@@ -6,8 +6,8 @@ import "./main.css"
 import { Toaster } from 'sonner';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
+  <div id='main-app'>
     <App />
     <Toaster richColors/>
-  </React.StrictMode>,
+  </div>
 )

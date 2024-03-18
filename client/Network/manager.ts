@@ -8,6 +8,7 @@ export class NetworkManager {
     public socket: WebSocket;
     private static instance: NetworkManager;
     private static eventHandlers: Map<string, (event: string) => void> = new Map();
+    private static initCallbacks: (() => void)[] = [];
 
     private constructor() {
         console.log("[NetworkManager] Connecting to server");
@@ -17,6 +18,7 @@ export class NetworkManager {
 
         this.socket.onopen = () => {
             console.log("[NetworkManager] Connected to server");
+            NetworkManager.initCallbacks.forEach(callback => callback());
         }
 
         this.socket.onmessage = (msg) => {
@@ -29,8 +31,6 @@ export class NetworkManager {
                 console.log("[NetworkManager] No handler for event: ", event.eventName);
             }
         }
-
-        this.onEvent("print", (data) => {console.log(data)})
     }
 
     public static getInstance(): NetworkManager {
@@ -59,5 +59,9 @@ export class NetworkManager {
 
     public onEvent(event: string, callback: (data: any) => void) {
         NetworkManager.eventHandlers.set(event, callback);
+    }
+
+    public addInitCallback(callback: () => void) {
+        NetworkManager.initCallbacks.push(callback);
     }
 }
