@@ -34,9 +34,10 @@ export function EditorPage() {
 
     function renderFileList() {
         return fileList.map((file) => {
-            return <FileButton fileName={file.split("\\").pop() as string} key={file}/>
+            return <FileButton filePath={file} key={file}/>
         })
     }
+
     return (
         <div id="main-editor">
             <div id="navbar">

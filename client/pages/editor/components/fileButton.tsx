@@ -2,14 +2,16 @@ import { useEffect, useRef, useState } from "react"
 import { Assets } from "../../../Constants"
 
 interface props {
-    fileName: string
+    filePath: string
+    onClick?: () => void
 }
 
-export function FileButton({fileName}: props) {
+export function FileButton({filePath, onClick}: props) {
     const [fileTypeImgSrc, setFileTypeImgSrc] = useState<string>("")
+    const fileName = filePath.split("\\").pop() as string
 
     useEffect(() => {
-        switch (fileName.split(".")[1]) {
+        switch (fileName.split(".").pop()) {
             case "py":
                 setFileTypeImgSrc(Assets.ICONS.PYTHON_ICON)
                 break;
@@ -23,7 +25,7 @@ export function FileButton({fileName}: props) {
     }, [])
 
     return (
-        <div className="file-button">
+        <div onClick={onClick} className="file-button">
             <h3>{fileName}</h3>
             <img src={fileTypeImgSrc}/>
         </div>

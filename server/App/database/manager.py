@@ -35,11 +35,9 @@ class DBManager:
         self.cursor.execute(query, args)
         self.conn.commit()
         ret = self.cursor.fetchall()
-        
-        if len(ret) == 1 and len(ret[0]) == 1: return ret[0][0]
-        if len(ret) == 1: return ret[0]
-        if len(ret) == 0: return None
-        return ret
+        if not ret: return None
+        if ret[0][0] is None: return None
+        return ret[0]
 
     def close(self):
         self.conn.close()
