@@ -47,7 +47,10 @@ class StorageManager():
         
         shutil.rmtree(path)
     
-    def get_files(self, project_id):
+    def get_file_paths(self, project_id):
+        # Get the list of file names in the project directory.
         path = os.path.join(StorageConfig.PROJECTS_PATH, str(project_id))
-        print(path)
-    
+        filenames = os.listdir(path)
+        return [os.path.join(StorageConfig.FILES_HEADER_BASE_PATH, project_id, filename) for filename in filenames]
+
+

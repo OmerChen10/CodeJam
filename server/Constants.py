@@ -8,3 +8,4 @@ class DatabaseConfig:
 
 class StorageConfig:
     PROJECTS_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "App\Storage")
+    FILES_HEADER_BASE_PATH = "server\App\Storage"

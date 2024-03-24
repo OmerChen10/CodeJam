@@ -11,6 +11,7 @@ class ClientHandler():
         self.db_manager: DBManager = DBManager.get_instance()
 
         self.account: Account = None
+        self.project: Project = None
         self.storage_manager: StorageManager = StorageManager()
 
         @self.socket.eventHandler
@@ -68,6 +69,15 @@ class ClientHandler():
             self.db_manager.delete_project(props["id"])
             self.storage_manager.delete_project(props["id"])
             return True
+        
+        @self.socket.eventHandler
+        def setCurrentProject(props):
+            self.project = Project(props["id"], props["name"], props["author"], props["description"])
+            return True
+        
+        @self.socket.eventHandler
+        def getProjectFilePaths(props):
+            return self.storage_manager.get_file_paths(self.project.id)
 
 
 
@@ -81,6 +91,16 @@ class Account():
 
     def __str__(self) -> str:
         return f"Account: ID: {self.id}, Name: {self.name}, Email: {self.email}"
+    
+class Project():
+    def __init__(self, id: int, name: str, author: str, description: str) -> None:
+        self.id = id
+        self.name = name
+        self.author = author
+        self.description = description
+
+    def __str__(self) -> str:
+        return f"Project: ID: {self.id}, Name: {self.name}, Author: {self.author}, Description: {self.description}"
 
 
 

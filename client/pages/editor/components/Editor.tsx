@@ -17,8 +17,7 @@ export function CodeEditor() {
     const selectedProjectGlobal = useContext(SelectedProjectContext)
 
     const SetEditor = (ref: editor.IStandaloneCodeEditor) => {
-        editorRef.current = ref
-        console.log(selectedProjectGlobal)
+        editorRef.current = ref    
     }
 
     const SendChanges = (value: string | undefined, event: editor.IModelContentChangedEvent) => {

@@ -16,6 +16,14 @@ export const SelectedProjectContext = createContext<[ProjectInterface, (project:
 
 function App() {
     const [selectedProject, setSelectedProject] = useState({} as ProjectInterface)
+    const nm = NetworkManager.getInstance()
+
+    useEffect(() => {
+        if (Object.entries(selectedProject).length === 0) {
+            return
+        }
+        nm.send("setCurrentProject", selectedProject)
+    }, [selectedProject])
     
     useEffect(() => {
         let nm = NetworkManager.getInstance();

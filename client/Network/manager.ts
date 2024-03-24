@@ -1,3 +1,5 @@
+import { ServerResponseInterface } from "../Constants";
+
 
 interface Event {
     eventName: string;
@@ -28,7 +30,7 @@ export class NetworkManager {
             if (handler) {
                 handler(event.data);
             } else {
-                console.log("[NetworkManager] No handler for event: ", event.eventName);
+                console.log("[NetworkManager] No callback for event: ", event.eventName);
             }
         }
     }
@@ -41,7 +43,7 @@ export class NetworkManager {
         return NetworkManager.instance;
     }
 
-    public send(eventName: string, message: any, callback?: (response: any) => void){
+    public send(eventName: string, message: any, callback?: (response: ServerResponseInterface) => void){
         try {
             // Check if the massage is a json object
             if (typeof message === "object") {
