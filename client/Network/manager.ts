@@ -61,7 +61,7 @@ export class NetworkManager {
         NetworkManager.eventHandlers.set(event, callback);
     }
 
-    public addInitCallback(callback: () => void) {
+    public addInitCallback(callback: () => void, waitForResponse: boolean = false) {
         NetworkManager.initCallbacks.push(callback);
     }
 }

@@ -46,5 +46,8 @@ class StorageManager():
             return False
         
         shutil.rmtree(path)
-        
+    
+    def get_files(self, project_id):
+        path = os.path.join(StorageConfig.PROJECTS_PATH, str(project_id))
+        print(path)
     

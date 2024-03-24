@@ -1,7 +1,11 @@
 import "./editor.css"
-import { CodeEditor } from "../../components/Editor"
+import { CodeEditor } from "./components/Editor"
+import { useContext, useEffect } from "react"
+import { SelectedProjectContext } from "../../App"
 
 export function EditorPage() {
+    const selectedProject = useContext(SelectedProjectContext)
+
     return (
         <div id="main-editor">
             <div id="navbar">

@@ -1,8 +1,9 @@
-import { NetworkManager } from "../Network/manager";
+import { NetworkManager } from "../../../Network/manager";
+import { SelectedProjectContext } from "../../../App";
+import { EditorConfig } from "../../../Constants";
 import { Editor } from "@monaco-editor/react";
 import { editor } from "monaco-editor";
-import { useRef } from "react";
-import { EditorConfig } from "../Constants";
+import { useContext, useRef } from "react";
 
 export function CodeEditor() {
 
@@ -13,8 +14,11 @@ export function CodeEditor() {
     const duringCooldown = useRef<boolean>(false)
     const changeBuffer = useRef<editor.IModelContentChange[]>([])
 
+    const selectedProjectGlobal = useContext(SelectedProjectContext)
+
     const SetEditor = (ref: editor.IStandaloneCodeEditor) => {
         editorRef.current = ref
+        console.log(selectedProjectGlobal)
     }
 
     const SendChanges = (value: string | undefined, event: editor.IModelContentChangedEvent) => {

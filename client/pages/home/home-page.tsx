@@ -3,33 +3,27 @@ import { ProjectCreator } from "./components/ProjectCreator.tsx";
 import { ProjectButton } from "./components/ProjectButton.tsx";
 import { ProjectInterface } from "../../Constants.ts";
 import { NetworkManager } from "../../Network/manager";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { toast } from "sonner";
-import "./home.css"
+import "./home.css";
+import { SelectedProjectContext } from "../../App.tsx";
+import { useNavigate } from "react-router-dom";
+
 
 export function HomePage() {
     const [popUpMenuMode, setPopUpMenuMode] = useState("none");
-    const [projectList, setProjectList] = useState([] as object[]);
+    const [projectList, setProjectList] = useState([] as ProjectInterface[]);
     const [projectToEdit, setProjectToEdit] = useState({} as ProjectInterface);
+
     const nm = NetworkManager.getInstance();
-    
-    useEffect(() => {
-        // FOR DEVELOPMENT ONLY
-        // AUTO LOGIN
-        nm.addInitCallback(() => {
-            nm.send("loginUser", {email: "omer@mail", password: "1234"}, (response: any) => {
-                if (response.success) {
-                    toast.success("Auto Logged in!");
-                }
-                else {
-                    toast.error("Failed to login");
-                }
-            });
+    const navigate = useNavigate();
+    const [selectedProject, setSelectedProject] = useContext(SelectedProjectContext);
 
+    nm.addInitCallback(() => {
+        setTimeout(() => {
             fetchProjects();
-        });
-    }, []);
-
+        }, 100);
+    });
 
     const renderPopUp = () => {
         switch (popUpMenuMode) {
@@ -46,12 +40,16 @@ export function HomePage() {
         if (projectList == undefined){
             return;
         }
-        return projectList.map((project: any) => {
+        return projectList.map((project: ProjectInterface) => {
             return <ProjectButton 
                 key={project.id} 
                 project={project} 
                 onDelete={sendDeleteRequest} 
-                onOpen={() => {console.log("open")}} 
+                onOpen={() => {
+                    setSelectedProject(project)
+                    // Redirect to the editor page
+                    navigate("/editor");
+                }} 
                 onEdit={() => {
                     setProjectToEdit(project);
                     setPopUpMenuMode("editProjectProps");
