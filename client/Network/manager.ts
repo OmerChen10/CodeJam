@@ -3,14 +3,19 @@ import { ServerResponseInterface } from "../Constants";
 
 interface Event {
     eventName: string;
-    data: string;
+    data: any;
 }
 
 export class NetworkManager {
     public socket: WebSocket;
     private static instance: NetworkManager;
     private static eventHandlers: Map<string, (event: string) => void> = new Map();
-    private static initCallbacks: (() => void)[] = [];
+    private static callbackQueue: [(() => void), number][] = [];
+
+    private static eventPriority: { [eventName: string]: number } = {
+        loginUser: 3,
+        setCurrentProject: 2,
+    };
 
     private constructor() {
         console.log("[NetworkManager] Connecting to server");
@@ -20,7 +25,10 @@ export class NetworkManager {
 
         this.socket.onopen = () => {
             console.log("[NetworkManager] Connected to server");
-            NetworkManager.initCallbacks.forEach(callback => callback());
+            // Sort the queue by priority
+            NetworkManager.callbackQueue.sort((a, b) => b[1] - a[1]);
+            console.log(NetworkManager.callbackQueue);
+            NetworkManager.callbackQueue.forEach(([callback]) => callback());
         }
 
         this.socket.onmessage = (msg) => {
@@ -43,8 +51,15 @@ export class NetworkManager {
         return NetworkManager.instance;
     }
 
-    public send(eventName: string, message: any, callback?: (response: ServerResponseInterface) => void){
+    public send(eventName: string, message: any,  callback?: (response: ServerResponseInterface) => void){
         try {
+            if (!this.socket || this.socket.readyState !== WebSocket.OPEN) {
+                NetworkManager.callbackQueue.push([
+                    () => this.send(eventName, message, callback),
+                    this.getPriority(eventName)
+                ]);
+                return;
+            }
             // Check if the massage is a json object
             if (typeof message === "object") {
                 message = JSON.stringify(message);
@@ -63,7 +78,7 @@ export class NetworkManager {
         NetworkManager.eventHandlers.set(event, callback);
     }
 
-    public addInitCallback(callback: () => void, waitForResponse: boolean = false) {
-        NetworkManager.initCallbacks.push(callback);
+    private getPriority(eventName: string): number {
+        return NetworkManager.eventPriority[eventName] || 0;
     }
 }

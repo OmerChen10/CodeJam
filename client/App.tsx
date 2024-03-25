@@ -18,29 +18,32 @@ function App() {
     const [selectedProject, setSelectedProject] = useState({} as ProjectInterface)
     const nm = NetworkManager.getInstance()
 
+    const devProject: ProjectInterface = {
+        id: "0",
+        name: "Project",
+        description: "1234",
+        author: "OmerChen10"
+    }
+
     useEffect(() => {
-        if (Object.entries(selectedProject).length === 0) {
-            return
-        }
-        nm.send("setCurrentProject", selectedProject)
-    }, [selectedProject])
-    
-    useEffect(() => {
-        let nm = NetworkManager.getInstance();
-        nm.addInitCallback(() => {
-            nm.send("loginUser", {email: "omer@mail", password: "1234"}, (response: any) => {
-                if (response.success) {
-                    toast.success("Auto Logged in!");
-                }
-                else {
-                    toast.error("Failed to login");
-                }
-            });
+        updateSelectedProject(devProject);
+        nm.send("loginUser", {email: "omer@mail", password: "1234"}, (response: any) => {
+            if (response.success) {
+                toast.success("Auto Logged in!");
+            }
+            else {
+                toast.error("Failed to login");
+            }
         });
     }, []);
+
+    function updateSelectedProject(project: ProjectInterface) {
+        nm.send("setCurrentProject", project);
+        setSelectedProject(project);
+    }
     
     return (    
-        <SelectedProjectContext.Provider value={[selectedProject, setSelectedProject]}>
+        <SelectedProjectContext.Provider value={[selectedProject, updateSelectedProject]}>
             <BrowserRouter>
                 <Routes>
                     <Route path="/" element={<LoginPage />} />

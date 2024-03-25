@@ -8,29 +8,18 @@ import { FileButton } from "./components/fileButton"
 
 export function EditorPage() {
     const [fileList, setFileList] = useState<string[]>([])
+    const [selectedProject, setSelectedProject] = useContext(SelectedProjectContext)
 
-    const devProject: ProjectInterface = {
-            "id": "0",
-            "name": "Project",
-            "description": "1234",
-            "author": "OmerChen10"
-    }
     const nm = NetworkManager.getInstance()
 
     useEffect(() => {
-        nm.addInitCallback(() => {
-            nm.send("setCurrentProject", devProject)
-            fetchFiles()
-        })
-    }, [])
-
-    function fetchFiles() {
-        nm.send("getProjectFilePaths", { id: devProject["id"] }, (response) => {
+        console.log("Getting project file paths")
+        nm.send("getProjectFilePaths", {}, (response) => {
             if (response.success) {
                 setFileList(response.data)
             }
         })
-    }
+    }, [selectedProject])
 
     function renderFileList() {
         return fileList.map((file) => {

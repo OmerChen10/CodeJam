@@ -51,6 +51,6 @@ class StorageManager():
         # Get the list of file names in the project directory.
         path = os.path.join(StorageConfig.PROJECTS_PATH, str(project_id))
         filenames = os.listdir(path)
-        return [os.path.join(StorageConfig.FILES_HEADER_BASE_PATH, project_id, filename) for filename in filenames]
+        return [os.path.join(StorageConfig.FILES_HEADER_BASE_PATH, str(project_id), filename) for filename in filenames]
 
 

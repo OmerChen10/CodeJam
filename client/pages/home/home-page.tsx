@@ -18,12 +18,10 @@ export function HomePage() {
     const nm = NetworkManager.getInstance();
     const navigate = useNavigate();
     const [selectedProject, setSelectedProject] = useContext(SelectedProjectContext);
-
-    nm.addInitCallback(() => {
-        setTimeout(() => {
-            fetchProjects();
-        }, 100);
-    });
+    
+    useEffect(() => {
+        fetchProjects();
+    }, []);
 
     const renderPopUp = () => {
         switch (popUpMenuMode) {
@@ -46,8 +44,7 @@ export function HomePage() {
                 project={project} 
                 onDelete={sendDeleteRequest} 
                 onOpen={() => {
-                    setSelectedProject(project)
-                    // Redirect to the editor page
+                    setSelectedProject(project);
                     navigate("/editor");
                 }} 
                 onEdit={() => {
@@ -72,7 +69,7 @@ export function HomePage() {
             {renderPopUp()}
         </div>
     );
-
+    
     function sendCreateRequest() {
         let projectName = (document.getElementById("project-name") as HTMLInputElement).value;
         let projectDescription = (document.getElementById("project-description") as HTMLInputElement).value;
