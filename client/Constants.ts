@@ -2,6 +2,8 @@
 
 export class EditorConfig {
     public static readonly COOLDOWN_TIME = 100; // in ms
+    public static readonly STORAGE_DIRECTORY = 
+    window.location.protocol + "//" + window.location.hostname + "/server/";
 }
 
 export class Assets {
@@ -10,7 +12,6 @@ export class Assets {
         JS_ICON: "./client/assets/images/JavaScript-icon.png",
         JSON_ICON: "./client/assets/images/json-icon.png"
     }
-
 }
 
 export interface ProjectInterface {

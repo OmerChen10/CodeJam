@@ -5,9 +5,8 @@ import { LoginPage } from "./pages/login-page/login-page"
 import { EditorPage } from "./pages/editor/editor-page"
 import { HomePage } from "./pages/home/home-page"
 import { toast } from "sonner"
-import { createContext, useContext, useEffect, useState } from "react"
+import { createContext, useEffect, useState } from "react"
 import { ProjectInterface } from "./Constants"
-
 
 export const SelectedProjectContext = createContext<[ProjectInterface, (project: ProjectInterface) => void]>([
     {} as ProjectInterface,

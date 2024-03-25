@@ -3,17 +3,16 @@ import { CodeEditor } from "./components/Editor"
 import { useContext, useEffect, useState } from "react"
 import { SelectedProjectContext } from "../../App"
 import { NetworkManager } from "../../Network/manager"
-import { ProjectInterface } from "../../Constants"
 import { FileButton } from "./components/fileButton"
 
 export function EditorPage() {
     const [fileList, setFileList] = useState<string[]>([])
     const [selectedProject, setSelectedProject] = useContext(SelectedProjectContext)
+    const [selectedFile, setSelectedFile] = useState<string>("")
 
     const nm = NetworkManager.getInstance()
 
     useEffect(() => {
-        console.log("Getting project file paths")
         nm.send("getProjectFilePaths", {}, (response) => {
             if (response.success) {
                 setFileList(response.data)
@@ -23,7 +22,9 @@ export function EditorPage() {
 
     function renderFileList() {
         return fileList.map((file) => {
-            return <FileButton filePath={file} key={file}/>
+            return <FileButton filePath={file} key={file} onClick={() => {
+                setSelectedFile(file)
+            }}/>
         })
     }
 
@@ -40,7 +41,7 @@ export function EditorPage() {
                         {renderFileList()}
                     </div>
                 </div>
-                <CodeEditor />
+                <CodeEditor filePath={selectedFile}/>
             </div>
         </div>
     )

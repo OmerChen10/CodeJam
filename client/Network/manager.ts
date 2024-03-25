@@ -27,7 +27,6 @@ export class NetworkManager {
             console.log("[NetworkManager] Connected to server");
             // Sort the queue by priority
             NetworkManager.callbackQueue.sort((a, b) => b[1] - a[1]);
-            console.log(NetworkManager.callbackQueue);
             NetworkManager.callbackQueue.forEach(([callback]) => callback());
         }
 
