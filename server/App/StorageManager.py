@@ -7,6 +7,18 @@ import shutil
 class StorageManager():
     def __init__(self, **kwargs):
         pass
+
+    def _check_path(self, path):
+        if not StorageConfig.PROJECTS_PATH in path:
+            Logger.log_error(f"[StorageManager] Path is not inside the projects directory: {path}")
+            return False
+        
+        # Check if about to delete windows system files.
+        if path in ["C:\\", "C:\\Windows", "C:\\Program Files", "C:\\Program Files (x86)"]:
+            Logger.log_error(f"[StorageManager] Attempted to delete system files: {path}")
+            return False
+        
+        return True
     
     def create_project(self, **kwargs):
         id = kwargs.get("id")
@@ -36,15 +48,7 @@ class StorageManager():
     def delete_project(self, project_id):
         path = os.path.join(StorageConfig.PROJECTS_PATH, str(project_id))
         # Run a check for the path - inside the StorageConfig.PROJECTS_PATH directory.
-        if not StorageConfig.PROJECTS_PATH in path:
-            Logger.log_error(f"[StorageManager] Path is not inside the projects directory: {path}")
-            return False
-        
-        # Check if about to delete windows system files.
-        if path in ["C:\\", "C:\\Windows", "C:\\Program Files", "C:\\Program Files (x86)"]:
-            Logger.log_error(f"[StorageManager] Attempted to delete system files: {path}")
-            return False
-        
+        if not self._check_path(path): return False
         shutil.rmtree(path)
     
     def get_files(self, project_id):
@@ -63,10 +67,16 @@ class StorageManager():
         with open(path, "wb") as file:
             file.write(b"")
 
-        return os.path.join(StorageConfig.FILES_HEADER_BASE_PATH, str(project_id), name)
+        return True
 
     def edit_file_name(self, project_id, old_name, new_name):
         old_path = os.path.join(StorageConfig.PROJECTS_PATH, str(project_id), old_name)
         new_path = os.path.join(StorageConfig.PROJECTS_PATH, str(project_id), new_name)
         os.rename(old_path, new_path)
+        return True
+    
+    def delete_file(self, project_id, name):
+        path = os.path.join(StorageConfig.PROJECTS_PATH, str(project_id), name)
+        if not self._check_path(path): return False
+        os.remove(path)
         return True

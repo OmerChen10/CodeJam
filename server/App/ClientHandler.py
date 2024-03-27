@@ -86,6 +86,9 @@ class ClientHandler():
         def renameFile(props):
             return self.storage_manager.edit_file_name(self.project.id, props["oldName"], props["newName"])
 
+        @self.socket.eventHandler
+        def deleteFile(props):
+            return self.storage_manager.delete_file(self.project.id, props["name"])
 
 class Account():
     """Represents a user account. This class is used to manage the user's projects and permissions."""

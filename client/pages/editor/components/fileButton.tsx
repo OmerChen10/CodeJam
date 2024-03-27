@@ -10,7 +10,7 @@ interface props {
     onDelete: () => void
 }
 
-export function FileButton({fileName, onOpen, onRename}: props) {
+export function FileButton({fileName, onOpen, onRename, onDelete}: props) {
     const [fileTypeImgSrc, setFileTypeImgSrc] = useState<string>("")
     const [inputDisplayedText, setInputDisplayedText] = useState<string>("")
     const nm = NetworkManager.getInstance()
@@ -61,7 +61,7 @@ export function FileButton({fileName, onOpen, onRename}: props) {
                 } onBlur={saveFileName}/>
                 <img src={fileTypeImgSrc} className="file-extension-img"/>
             </div>
-            <img src="./client/assets/images/trash-icon.png" className="edit-icon"/>
+            <img src="./client/assets/images/trash-icon.png" onClick={onDelete} className="delete-icon"/>
         </div>
     )
 }

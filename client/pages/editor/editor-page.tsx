@@ -35,7 +35,17 @@ export function EditorPage() {
                         }))
                     }
                 }
-                onDelete={() => {}}/>
+                onDelete={() => {
+                    setFileList(fileList.filter((name) => name !== fileName))
+                    nm.send("deleteFile", {name: fileName}, (response) => {
+                        if (response.success) {
+                            toast.success("File deleted successfully!")
+                        }
+                        else {
+                            toast.error("Failed to delete file!")
+                        }
+                    })
+                }}/>
         })
     }
 
@@ -43,7 +53,7 @@ export function EditorPage() {
         nm.send("createFile", {name: "New File"}, (response) => {
             if (response.success) {
                 toast.success("File created successfully!")
-                setFileList([...fileList, response.data])
+                setFileList([...fileList, "New File"])
             }
             else {
                 toast.error("Failed to create file!")

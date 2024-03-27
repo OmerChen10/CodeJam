@@ -65,11 +65,11 @@
     align-items: center;
     justify-content: space-between;
 }
-.edit-icon img {
+.delete-icon img {
     width: 1.75rem;
     height: 1.75rem;
 }
-.edit-icon {
+.delete-icon {
     width: 2.2rem;
     height: 2.2rem;
     padding: 0.1rem;
@@ -106,12 +106,12 @@
     outline: 2px solid azure;
 }
 
-.edit-icon:hover {
+.delete-icon:hover {
     cursor: pointer;
     background-color: #454b50;
 }
 
-.file-button:hover .edit-icon {
+.file-button:hover .delete-icon {
     visibility: visible;
 }
 
