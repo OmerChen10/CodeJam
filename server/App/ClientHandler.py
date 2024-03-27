@@ -77,6 +77,10 @@ class ClientHandler():
         @self.socket.eventHandler
         def getProjectFilePaths(props):
             return self.storage_manager.get_file_paths(self.project.id)
+        
+        @self.socket.eventHandler
+        def createFile(props):
+            return self.storage_manager.create_file(self.project.id, props["name"])
 
 
 

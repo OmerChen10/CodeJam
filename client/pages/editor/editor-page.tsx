@@ -4,6 +4,7 @@ import { useContext, useEffect, useState } from "react"
 import { SelectedProjectContext } from "../../App"
 import { NetworkManager } from "../../Network/manager"
 import { FileButton } from "./components/fileButton"
+import { toast } from "sonner"
 
 export function EditorPage() {
     const [fileList, setFileList] = useState<string[]>([])
@@ -18,7 +19,7 @@ export function EditorPage() {
                 setFileList(response.data)
             }
         })
-    }, [selectedProject])
+    }, [])
 
     function renderFileList() {
         return fileList.map((file) => {
@@ -28,15 +29,30 @@ export function EditorPage() {
         })
     }
 
+    function createNewFile() {
+        nm.send("createFile", {name: "New File"}, (response) => {
+            if (response.success) {
+                toast.success("File created successfully!")
+                setFileList([...fileList, response.data])
+            }
+            else {
+                toast.error("Failed to create file!")
+            }
+        })
+    }
+
     return (
         <div id="main-editor">
             <div id="navbar">
                 <h2 id="navbar-title">CodeJam</h2>
-                <h2 id="project-name">New Project <span className="badge text-bg-secondary">Saved</span></h2>
+                <h2 id="project-name">{selectedProject.name} <span className="badge text-bg-secondary">Saved</span></h2>
             </div>
             <div id="editor-container">
                 <div id="editor-nav">
-                    <h3 id="file-list-title">Files</h3>
+                    <div id="file-list-title">
+                        <h3>Files:</h3>
+                        <img src="./client/assets/images/new-file-icon.png" id="create-file-icon" onClick={createNewFile} />
+                    </div>
                     <div id="file-list">
                         {renderFileList()}
                     </div>

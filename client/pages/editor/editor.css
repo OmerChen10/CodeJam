@@ -34,7 +34,7 @@
 
 #editor-nav {
     position: relative;
-    width: 12rem;
+    width: 15rem;
     height: 100%;
     background-color: #454b50;
 }
@@ -57,15 +57,52 @@
 .file-button {
     width: 100%;
     height: 3rem;
+    background-color: #454b50; 
+    cursor: pointer;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+.edit-icon img {
+    width: 1.75rem;
+    height: 1.75rem;
+}
+.edit-icon {
+    width: 2.2rem;
+    height: 2.2rem;
+    padding: 0.1rem;
+    border-radius: 0.2rem;
+    visibility: hidden;
+    margin: 0.5rem;
+}
+
+.edit-icon:hover {
+    cursor: pointer;
     background-color: #454b50;
+}
+
+.file-button:hover .edit-icon {
+    visibility: visible;
+}
+
+.file-button-tools {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0;
+}
+
+.file-name-text {
     color: white;
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: flex-start;
     padding-left: 1rem;
-    cursor: pointer;
-    gap: 0.4rem;
+    gap: 0.2rem;
 }
 
 .file-button h3 {
@@ -76,7 +113,7 @@
     background-color: #323c42;
 }
 
-.file-button img {
+.file-extension-img {
     width: 1.6rem;
     height: 1.6rem;
 }
@@ -86,4 +123,19 @@
     font-size: 1.5rem;
     margin-left: 0.5rem;
     
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 3.5rem;
+}
+
+#create-file-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+}
+
+#create-file-icon:hover {
+    cursor: pointer;
+    background-color: #323c42;
 }

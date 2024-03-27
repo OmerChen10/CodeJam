@@ -10,7 +10,8 @@ export class Assets {
     public static readonly ICONS = {
         PYTHON_ICON: "./client/assets/images/Python-icon.png",
         JS_ICON: "./client/assets/images/JavaScript-icon.png",
-        JSON_ICON: "./client/assets/images/json-icon.png"
+        JSON_ICON: "./client/assets/images/json-icon.png",
+        DEFAULT_ICON: "./client/assets/images/default-file-icon.png"
     }
 }
 

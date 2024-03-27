@@ -53,4 +53,15 @@ class StorageManager():
         filenames = os.listdir(path)
         return [os.path.join(StorageConfig.FILES_HEADER_BASE_PATH, str(project_id), filename) for filename in filenames]
 
+    def create_file(self, project_id, name):
+        # Check if the file already exists.
+        file_list = os.listdir(os.path.join(StorageConfig.PROJECTS_PATH, str(project_id)))
+        file_num = len([file for file in file_list if name in file])
+        if file_num > 0:
+            name = f"{name} ({file_num})"
+        path = os.path.join(StorageConfig.PROJECTS_PATH, str(project_id), name)
+        with open(path, "wb") as file:
+            file.write(b"")
+
+        return os.path.join(StorageConfig.FILES_HEADER_BASE_PATH, str(project_id), name)
 
