@@ -3,7 +3,7 @@
 export class EditorConfig {
     public static readonly COOLDOWN_TIME = 100; // in ms
     public static readonly STORAGE_DIRECTORY = 
-    window.location.protocol + "//" + window.location.hostname + "/server/";
+    window.location.protocol + "//" + window.location.hostname + "//Storage//";
 }
 
 export class Assets {

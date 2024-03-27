@@ -17,7 +17,7 @@ export function HomePage() {
 
     const nm = NetworkManager.getInstance();
     const navigate = useNavigate();
-    const [selectedProject, setSelectedProject] = useContext(SelectedProjectContext);
+    const [_, setSelectedProject] = useContext(SelectedProjectContext);
     
     useEffect(() => {
         fetchProjects();

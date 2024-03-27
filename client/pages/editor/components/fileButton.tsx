@@ -1,24 +1,43 @@
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useState } from "react"
+import { NetworkManager } from "../../../Network/manager"
+import { toast } from "sonner"
 import { Assets } from "../../../Constants"
 
 interface props {
-    filePath: string
-    onClick?: () => void
+    fileName: string
+    onOpen: () => void
+    onRename: (oldName: string, newName: string) => void
+    onDelete: () => void
 }
 
-export function FileButton({filePath, onClick}: props) {
+export function FileButton({fileName, onOpen, onRename}: props) {
     const [fileTypeImgSrc, setFileTypeImgSrc] = useState<string>("")
-    let fileName = filePath.split("\\").pop() as string
+    const [inputDisplayedText, setInputDisplayedText] = useState<string>("")
+    const nm = NetworkManager.getInstance()
+    const fileExtension = fileName.split(".")[1]
 
+    function updateFileName() {
+        if (fileName.length > 10) {
+            setInputDisplayedText(fileName.substring(0, 10) + "...")
+        }
+        setInputDisplayedText(fileName)
+    }
 
-    function generateFileName() {
-        if (fileName.length > 10) fileName = fileName.substring(0, 10) + "..."
-        return fileName.split(".")[0]
+    function saveFileName() {
+        nm.send("renameFile", 
+        {oldName: fileName, newName: inputDisplayedText}, (response) => {
+            if (response.success) {
+                toast.success("File name updated successfully!")
+                updateFileName()
+            }
+        })
+        onRename(fileName, inputDisplayedText)
+        fileName = inputDisplayedText
     }
 
     useEffect(() => {
-        let fileParts = filePath.split(".")
-        switch (fileParts[fileParts.length - 1]) {
+        updateFileName()
+        switch (fileExtension) {
             case "py":
                 setFileTypeImgSrc(Assets.ICONS.PYTHON_ICON)
                 break;
@@ -35,15 +54,14 @@ export function FileButton({filePath, onClick}: props) {
     }, [])
 
     return (
-        <div onClick={onClick} className="file-button">
+        <div onClick={onOpen} className="file-button">
             <div className="file-name-text">
-                <h3>{generateFileName()}</h3>
+                <input type="text" value={inputDisplayedText} className="file-name-input" onChange={
+                    (e) => {setInputDisplayedText(e.target.value)}
+                } onBlur={saveFileName}/>
                 <img src={fileTypeImgSrc} className="file-extension-img"/>
             </div>
-            <div className="file-button-tools">
-                <img src="./client/assets/images/edit-icon.png" className="edit-icon"/>
-                <img src="./client/assets/images/trash-icon.png" className="edit-icon"/>
-            </div>
+            <img src="./client/assets/images/trash-icon.png" className="edit-icon"/>
         </div>
     )
 }

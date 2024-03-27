@@ -78,6 +78,34 @@
     margin: 0.5rem;
 }
 
+.file-name-input {
+    width: 6rem;
+    height: 100%;
+    background-color: #454b50;
+    color: white;
+    border: none;
+    font-size: 1rem;
+    padding-left: 1rem;
+    outline: none;
+    padding: 0.1rem;
+    font-family: Arial, sans-serif;
+    font-size: 1.2rem;
+    font-weight: 400;
+    outline: none;
+} 
+
+.file-name-input:hover {
+    background-color: #323c42;
+}
+
+.file-button:hover .file-name-input {
+    background-color: #323c42;
+}
+
+.file-name-input:focus {
+    outline: 2px solid azure;
+}
+
 .edit-icon:hover {
     cursor: pointer;
     background-color: #454b50;

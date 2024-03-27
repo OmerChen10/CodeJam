@@ -47,11 +47,11 @@ class StorageManager():
         
         shutil.rmtree(path)
     
-    def get_file_paths(self, project_id):
+    def get_files(self, project_id):
         # Get the list of file names in the project directory.
         path = os.path.join(StorageConfig.PROJECTS_PATH, str(project_id))
         filenames = os.listdir(path)
-        return [os.path.join(StorageConfig.FILES_HEADER_BASE_PATH, str(project_id), filename) for filename in filenames]
+        return filenames
 
     def create_file(self, project_id, name):
         # Check if the file already exists.
@@ -65,3 +65,8 @@ class StorageManager():
 
         return os.path.join(StorageConfig.FILES_HEADER_BASE_PATH, str(project_id), name)
 
+    def edit_file_name(self, project_id, old_name, new_name):
+        old_path = os.path.join(StorageConfig.PROJECTS_PATH, str(project_id), old_name)
+        new_path = os.path.join(StorageConfig.PROJECTS_PATH, str(project_id), new_name)
+        os.rename(old_path, new_path)
+        return True

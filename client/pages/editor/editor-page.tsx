@@ -8,7 +8,7 @@ import { toast } from "sonner"
 
 export function EditorPage() {
     const [fileList, setFileList] = useState<string[]>([])
-    const [selectedProject, setSelectedProject] = useContext(SelectedProjectContext)
+    const [selectedProject] = useContext(SelectedProjectContext)
     const [selectedFile, setSelectedFile] = useState<string>("")
 
     const nm = NetworkManager.getInstance()
@@ -22,10 +22,20 @@ export function EditorPage() {
     }, [])
 
     function renderFileList() {
-        return fileList.map((file) => {
-            return <FileButton filePath={file} key={file} onClick={() => {
-                setSelectedFile(file)
-            }}/>
+        return fileList.map((fileName) => {
+            return <FileButton fileName={fileName} key={fileName} 
+                onOpen={() => setSelectedFile(fileName)}
+                onRename={
+                    (oldName: string, newName: string) => {
+                        setFileList(fileList.map((name) => {
+                            if (name === oldName) {
+                                return newName
+                            }
+                            return name
+                        }))
+                    }
+                }
+                onDelete={() => {}}/>
         })
     }
 
