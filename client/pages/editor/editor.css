@@ -34,7 +34,7 @@
 
 #editor-nav {
     position: relative;
-    width: 12vw;
+    width: 15rem;
     height: 100%;
     background-color: #454b50;
 }
@@ -42,4 +42,128 @@
 #editor-wrapper{
     width: 100%;
     height: 100%;
+}
+
+/* File List */
+.file-list {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+}
+
+.file-button {
+    width: 100%;
+    height: 3rem;
+    background-color: #454b50; 
+    cursor: pointer;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+.delete-icon img {
+    width: 1.75rem;
+    height: 1.75rem;
+}
+.delete-icon {
+    width: 2.2rem;
+    height: 2.2rem;
+    padding: 0.1rem;
+    border-radius: 0.2rem;
+    visibility: hidden;
+    margin: 0.5rem;
+}
+
+.file-name-input {
+    width: 6rem;
+    height: 100%;
+    background-color: #454b50;
+    color: white;
+    border: none;
+    font-size: 1rem;
+    padding-left: 1rem;
+    outline: none;
+    padding: 0.1rem;
+    font-family: Arial, sans-serif;
+    font-size: 1.2rem;
+    font-weight: 400;
+    outline: none;
+} 
+
+.file-name-input:hover {
+    background-color: #323c42;
+}
+
+.file-button:hover .file-name-input {
+    background-color: #323c42;
+}
+
+.file-name-input:focus {
+    outline: 2px solid azure;
+}
+
+.delete-icon:hover {
+    cursor: pointer;
+    background-color: #454b50;
+}
+
+.file-button:hover .delete-icon {
+    visibility: visible;
+}
+
+.file-button-tools {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0;
+}
+
+.file-name-text {
+    color: white;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    padding-left: 1rem;
+    gap: 0.2rem;
+}
+
+.file-button h3 {
+    font-size: 1rem;
+}
+
+.file-button:hover {
+    background-color: #323c42;
+}
+
+.file-extension-img {
+    width: 1.6rem;
+    height: 1.6rem;
+}
+
+#file-list-title {
+    text-decoration: underline;
+    font-size: 1.5rem;
+    margin-left: 0.5rem;
+    
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 3.5rem;
+}
+
+#create-file-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+}
+
+#create-file-icon:hover {
+    cursor: pointer;
+    background-color: #323c42;
 }

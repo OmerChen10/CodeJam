@@ -35,11 +35,9 @@ class DBManager:
         self.cursor.execute(query, args)
         self.conn.commit()
         ret = self.cursor.fetchall()
-        
-        if len(ret) == 1 and len(ret[0]) == 1: return ret[0][0]
+        if not ret: return None
         if len(ret) == 1: return ret[0]
-        if len(ret) == 0: return None
-        return ret
+        else: return ret
 
     def close(self):
         self.conn.close()
@@ -48,7 +46,7 @@ class DBManager:
     def create_user(self, username: str,  email: str, password: str):
         # Generate id
         # If the table is empty, set the id to 0.
-        user_id = self.execute("SELECT MAX(id) FROM users")
+        user_id = self.execute("SELECT MAX(id) FROM users")[0]
         user_id = 0 if user_id is None else user_id + 1
 
         self.execute(f"INSERT INTO users (id, username, email, password) VALUES {user_id, username, email, password}")
@@ -60,7 +58,7 @@ class DBManager:
     def create_project(self, user_id: int):
 
         # Generate id
-        project_id = self.execute("SELECT MAX(project_id) FROM permissions")
+        project_id = self.execute("SELECT MAX(project_id) FROM permissions")[0]
         if project_id is None: project_id = 0
         else: project_id = 0 if project_id is None else project_id + 1
 
@@ -69,7 +67,11 @@ class DBManager:
 
 
     def get_projects_for_user(self, user_id: int):
-        return self.execute(f"SELECT project_id FROM permissions WHERE user_id = {user_id}")
+        ret = self.execute(f"SELECT project_id FROM permissions WHERE user_id = {user_id}")
+        if ret is None: return None
+        if len(ret) == 1: return ret[0]
+        return [x[0] for x in ret] if ret is not None else None
+        
     
     def delete_project(self, project_id: int):
         self.execute(f"DELETE FROM permissions WHERE project_id = {project_id}")

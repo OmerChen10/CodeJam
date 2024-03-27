@@ -1,21 +1,33 @@
-import { NetworkManager } from "../Network/manager";
+import { NetworkManager } from "../../../Network/manager";
+import { EditorConfig } from "../../../Constants";
 import { Editor } from "@monaco-editor/react";
 import { editor } from "monaco-editor";
-import { useRef } from "react";
-import { EditorConfig } from "../Constants";
+import { useContext, useEffect, useRef, useState } from "react";
+import { SelectedProjectContext } from "../../../App";
 
-export function CodeEditor() {
+interface props {
+    filePath: string
+}
 
+export function CodeEditor({filePath}: props) {
+
+    const [selectedProject, _] = useContext(SelectedProjectContext)
     const nm = useRef<NetworkManager>(NetworkManager.getInstance()).current
     const editorRef = useRef<editor.IStandaloneCodeEditor>()
     const isProgrammaticChange = useRef<boolean>(false)
+    const [selectedFile, setSelectedFile] = useState<string>("")
 
     const duringCooldown = useRef<boolean>(false)
     const changeBuffer = useRef<editor.IModelContentChange[]>([])
 
-    const SetEditor = (ref: editor.IStandaloneCodeEditor) => {
-        editorRef.current = ref
-    }
+    useEffect(() => {
+        if (filePath === "") return
+        fetch(EditorConfig.STORAGE_DIRECTORY + selectedProject.id + "//" + filePath).then((response) => {
+            response.text().then((text) => {
+                setSelectedFile(text)
+            })
+        })
+    }, [filePath])
 
     const SendChanges = (value: string | undefined, event: editor.IModelContentChangedEvent) => {
         if (value === undefined) {
@@ -62,7 +74,8 @@ export function CodeEditor() {
                     cursorStyle: "line"
                 }}
                 onChange={SendChanges}
-                onMount={SetEditor}
+                onMount={(ref) => {editorRef.current = ref}}
+                value={selectedFile}
                 />
         </div>
     )

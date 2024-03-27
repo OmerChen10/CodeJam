@@ -5,19 +5,52 @@ import { LoginPage } from "./pages/login-page/login-page"
 import { EditorPage } from "./pages/editor/editor-page"
 import { HomePage } from "./pages/home/home-page"
 import { toast } from "sonner"
+import { createContext, useEffect, useState } from "react"
+import { ProjectInterface } from "./Constants"
+
+export const SelectedProjectContext = createContext<[ProjectInterface, (project: ProjectInterface) => void]>([
+    {} as ProjectInterface,
+    () => {}
+]);
 
 function App() {
-    // Reconnect to the server each time a state changes
-    NetworkManager.getInstance();
+    const [selectedProject, setSelectedProject] = useState({} as ProjectInterface)
+    const nm = NetworkManager.getInstance()
+
+    const devProject: ProjectInterface = {
+        id: "0",
+        name: "Project",
+        description: "1234",
+        author: "OmerChen10"
+    }
+
+    useEffect(() => {
+        updateSelectedProject(devProject);
+        nm.send("loginUser", {email: "omer@mail", password: "1234"}, (response: any) => {
+            if (response.success) {
+                toast.success("Auto Logged in!");
+            }
+            else {
+                toast.error("Failed to login");
+            }
+        });
+    }, []);
+
+    function updateSelectedProject(project: ProjectInterface) {
+        nm.send("setCurrentProject", project);
+        setSelectedProject(project);
+    }
     
     return (    
-        <BrowserRouter>
-            <Routes>
-                <Route path="/" element={<LoginPage />} />
-                <Route path="/home" element={<HomePage />} />
-                <Route path="/editor" element={<EditorPage />} />
-            </Routes>
-        </BrowserRouter>
+        <SelectedProjectContext.Provider value={[selectedProject, updateSelectedProject]}>
+            <BrowserRouter>
+                <Routes>
+                    <Route path="/" element={<LoginPage />} />
+                    <Route path="/home" element={<HomePage />} />
+                    <Route path="/editor" element={<EditorPage />} />
+                </Routes>
+            </BrowserRouter>
+        </SelectedProjectContext.Provider>
     )
 }
 
