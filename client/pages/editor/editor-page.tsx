@@ -1,15 +1,20 @@
 import "./editor.css"
 import { CodeEditor } from "./components/Editor"
-import { useContext, useEffect, useState } from "react"
+import { createContext, useContext, useEffect, useState } from "react"
 import { SelectedProjectContext } from "../../App"
 import { NetworkManager } from "../../Network/manager"
 import { FileButton } from "./components/fileButton"
 import { toast } from "sonner"
 
+
+export const LoadingContext = createContext<(loading: boolean) => void>(() => {})
+
+
 export function EditorPage() {
     const [fileList, setFileList] = useState<string[]>([])
     const [selectedProject] = useContext(SelectedProjectContext)
     const [selectedFile, setSelectedFile] = useState<string>("")
+    const [isLoading, setLoading] = useState<boolean>(false)
 
     const nm = NetworkManager.getInstance()
 
@@ -67,7 +72,7 @@ export function EditorPage() {
                 <h2 id="navbar-title">CodeJam</h2>
                 <h2 id="project-name">{selectedProject.name} <span className="badge text-bg-secondary">Saved</span></h2>
             </div>
-            <div id="editor-container">
+            <div id="editor-container" className={isLoading ? "disabled" : ""}>
                 <div id="editor-nav">
                     <div id="file-list-title">
                         <h3>Files:</h3>
@@ -77,8 +82,12 @@ export function EditorPage() {
                         {renderFileList()}
                     </div>
                 </div>
-                <CodeEditor filePath={selectedFile}/>
+                <LoadingContext.Provider value={setLoading}>
+                    <CodeEditor filePath={selectedFile}/>
+                </LoadingContext.Provider>
             </div>
+            <div id="loading-spinner" className="spinner-border" role="status" 
+            style={isLoading ? {} : { display: "none" }}/>
         </div>
     )
 }

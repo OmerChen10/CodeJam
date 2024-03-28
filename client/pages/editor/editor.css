@@ -44,6 +44,19 @@
     height: 100%;
 }
 
+.disabled {
+    pointer-events: none;
+    filter: blur(2px);
+}
+
+#loading-spinner {
+    width: 5rem;
+    height: 5rem;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 1000;
+}
 /* File List */
 .file-list {
     width: 100%;

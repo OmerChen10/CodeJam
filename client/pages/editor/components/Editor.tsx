@@ -4,6 +4,8 @@ import { Editor } from "@monaco-editor/react";
 import { editor } from "monaco-editor";
 import { useContext, useEffect, useRef, useState } from "react";
 import { SelectedProjectContext } from "../../../App";
+import { LoadingContext } from "../editor-page";
+
 
 interface props {
     filePath: string
@@ -19,10 +21,13 @@ export function CodeEditor({filePath}: props) {
 
     const duringCooldown = useRef<boolean>(false)
     const changeBuffer = useRef<editor.IModelContentChange[]>([])
+    const setLoading = useContext(LoadingContext)
 
     useEffect(() => {
         if (filePath === "") return
+        setLoading(true)
         fetch(EditorConfig.STORAGE_DIRECTORY + selectedProject.id + "//" + filePath).then((response) => {
+            setLoading(false)
             response.text().then((text) => {
                 setSelectedFile(text)
             })
