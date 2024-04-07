@@ -46,7 +46,8 @@
 
 .disabled {
     pointer-events: none;
-    filter: blur(2px);
+    filter: blur(5px);
+    transition: 0.5s;
 }
 
 #loading-spinner {
