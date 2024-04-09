@@ -24,6 +24,10 @@ export function EditorPage() {
                 setFileList(response.data)
             }
         })
+
+        nm.onEvent("executer_output", (data) => {
+            console.log(data)
+        })
     }, [])
 
     function renderFileList() {

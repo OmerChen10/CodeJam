@@ -6,6 +6,8 @@ import json
 import threading
 
 class ExecuterIOServer(threading.Thread):
+    _instance = None
+
     def __init__(self):
         threading.Thread.__init__(self)
         self.daemon = True
@@ -14,7 +16,13 @@ class ExecuterIOServer(threading.Thread):
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server.bind(('localhost', NetworkConfig.EXECUTER_IO_PORT))
         self.server.listen(1)
-        
+    
+    @staticmethod
+    def get_instance():
+        if ExecuterIOServer._instance is None:
+            ExecuterIOServer._instance = ExecuterIOServer()
+        return ExecuterIOServer._instance
+
     @Logger.catch_exceptions
     def run(self):
 
@@ -26,10 +34,10 @@ class ExecuterIOServer(threading.Thread):
 
     @Logger.catch_exceptions
     def send(self, eventName, data):
+        if type(data) == dict: data = json.dumps(data)
         msg = json.dumps({"eventName": eventName, "data": data})
         msg_length = str(len(msg)).zfill(NetworkConfig.LENGTH_HEADER_SIZE)
-        self.conn.send(msg_length.encode())
-        self.conn.send(msg.encode())
+        self.conn.send((msg_length + msg).encode())
 
     @Logger.catch_exceptions
     def receive(self):

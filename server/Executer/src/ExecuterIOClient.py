@@ -3,17 +3,27 @@ from Logger import Logger
 import socket
 import json
 import threading
+import time
 
 class ExecuterIOClient(threading.Thread):
+    _instance = None
+
     def __init__(self):
         super().__init__()
         self.handler_map = {}
         self.conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.running = True
 
+    @staticmethod
+    def get_instance():
+        if not ExecuterIOClient._instance:
+            ExecuterIOClient._instance = ExecuterIOClient()
+        return ExecuterIOClient._instance
+    
     def run(self):
         while self.running:
             self.receive()
+            time.sleep(0.1)
 
     def connect(self):
         self.conn.connect(('host.docker.internal', NetworkConfig.EXECUTER_IO_PORT))
@@ -37,6 +47,9 @@ class ExecuterIOClient(threading.Thread):
         if eventName not in self.handler_map.keys():
             Logger.log_info(f"[ExecuterIO Server] Event {eventName} not found.")
             return
+        
+        try: data = json.loads(data)
+        except: pass
         
         self.handler_map[eventName](data)
 

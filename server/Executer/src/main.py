@@ -1,15 +1,19 @@
+import time
 from ExecuterIOClient import ExecuterIOClient
 from Logger import Logger
+from projects import ExecutionManager
+
 
 def main():
     Logger.log_info("Starting ExecuterIO client")
-    io_client = ExecuterIOClient()
-    io_client.connect()
-    io_client.start()
+    em = ExecutionManager()
+    conn = ExecuterIOClient.get_instance()
 
-    @io_client.onEvent
-    def echo(data):
-        Logger.log_info(f"Received {data}")
+    conn.connect()
+    conn.start()
 
 if __name__ == "__main__":
-    main()
+    print("Input: " + input())
+    print("Project done")
+    print("Preforming error")
+    raise Exception("Error")

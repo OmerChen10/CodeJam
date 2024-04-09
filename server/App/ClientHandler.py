@@ -1,6 +1,8 @@
 from Network import ClientIO
 from App.database.manager import DBManager
 from App.StorageManager import StorageManager
+from App.Executer import Executer
+from Constants import Account, Project
 
 class ClientHandler():
     def __init__(self, manager, socket: ClientIO) -> None:
@@ -12,6 +14,7 @@ class ClientHandler():
         self.account: Account = None
         self.project: Project = None
         self.storage_manager: StorageManager = StorageManager()
+        self.executer: Executer = None
 
         @self.socket.eventHandler
         def editorSend(msg):
@@ -61,6 +64,7 @@ class ClientHandler():
                                                  name=props["name"], 
                                                  description=props["description"], 
                                                  author=self.account.name)
+            
             return True
         
         @self.socket.eventHandler
@@ -72,6 +76,8 @@ class ClientHandler():
         @self.socket.eventHandler
         def setCurrentProject(props):
             self.project = Project(props["id"], props["name"], props["author"], props["description"])
+            self.executer = Executer(self.project, self.socket)
+            self.executer.send_input("ls")
             return True
         
         @self.socket.eventHandler
@@ -89,29 +95,6 @@ class ClientHandler():
         @self.socket.eventHandler
         def deleteFile(props):
             return self.storage_manager.delete_file(self.project.id, props["name"])
-
-class Account():
-    """Represents a user account. This class is used to manage the user's projects and permissions."""
-    
-    def __init__(self, id: int, name: str, email: str) -> None:
-        self.id = id
-        self.email = email
-        self.name = name
-
-    def __str__(self) -> str:
-        return f"Account: ID: {self.id}, Name: {self.name}, Email: {self.email}"
-    
-class Project():
-    def __init__(self, id: int, name: str, author: str, description: str) -> None:
-        self.id = id
-        self.name = name
-        self.author = author
-        self.description = description
-
-    def __str__(self) -> str:
-        return f"Project: ID: {self.id}, Name: {self.name}, Author: {self.author}, Description: {self.description}"
-
-
 
     
         
