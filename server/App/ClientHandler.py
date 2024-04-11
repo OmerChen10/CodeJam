@@ -101,7 +101,7 @@ class ClientHandler():
             if self.executer is not None:
                 self.executer.close()
                 self.executer = None
-                
+
             return True
 
     

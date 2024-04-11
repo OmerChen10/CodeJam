@@ -33,6 +33,8 @@ class Executer:
          
     def send_input(self, input: str):
         self.com_socket.send(input.encode() + b"\n")
+        if input == "ls":
+            self.web_client.send("executer_cwd", self.get_current_directory())
 
     def output_listener(self):
         self.stdout = self.container.logs(stream=True, stderr=False)
