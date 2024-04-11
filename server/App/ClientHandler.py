@@ -76,7 +76,7 @@ class ClientHandler():
         @self.socket.eventHandler
         def setCurrentProject(props):
             self.project = Project(props["id"], props["name"], props["author"], props["description"])
-            self.executer = Executer(self.project, self.socket)
+            # self.executer = Executer(self.project, self.socket)
             return True
         
         @self.socket.eventHandler

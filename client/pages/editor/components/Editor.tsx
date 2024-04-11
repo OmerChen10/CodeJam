@@ -5,7 +5,7 @@ import { editor } from "monaco-editor";
 import { useContext, useEffect, useRef, useState } from "react";
 import { SelectedProjectContext } from "../../../App";
 import { LoadingContext } from "../editor-page";
-
+import { Terminal } from "./Terminal";
 
 interface props {
     filePath: string
@@ -82,6 +82,7 @@ export function CodeEditor({filePath}: props) {
                 onMount={(ref) => {editorRef.current = ref}}
                 value={selectedFile}
                 />
+            <Terminal/>
         </div>
     )
     )
