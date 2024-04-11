@@ -25,7 +25,7 @@ function App() {
     }
 
     useEffect(() => {
-        updateSelectedProject(devProject);
+        // updateSelectedProject(devProject);
         nm.send("loginUser", {email: "omer@mail", password: "1234"}, (response: any) => {
             if (response.success) {
                 toast.success("Auto Logged in!");

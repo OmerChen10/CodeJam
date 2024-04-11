@@ -77,7 +77,6 @@ class ClientHandler():
         def setCurrentProject(props):
             self.project = Project(props["id"], props["name"], props["author"], props["description"])
             self.executer = Executer(self.project, self.socket)
-            self.executer.send_input("ls")
             return True
         
         @self.socket.eventHandler
@@ -95,6 +94,15 @@ class ClientHandler():
         @self.socket.eventHandler
         def deleteFile(props):
             return self.storage_manager.delete_file(self.project.id, props["name"])
+        
+        @self.socket.eventHandler
+        def clientInHomePage(props):
+            self.project = None
+            if self.executer is not None:
+                self.executer.close()
+                self.executer = None
+                
+            return True
 
     
         

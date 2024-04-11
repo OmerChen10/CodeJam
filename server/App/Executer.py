@@ -5,6 +5,8 @@ import threading
 import docker
 import os
 import time
+import atexit
+
 
 class Executer:
     def __init__(self, project: Project, web_client: ClientIO):
@@ -18,13 +20,16 @@ class Executer:
             volumes={self.project_path: {"bind": f"/app/{project.name}", "mode": "rw"}},
             detach=True,
             stdin_open=True,
-            remove=True
+            remove=True,
+            auto_remove=True   
         )
 
         self.output_thread = threading.Thread(target=self.output_listener, daemon=True)
         self.output_thread.start()
 
         self.com_socket = self.container.attach_socket(params={'stdin': True, 'stream': True})
+
+        atexit.register(self.close)
          
     def send_input(self, input: str):
         self.com_socket.send(input.encode() + b"\n")
@@ -33,7 +38,7 @@ class Executer:
         self.stdout = self.container.logs(stream=True, stderr=False)
         self.stderr = self.container.logs(stream=True, stdout=False)
 
-        while True:
+        while self.container.status == "running":
             if self.stdout:
                 for line in self.stdout:
                     self.web_client.send("executer_output", line.decode("utf-8"))
@@ -44,8 +49,10 @@ class Executer:
             
             time.sleep(0.1)
 
+    def get_current_directory(self):
+        return self.container.exec_run("pwd").output.decode("utf-8").strip()
+
     def close(self):
+        self.send_input("exit")
         self.com_socket.close()
-        self.container.stop()
-        self.container.remove()
-        self.output_thread.join()
+
