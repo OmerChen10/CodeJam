@@ -1,43 +1,74 @@
 import { useEffect, useRef, useState } from "react"
-
+import { NetworkManager } from "../../../Network/manager"
 
 
 export function Terminal() {
-    const testCwd = "/home/"
-    const [terminalText, setTerminalText] = useState<string>(testCwd + "> ")
-    const textareaRef = useRef<HTMLTextAreaElement>(null);
+    const [cwd, setCwd] = useState<string>("")
+    const nm = NetworkManager.getInstance()
+    const [output, setOutput] = useState<string>("")
+    const [input, setInput] = useState<string>(cwd + "> ")
 
     useEffect(() => {
-        if (textareaRef.current) {
-            textareaRef.current.scrollTop = textareaRef.current.scrollHeight;
+        nm.send("createExecuter", {}, (response) => {
+            console.log(response.data)
+            setCwd(response.data)
+        })
+
+        nm.onEvent("executerCwd", (response) => {
+            console.log(response.data)
+            setCwd(response.data)
+        })
+
+        nm.onEvent("executerStdout", (stdout) => {
+            // if the last character is a newline, remove it
+            addOutput(stdout.data)
+        })
+
+        nm.onEvent("executerStderr", (stderr) => {
+            addOutput(stderr.data)
+        })
+    }, [])
+
+    useEffect(() => {
+        const outputElement = document.getElementById("terminal-output")
+        outputElement!.scrollTop = outputElement!.scrollHeight
+    }, [output])
+
+    useEffect(() => {
+        setInput(cwd + "> " + input.substring(cwd.length + 2))
+    }, [cwd])
+
+    function handleInputChange (event: any) {
+        setInput(event.target.value)
+    }
+
+    function handleKeyDown(event: any) {
+        // check if the user tries to delete the cwd
+        if (event.key === "Backspace" && input === cwd + "> ") {
+            event.preventDefault()
         }
-    }, [terminalText]);  // Update the scroll position whenever terminalText changes
-    
+        if (event.key === "Enter") {
+            event.preventDefault()
+            let cmd = input.substring(cwd.length + 2)
+            if (cmd != "") {
+                nm.send("executerCommand", {command: cmd})
+            }
+
+            setInput(cwd + "> ")
+        }
+    }
+
+    function addOutput(text: string) {
+        setOutput((prevOutput) => prevOutput + text);
+    }
+
     return (
         <div id="terminal">
             <div className="separator"/>
-            <div id="terminal-header-text">
-                Terminal
-            </div>
             <div id="terminal-body">
-                <textarea id="terminal-text" ref={textareaRef} onChange={handleChange} value={terminalText} onKeyDown={handleEnter}/>
+                <textarea id="terminal-input" value={input} onChange={handleInputChange} onKeyDown={handleKeyDown}/>
+                <textarea id="terminal-output" value={output} onChange={() => {}}/>
             </div>
         </div>
     )
-
-    function handleEnter(event: React.KeyboardEvent<HTMLTextAreaElement>) {
-        if (event.key === "Enter") {
-            event.preventDefault()
-            newLine()
-        }
-    }
-
-    function handleChange(event: React.ChangeEvent<HTMLTextAreaElement>) {
-        setTerminalText(event.target.value)
-    }
-
-    function newLine() {
-        setTerminalText(terminalText + "\n" + testCwd + "> ")
-    }
 }
-
