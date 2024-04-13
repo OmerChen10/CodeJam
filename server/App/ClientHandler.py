@@ -76,7 +76,6 @@ class ClientHandler():
         @self.socket.eventHandler
         def setCurrentProject(props):
             self.project = Project(props["id"], props["name"], props["author"], props["description"])
-            self.executer = Executer(self.project, self.socket)
             return True
         
         @self.socket.eventHandler
@@ -102,6 +101,15 @@ class ClientHandler():
                 self.executer.close()
                 self.executer = None
 
+            return True
+        
+        @self.socket.eventHandler
+        def createExecuter(props):
+            self.executer = Executer(self.project, self.socket)
+        
+        @self.socket.eventHandler
+        def executerCommand(props):
+            self.executer.send_input(props["command"])
             return True
 
     

@@ -14,6 +14,14 @@ class StorageConfig:
     PROJECTS_PATH = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../Storage"))
     FILES_HEADER_BASE_PATH = "Storage"
 
+
+class ExecuterConfig:
+    IMAGE = "executer"
+    WORKING_DIR = "/app"
+    COMMAND = "/bin/bash"
+    COMMAND_FINISH_MARKER = "__COMMAND_FINISHED__"
+
+
 @dataclasses.dataclass
 class Account:
     id: int

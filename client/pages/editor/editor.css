@@ -181,3 +181,61 @@
     cursor: pointer;
     background-color: #323c42;
 }
+
+/* Terminal */
+
+#terminal {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    height: 15rem;
+    background-color: #1e1e1e;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    z-index: 1000;
+}
+
+#terminal textarea {
+    background-color: #313131;
+    color: white;
+    border: none;
+    font-size: 1rem;
+    outline: none;
+    font-family: Arial, sans-serif;
+    font-size: 1.2rem;
+    font-weight: 400;
+    outline: none;
+    resize: none;
+    box-shadow: #131313 0px 0px 10px;
+    border-radius: 0.5rem;
+}
+
+#terminal-input {
+    width: 100%;
+    height: 3rem;
+}
+
+.separator {
+    width: 100%;
+    height: 0.1rem;
+    background-color: #454b50;
+}
+
+#terminal-body {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 0.5rem;
+    padding: 0.5rem;
+    white-space: pre-wrap;
+}
+
+#terminal-output {
+    width: 100%;
+    height: 100%;
+}

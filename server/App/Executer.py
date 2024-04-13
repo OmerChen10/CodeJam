@@ -1,5 +1,5 @@
 from Constants import Project
-from Constants import StorageConfig
+from Constants import StorageConfig, ExecuterConfig
 from Network import ClientIO
 import threading
 import docker
@@ -15,46 +15,44 @@ class Executer:
 
         self.client = docker.from_env()
         self.container = self.client.containers.run(
-            image="executer",
-            command="/bin/bash",
-            volumes={self.project_path: {"bind": f"/app/{project.name}", "mode": "rw"}},
+            image=ExecuterConfig.IMAGE,
+            command=ExecuterConfig.COMMAND,
+            volumes={self.project_path: {"bind": f"{ExecuterConfig.WORKING_DIR}/{project.name}", "mode": "rw"}},
             detach=True,
             stdin_open=True,
+            tty=True,
             remove=True,
-            auto_remove=True   
+            auto_remove=True,   
+            working_dir=f"/app/{project.name}",
+            environment={"PYTHONUNBUFFERED": "1", "TERM": "dumb", "PS1": "$ "}
         )
 
-        self.output_thread = threading.Thread(target=self.output_listener, daemon=True)
-        self.output_thread.start()
-
-        self.com_socket = self.container.attach_socket(params={'stdin': True, 'stream': True})
-
         atexit.register(self.close)
-         
+
+        self.stdout = self.container.logs(stream=True, stdout=True, stderr=False)
+        self.stderr = self.container.logs(stream=True, stdout=False, stderr=True)
+        self.stdin = self.container.attach_socket(params={"stdin": 1, "stream": 1})
+
+        self.stdout_thread = threading.Thread(target=self.handle_output, args=(self.stdout, "stdout"))
+        self.stderr_thread = threading.Thread(target=self.handle_output, args=(self.stderr, "stderr"))
+        self.stdout_thread.start()
+        self.stderr_thread.start()
+
+    def handle_output(self, stream, stream_type: str):
+        buffer = b""
+        for text in stream:
+            buffer += text
+            if b"\n" in buffer or b"\r" in buffer: 
+
+                self.web_client.send(f"executer{stream_type.capitalize()}", buffer.decode("utf-8"))
+                buffer = b""
+                time.sleep(0.2)
+
+
     def send_input(self, input: str):
-        self.com_socket.send(input.encode() + b"\n")
-        if input == "ls":
-            self.web_client.send("executer_cwd", self.get_current_directory())
-
-    def output_listener(self):
-        self.stdout = self.container.logs(stream=True, stderr=False)
-        self.stderr = self.container.logs(stream=True, stdout=False)
-
-        while self.container.status == "running":
-            if self.stdout:
-                for line in self.stdout:
-                    self.web_client.send("executer_output", line.decode("utf-8"))
-            
-            if self.stderr:
-                for line in self.stderr:
-                    self.web_client.send("executer_error", line.decode("utf-8"))
-            
-            time.sleep(0.1)
-
-    def get_current_directory(self):
-        return self.container.exec_run("pwd").output.decode("utf-8").strip()
+        self.stdin.send((input + "\n").encode("utf-8"))
 
     def close(self):
         self.send_input("exit")
-        self.com_socket.close()
+        self.stdin.close()
 
