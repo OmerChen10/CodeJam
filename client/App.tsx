@@ -34,6 +34,10 @@ function App() {
                 toast.error("Failed to login");
             }
         });
+
+        nm.onEvent("showToast", (response: any) => {
+            toast.info(response.data);
+        });
     }, []);
 
     function updateSelectedProject(project: ProjectInterface) {
