@@ -10,12 +10,12 @@ export function Terminal() {
 
     useEffect(() => {
         nm.send("createExecuter", {}, (response) => {
-            console.log(response.data)
+            if (response.data === undefined) return
             setCwd(response.data)
         })
 
         nm.onEvent("executerCwd", (response) => {
-            console.log(response.data)
+            if (response.data === undefined) return
             setCwd(response.data)
         })
 
@@ -35,6 +35,7 @@ export function Terminal() {
     }, [output])
 
     useEffect(() => {
+        if (cwd === undefined) return
         setInput(cwd + "> " + input.substring(cwd.length + 2))
     }, [cwd])
 

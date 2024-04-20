@@ -111,6 +111,11 @@ class ClientHandler():
         def executerCommand(props):
             self.executer.send_input(props["command"])
             return True
+        
+        @self.socket.eventHandler
+        def autoSave(props):
+            self.storage_manager.save_file(self.project.id, props["name"], props["data"])
+            return True
 
     
         

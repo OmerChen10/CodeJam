@@ -4,6 +4,7 @@ export class EditorConfig {
     public static readonly COOLDOWN_TIME = 100; // in ms
     public static readonly STORAGE_DIRECTORY = 
     window.location.protocol + "//" + window.location.hostname + "//Storage//";
+    public static readonly AUTO_SAVE_TIME = 5000; // in ms
 }
 
 export class Assets {
