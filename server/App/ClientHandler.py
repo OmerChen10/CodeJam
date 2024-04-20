@@ -3,6 +3,8 @@ from App.database.manager import DBManager
 from App.StorageManager import StorageManager
 from App.Executer import Executer
 from Constants import Account, Project
+import time 
+import secrets
 
 class ClientHandler():
     def __init__(self, manager, socket: ClientIO) -> None:
@@ -25,8 +27,11 @@ class ClientHandler():
             if self.db_manager.get_user(props['username']) != None:
                 return False
             
-            self.db_manager.create_user(props['username'], props['email'], props['password'])
-            return True
+            user_id = self.db_manager.create_user(props['username'], props['email'], props['password'])
+            self.account = Account(user_id, props['username'], props['email'])
+            token = secrets.token_hex(16)
+            self.db_manager.create_token(user_id, token, time.time())
+            return token
         
         @self.socket.eventHandler
         def loginUser(props):
@@ -37,6 +42,17 @@ class ClientHandler():
             if password != props['password']: return False
             
             self.account = Account(id, username, props["email"])
+            token = secrets.token_hex(16)
+            self.db_manager.create_token(id, token, time.time())
+            return token
+        
+        @self.socket.eventHandler
+        def autoLogin(props):
+            ret = self.db_manager.get_user_by_token(props['token'])
+            if ret is None: return False
+
+            id, username, email = ret
+            self.account = Account(id, username, email)
             return True
         
         @self.socket.eventHandler

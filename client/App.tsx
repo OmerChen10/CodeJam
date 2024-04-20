@@ -1,60 +1,86 @@
 import { Route, BrowserRouter, Routes } from "react-router-dom"
 import { NetworkManager } from "./Network/manager"
-
 import { LoginPage } from "./pages/login-page/login-page"
 import { EditorPage } from "./pages/editor/editor-page"
 import { HomePage } from "./pages/home/home-page"
 import { toast } from "sonner"
 import { createContext, useEffect, useState } from "react"
 import { ProjectInterface } from "./Constants"
+import { LocalStorageController } from "./localStorageController"
+import { useNavigate } from "react-router-dom"
+
 
 export const SelectedProjectContext = createContext<[ProjectInterface, (project: ProjectInterface) => void]>([
     {} as ProjectInterface,
     () => {}
 ]);
 
+export const UserLoggedIn = createContext<[boolean, (loggedIn: boolean) => void]>([false, () => {}]);
+
 function App() {
     const [selectedProject, setSelectedProject] = useState({} as ProjectInterface)
+    const [userLoggedIn, setUserLoggedIn] = useState(false)
     const nm = NetworkManager.getInstance()
-
-    const devProject: ProjectInterface = {
-        id: "0",
-        name: "Project",
-        description: "1234",
-        author: "OmerChen10"
-    }
+    const navigate = useNavigate()
 
     useEffect(() => {
-        // updateSelectedProject(devProject);
-        nm.send("loginUser", {email: "omer@mail", password: "1234"}, (response: any) => {
-            if (response.success) {
-                toast.success("Auto Logged in!");
-            }
-            else {
-                toast.error("Failed to login");
-            }
-        });
-
+        autoNavigate();
         nm.onEvent("showToast", (response: any) => {
             toast.info(response.data);
         });
     }, []);
 
+    function autoNavigate() {
+        const token = LocalStorageController.getUserToken();
+        const requestedEndpoint = document.location.pathname;
+
+        if (!token) navigate("/");
+        nm.send("autoLogin", {token: token}, (response: any) => {
+            if (response.success) {
+                setUserLoggedIn(true);
+                switch (requestedEndpoint) {
+                    case "/":
+                        navigate("/home");
+                        break;
+
+                    case "/editor":
+                        const selectedProject = LocalStorageController.getProject();
+                        if (Object.keys(selectedProject).length !== 0) updateSelectedProject(selectedProject);
+                        else navigate("/home");
+                        break;
+
+                    default:
+                        navigate("/home");
+                        break;
+                }
+            }
+            else navigate("/");
+        });
+    }
+
     function updateSelectedProject(project: ProjectInterface) {
         nm.send("setCurrentProject", project);
+        LocalStorageController.setProject(project);
         setSelectedProject(project);
+    }
+
+    function PrivatePage({children}: {children: any}) {
+        if (!userLoggedIn) {
+            return null;
+        }
+        return children;
     }
     
     return (    
-        <SelectedProjectContext.Provider value={[selectedProject, updateSelectedProject]}>
-            <BrowserRouter>
+        <UserLoggedIn.Provider value={[userLoggedIn, setUserLoggedIn]}>
+            <SelectedProjectContext.Provider value={[selectedProject, updateSelectedProject]}>
                 <Routes>
                     <Route path="/" element={<LoginPage />} />
-                    <Route path="/home" element={<HomePage />} />
-                    <Route path="/editor" element={<EditorPage />} />
+                    <Route path="/home" element={<PrivatePage><HomePage/></PrivatePage>} />
+                    <Route path="/editor" element={<PrivatePage><EditorPage/></PrivatePage>} />
                 </Routes>
-            </BrowserRouter>
-        </SelectedProjectContext.Provider>
+            </SelectedProjectContext.Provider>
+        </UserLoggedIn.Provider>
     )
 }
 

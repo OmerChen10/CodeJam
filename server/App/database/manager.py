@@ -30,6 +30,9 @@ class DBManager:
         self.execute(
             "CREATE TABLE projects (project_id INTEGER, user_id INTEGER, container_id TEXT DEFAULT NULL)"
         )
+        self.execute(
+            "CREATE TABLE user_tokens (user_id INTEGER, token TEXT, timestamp TEXT)"
+        )
     
     def execute(self, query: str, *args):
         self.cursor.execute(query, args)
@@ -50,6 +53,7 @@ class DBManager:
         user_id = 0 if user_id is None else user_id + 1
 
         self.execute(f"INSERT INTO users (id, username, email, password) VALUES {user_id, username, email, password}")
+        return user_id
 
     
     def get_user(self, email: str):
@@ -80,8 +84,16 @@ class DBManager:
     def set_container_id(self, project_id: int, container_id: str):
         self.execute(f"UPDATE projects SET container_id = '{container_id}' WHERE project_id = {project_id}")
 
-    
     def get_container_id(self, project_id: int):
         return self.execute(f"SELECT container_id FROM projects WHERE project_id = {project_id}")[0]
+    
+    def create_token(self, user_id: int, token: str, timestamp: str):
+        self.execute(f"INSERT INTO user_tokens (user_id, token, timestamp) VALUES {user_id, token, timestamp}")
+
+    def get_user_by_token(self, token: str):
+        return self.execute(f"SELECT * FROM user_tokens WHERE token = '{token}'")
+    
+    def delete_token(self, token: str):
+        self.execute(f"DELETE FROM user_tokens WHERE token = '{token}'")
 
     

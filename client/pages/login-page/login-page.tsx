@@ -1,10 +1,68 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { NetworkManager } from "../../Network/manager";
-import "./login.css"
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
+import { LocalStorageController } from "../../localStorageController";
+import { UserLoggedIn } from "../../App";
+import "./login.css"
 
 export function LoginPage() {
     const [signup, setSignUp] = useState(false);
+    const [userLoggedIn, setUserLoggedIn] = useContext(UserLoggedIn);
+    const navigate = useNavigate();
+
+    function createAccount() {
+        let manager = NetworkManager.getInstance();
+        // Get the email and password from the input fields
+        let username = (document.getElementById("username") as HTMLInputElement).value;
+        let email = (document.getElementById("email") as HTMLInputElement).value;
+        let password = (document.getElementById("password") as HTMLInputElement).value;
+        let confirmPassword = (document.getElementById("confirm-password") as HTMLInputElement).value;
+    
+        if (password !== confirmPassword) {
+            toast.error("Passwords do not match");
+            return;
+        }
+        
+        // Check if the email and password are valid
+        if (email === "" || password === "") {
+            toast.error("Invalid email or password");
+            return;
+        }
+    
+        manager = NetworkManager.getInstance();
+        manager.send("createUser", {username: username, email: email, password: password}, (response) => {
+            if (response.success) {
+                toast.success("Account created!");
+                LocalStorageController.setUserToken(response.data);
+                setUserLoggedIn(true);
+                navigate("/home");
+            }
+            else {
+                toast.error("Username already exists!");
+            }
+        });
+    }
+    
+    function login() {
+        let manager = NetworkManager.getInstance();
+        // Get the email and password from the input fields
+        let email = (document.getElementById("email") as HTMLInputElement).value;
+        let password = (document.getElementById("password") as HTMLInputElement).value;
+    
+        manager = NetworkManager.getInstance();
+        manager.send("loginUser", {email: email, password: password}, (response) => {
+            if (response.success) {
+                toast.success("Logged in");
+                LocalStorageController.setUserToken(response.data);
+                navigate("/home");
+            }
+            else {
+                toast.error("Invalid email or password");
+            }
+        });
+    }    
+
     if (signup) {
         return (
             <div id="main-login">
@@ -49,52 +107,4 @@ export function LoginPage() {
         </div>
     );
 }
-
-function createAccount() {
-    let manager = NetworkManager.getInstance();
-    // Get the email and password from the input fields
-    let username = (document.getElementById("username") as HTMLInputElement).value;
-    let email = (document.getElementById("email") as HTMLInputElement).value;
-    let password = (document.getElementById("password") as HTMLInputElement).value;
-    let confirmPassword = (document.getElementById("confirm-password") as HTMLInputElement).value;
-
-    if (password !== confirmPassword) {
-        toast.error("Passwords do not match");
-        return;
-    }
-    
-    // Check if the email and password are valid
-    if (email === "" || password === "") {
-        toast.error("Invalid email or password");
-        return;
-    }
-
-    manager = NetworkManager.getInstance();
-    manager.send("createUser", {username: username, email: email, password: password}, (response) => {
-        if (response.success) {
-            toast.success("Account created!");
-        }
-        else {
-            toast.error("Username already exists!");
-        }
-    });
-}
-
-function login() {
-    let manager = NetworkManager.getInstance();
-    // Get the email and password from the input fields
-    let email = (document.getElementById("email") as HTMLInputElement).value;
-    let password = (document.getElementById("password") as HTMLInputElement).value;
-
-    manager = NetworkManager.getInstance();
-    manager.send("loginUser", {email: email, password: password}, (response) => {
-        if (response.success) {
-            toast.success("Logged in");
-        }
-        else {
-            toast.error("Invalid email or password");
-        }
-    });
-}
-
   
