@@ -21,6 +21,7 @@ export function HomePage() {
     
     useEffect(() => {
         fetchProjects();
+        nm.send("clientInHomePage", {});
     }, []);
 
     const renderPopUp = () => {

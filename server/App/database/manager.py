@@ -28,7 +28,7 @@ class DBManager:
             "CREATE TABLE users (id INTEGER, username TEXT, email TEXT, password TEXT)"
         )
         self.execute(
-            "CREATE TABLE permissions (project_id INTEGER, user_id INTEGER)"
+            "CREATE TABLE projects (project_id INTEGER, user_id INTEGER, container_id TEXT DEFAULT NULL)"
         )
     
     def execute(self, query: str, *args):
@@ -58,21 +58,30 @@ class DBManager:
     def create_project(self, user_id: int):
 
         # Generate id
-        project_id = self.execute("SELECT MAX(project_id) FROM permissions")[0]
+        project_id = self.execute("SELECT MAX(project_id) FROM projects")[0]
         if project_id is None: project_id = 0
         else: project_id = 0 if project_id is None else project_id + 1
 
-        self.execute(f"INSERT INTO permissions (project_id, user_id) VALUES {project_id, user_id}")
+        self.execute(f"INSERT INTO projects (project_id, user_id) VALUES {project_id, user_id}")
         return project_id
 
 
     def get_projects_for_user(self, user_id: int):
-        ret = self.execute(f"SELECT project_id FROM permissions WHERE user_id = {user_id}")
+        ret = self.execute(f"SELECT project_id FROM projects WHERE user_id = {user_id}")
         if ret is None: return None
         if len(ret) == 1: return ret[0]
         return [x[0] for x in ret] if ret is not None else None
         
     
     def delete_project(self, project_id: int):
-        self.execute(f"DELETE FROM permissions WHERE project_id = {project_id}")
+        self.execute(f"DELETE FROM projects WHERE project_id = {project_id}")
+
+
+    def set_container_id(self, project_id: int, container_id: str):
+        self.execute(f"UPDATE projects SET container_id = '{container_id}' WHERE project_id = {project_id}")
+
+    
+    def get_container_id(self, project_id: int):
+        return self.execute(f"SELECT container_id FROM projects WHERE project_id = {project_id}")[0]
+
     

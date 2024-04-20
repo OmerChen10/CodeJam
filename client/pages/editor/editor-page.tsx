@@ -9,7 +9,6 @@ import { toast } from "sonner"
 
 export const LoadingContext = createContext<(loading: boolean) => void>(() => {})
 
-
 export function EditorPage() {
     const [fileList, setFileList] = useState<string[]>([])
     const [selectedProject] = useContext(SelectedProjectContext)
@@ -81,6 +80,9 @@ export function EditorPage() {
                     <div id="file-list">
                         {renderFileList()}
                     </div>
+                </div>
+                <div id="">
+
                 </div>
                 <LoadingContext.Provider value={setLoading}>
                     <CodeEditor filePath={selectedFile}/>

@@ -80,3 +80,9 @@ class StorageManager():
         if not self._check_path(path): return False
         os.remove(path)
         return True
+    
+    def save_file(self, project_id, name, content):
+        path = os.path.join(StorageConfig.PROJECTS_PATH, str(project_id), name)
+        with open(path, "wb") as file:
+            file.write(content.encode("utf-8"))
+        return True

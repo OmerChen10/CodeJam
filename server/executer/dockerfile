@@ -1,0 +1,9 @@
+# Use the Python 3.11 image
+FROM python:3.11
+
+# Set the working directory to /app
+WORKDIR /app
+
+# Create a non-root user and switch to that user
+RUN useradd -m user -d /app
+USER user
