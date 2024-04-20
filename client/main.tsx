@@ -3,10 +3,13 @@ import App from './App.tsx'
 import 'bootstrap/dist/css/bootstrap.css';
 import "./main.css"
 import { Toaster } from 'sonner';
+import { BrowserRouter } from 'react-router-dom';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <div id='main-app'>
-    <App />
-    <Toaster richColors/>
-  </div>
+    <BrowserRouter>
+        <div id='main-app'>
+            <App />
+            <Toaster richColors/>
+        </div>
+    </BrowserRouter>
 )

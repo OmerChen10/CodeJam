@@ -65,6 +65,7 @@ export function EditorPage() {
         })
     }
 
+    if (!selectedProject) return null
     return (
         <div id="main-editor">
             <div id="navbar">
