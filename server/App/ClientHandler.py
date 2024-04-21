@@ -48,11 +48,14 @@ class ClientHandler():
         
         @self.socket.eventHandler
         def autoLogin(props):
-            ret = self.db_manager.get_user_by_token(props['token'])
-            if ret is None: return False
+            user_id = self.db_manager.get_user_id_by_token(props['token'])
+            if user_id is None: return False
 
-            id, username, email = ret
-            self.account = Account(id, username, email)
+            ret = self.db_manager.get_user_by_id(user_id)
+            if ret is None: return False
+            
+            _, username, email, _ = ret
+            self.account = Account(user_id, username, email)
             return True
         
         @self.socket.eventHandler

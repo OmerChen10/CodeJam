@@ -84,25 +84,27 @@ export function CodeEditor({filePath}: props) {
     })
 
     return ((
-        <div id="editor-wrapper">
-            <Editor
-                defaultLanguage="python"
-                theme="vs-dark"
-                options={{
-                    autoClosingBrackets: "never",
-                    autoClosingQuotes: "never",
-                    autoIndent: "full",
-                    automaticLayout: true,
-                    colorDecorators: true,
-                    contextmenu: true,
-                    cursorBlinking: "blink",
-                    cursorSmoothCaretAnimation: 'on',
-                    cursorStyle: "line"
-                }}
-                onChange={handleChanges}
-                onMount={(ref) => {editorRef.current = ref}}
-                value={selectedFile}
-                />
+        <div id="code-editor">
+            <div id="editor-wrapper">
+                <Editor
+                    defaultLanguage="python"
+                    theme="vs-dark"
+                    options={{
+                        autoClosingBrackets: "never",
+                        autoClosingQuotes: "never",
+                        autoIndent: "full",
+                        automaticLayout: true,
+                        colorDecorators: true,
+                        contextmenu: true,
+                        cursorBlinking: "blink",
+                        cursorSmoothCaretAnimation: 'on',
+                        cursorStyle: "line"
+                    }}
+                    onChange={handleChanges}
+                    onMount={(ref) => {editorRef.current = ref}}
+                    value={selectedFile}
+                    />
+            </div>
             <Terminal/>
         </div>
     )

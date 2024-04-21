@@ -5,6 +5,7 @@ import { SelectedProjectContext } from "../../App"
 import { NetworkManager } from "../../Network/manager"
 import { FileButton } from "./components/fileButton"
 import { toast } from "sonner"
+import * as Switch from '@radix-ui/react-switch';
 
 
 export const LoadingContext = createContext<(loading: boolean) => void>(() => {})
@@ -69,7 +70,7 @@ export function EditorPage() {
     return (
         <div id="main-editor">
             <div id="navbar">
-                <h2 id="navbar-title">CodeJam</h2>
+                <h2 id="navbar-title">{'CodeJam</>'}</h2>
                 <h2 id="project-name">{selectedProject.name} <span className="badge text-bg-secondary">Saved</span></h2>
             </div>
             <div id="editor-container" className={isLoading ? "disabled" : ""}>
@@ -81,9 +82,6 @@ export function EditorPage() {
                     <div id="file-list">
                         {renderFileList()}
                     </div>
-                </div>
-                <div id="">
-
                 </div>
                 <LoadingContext.Provider value={setLoading}>
                     <CodeEditor filePath={selectedFile}/>

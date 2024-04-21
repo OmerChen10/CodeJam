@@ -59,6 +59,9 @@ class DBManager:
     def get_user(self, email: str):
         return self.execute(f"SELECT * FROM users WHERE email = '{email}'")
     
+    def get_user_by_id(self, user_id: int): 
+        return self.execute(f"SELECT * FROM users WHERE id = {user_id}")
+    
     def create_project(self, user_id: int):
 
         # Generate id
@@ -90,8 +93,8 @@ class DBManager:
     def create_token(self, user_id: int, token: str, timestamp: str):
         self.execute(f"INSERT INTO user_tokens (user_id, token, timestamp) VALUES {user_id, token, timestamp}")
 
-    def get_user_by_token(self, token: str):
-        return self.execute(f"SELECT * FROM user_tokens WHERE token = '{token}'")
+    def get_user_id_by_token(self, token: str):
+        return self.execute(f"SELECT user_id FROM user_tokens WHERE token = '{token}'")[0]
     
     def delete_token(self, token: str):
         self.execute(f"DELETE FROM user_tokens WHERE token = '{token}'")
