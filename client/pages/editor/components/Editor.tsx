@@ -18,6 +18,8 @@ export function CodeEditor({filePath}: props) {
     const editorRef = useRef<editor.IStandaloneCodeEditor>()
     const isProgrammaticChange = useRef<boolean>(false)
     const [selectedFile, setSelectedFile] = useState<string>("")
+    const currText = useRef<string>("")
+    const currFileName = useRef<string>("")
 
     const duringCooldown = useRef<boolean>(false)
     const fileChangeTimestamp = useRef<number>(0)
@@ -26,6 +28,10 @@ export function CodeEditor({filePath}: props) {
 
     useEffect(() => {
         if (filePath === "") return
+        if (currFileName.current === filePath) return
+        if (editorRef.current) saveFile()
+
+        currFileName.current = filePath
         setLoading(true)
         fetch(EditorConfig.STORAGE_DIRECTORY + selectedProject.id + "//" + filePath).then((response) => {
             setLoading(false)
@@ -37,8 +43,9 @@ export function CodeEditor({filePath}: props) {
 
     const handleChanges = (value: string | undefined, event: editor.IModelContentChangedEvent) => {
         fileChangeTimestamp.current = Date.now()
+        currText.current = value as string
         SendChanges(value, event)
-        autoSave(value as string)
+        autoSave()
     }
 
     const SendChanges = (value: string | undefined, event: editor.IModelContentChangedEvent) => {
@@ -61,17 +68,45 @@ export function CodeEditor({filePath}: props) {
         // }
     }
 
-    const autoSave = (currText: string) => {
+    const autoSave = () => {
         setTimeout(() => {
             if (Date.now() - fileChangeTimestamp.current > EditorConfig.AUTO_SAVE_TIME) {
-                console.log("Auto saving...")
-                console.log(EditorConfig.STORAGE_DIRECTORY + selectedProject.id + "//" + filePath)
-                nm.send("autoSave", {
-                    name: filePath,
-                    data: currText
-                })
+                saveFile()
             }
         }, EditorConfig.AUTO_SAVE_TIME)
+    }
+
+    const saveFile = () => {
+        nm.send("autoSave", {
+            name: currFileName.current,
+            data: currText.current
+        })
+    }
+
+    const renderEditor = () => {
+        if (filePath == "") {
+            return <h1 id="select-file-text">Select a file to edit</h1>
+        }
+        else return (
+            <Editor
+                defaultLanguage="python"
+                theme="vs-dark"
+                options={{
+                    autoClosingBrackets: "never",
+                    autoClosingQuotes: "never",
+                    autoIndent: "full",
+                    automaticLayout: true,
+                    colorDecorators: true,
+                    contextmenu: true,
+                    cursorBlinking: "blink",
+                    cursorSmoothCaretAnimation: 'on',
+                    cursorStyle: "line"
+                }}
+                onChange={handleChanges}
+                onMount={(ref) => {editorRef.current = ref}}
+                value={selectedFile}
+                />
+        )
     }
 
 
@@ -86,24 +121,7 @@ export function CodeEditor({filePath}: props) {
     return ((
         <div id="code-editor">
             <div id="editor-wrapper">
-                <Editor
-                    defaultLanguage="python"
-                    theme="vs-dark"
-                    options={{
-                        autoClosingBrackets: "never",
-                        autoClosingQuotes: "never",
-                        autoIndent: "full",
-                        automaticLayout: true,
-                        colorDecorators: true,
-                        contextmenu: true,
-                        cursorBlinking: "blink",
-                        cursorSmoothCaretAnimation: 'on',
-                        cursorStyle: "line"
-                    }}
-                    onChange={handleChanges}
-                    onMount={(ref) => {editorRef.current = ref}}
-                    value={selectedFile}
-                    />
+                {renderEditor()}
             </div>
             <Terminal/>
         </div>

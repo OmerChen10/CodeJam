@@ -20,6 +20,17 @@
 
 }
 
+#navbar-title{
+    color: white;
+    margin-left: 0.5rem;
+    font-weight: bolder;
+}
+
+#select-file-text {
+    text-align: center;
+    margin-top: 15%;
+}
+
 #project-name {
     position: relative;
     margin: auto;

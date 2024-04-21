@@ -5,8 +5,6 @@ import { SelectedProjectContext } from "../../App"
 import { NetworkManager } from "../../Network/manager"
 import { FileButton } from "./components/fileButton"
 import { toast } from "sonner"
-import * as Switch from '@radix-ui/react-switch';
-
 
 export const LoadingContext = createContext<(loading: boolean) => void>(() => {})
 
@@ -42,6 +40,7 @@ export function EditorPage() {
                 }
                 onDelete={() => {
                     setFileList(fileList.filter((name) => name !== fileName))
+                    setSelectedFile("")
                     nm.send("deleteFile", {name: fileName}, (response) => {
                         if (response.success) {
                             toast.success("File deleted successfully!")
