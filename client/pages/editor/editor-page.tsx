@@ -13,6 +13,7 @@ export function EditorPage() {
     const [selectedProject] = useContext(SelectedProjectContext)
     const [selectedFile, setSelectedFile] = useState<string>("")
     const [isLoading, setLoading] = useState<boolean>(false)
+    const [fileSaved, setFileSaved] = useState<boolean>(true)
 
     const nm = NetworkManager.getInstance()
 
@@ -53,6 +54,14 @@ export function EditorPage() {
         })
     }
 
+    function renderSaveIndicator() {
+        if (fileSaved) {
+            return <img src="./client/assets/images/checkmark-icon.png"/>
+        }
+        return <div id="save-spinner" className="spinner-border" role="status"/>
+    }
+
+
     function createNewFile() {
         nm.send("createFile", {name: "New File"}, (response) => {
             if (response.success) {
@@ -70,7 +79,12 @@ export function EditorPage() {
         <div id="main-editor">
             <div id="navbar">
                 <h2 id="navbar-title">{'CodeJam</>'}</h2>
-                <h2 id="project-name">{selectedProject.name} <span className="badge text-bg-secondary">Saved</span></h2>
+                <div id="project-name">
+                    <h2 className="badge text-bg-secondary">{selectedProject.name}</h2>
+                    <div id="save-indicator">
+                        {renderSaveIndicator()}
+                    </div>
+                </div>
             </div>
             <div id="editor-container" className={isLoading ? "disabled" : ""}>
                 <div id="editor-nav">
@@ -83,7 +97,7 @@ export function EditorPage() {
                     </div>
                 </div>
                 <LoadingContext.Provider value={setLoading}>
-                    <CodeEditor filePath={selectedFile}/>
+                    <CodeEditor filePath={selectedFile} fileSaved={setFileSaved}/>
                 </LoadingContext.Provider>
             </div>
             <div id="loading-spinner" className="spinner-border" role="status" 

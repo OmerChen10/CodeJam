@@ -72,7 +72,7 @@ export function HomePage() {
     );
     
     function sendCreateRequest() {
-        let projectName = (document.getElementById("project-name") as HTMLInputElement).value;
+        let projectName = (document.getElementById("project-creator-name") as HTMLInputElement).value;
         let projectDescription = (document.getElementById("project-description") as HTMLInputElement).value;
 
         // Send the request to create the project

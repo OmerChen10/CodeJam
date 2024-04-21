@@ -9,16 +9,16 @@ import { Terminal } from "./Terminal";
 
 interface props {
     filePath: string
+    fileSaved: (state: boolean) => void
 }
 
-export function CodeEditor({filePath}: props) {
+export function CodeEditor({filePath, fileSaved}: props) {
 
     const [selectedProject, _] = useContext(SelectedProjectContext)
     const nm = useRef<NetworkManager>(NetworkManager.getInstance()).current
     const editorRef = useRef<editor.IStandaloneCodeEditor>()
     const isProgrammaticChange = useRef<boolean>(false)
     const [selectedFile, setSelectedFile] = useState<string>("")
-    const currText = useRef<string>("")
     const currFileName = useRef<string>("")
 
     const duringCooldown = useRef<boolean>(false)
@@ -43,7 +43,7 @@ export function CodeEditor({filePath}: props) {
 
     const handleChanges = (value: string | undefined, event: editor.IModelContentChangedEvent) => {
         fileChangeTimestamp.current = Date.now()
-        currText.current = value as string
+        fileSaved(false)
         SendChanges(value, event)
         autoSave()
     }
@@ -79,8 +79,9 @@ export function CodeEditor({filePath}: props) {
     const saveFile = () => {
         nm.send("autoSave", {
             name: currFileName.current,
-            data: currText.current
+            data: editorRef.current?.getValue()
         })
+        fileSaved(true)
     }
 
     const renderEditor = () => {

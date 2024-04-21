@@ -23,7 +23,7 @@
 #navbar-title{
     color: white;
     margin-left: 0.5rem;
-    font-weight: bolder;
+    font-weight: bolder;;
 }
 
 #select-file-text {
@@ -34,6 +34,13 @@
 #project-name {
     position: relative;
     margin: auto;
+    color: white;
+    font-size: 2rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
 }
 
 #editor-container {
@@ -48,6 +55,24 @@
     width: 15rem;
     height: 100%;
     background-color: #454b50;
+}
+
+#save-spinner {
+    width: 2.5rem;
+    height: 2.5rem;
+}
+
+#save-indicator img{
+    width: 2rem;
+    height: auto;
+    padding-bottom: 0.35rem;
+}
+#save-indicator {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
 }
 
 #editor-wrapper{

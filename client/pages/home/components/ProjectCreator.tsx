@@ -11,7 +11,7 @@ export function ProjectCreator({ setPopUpMenuMode, sendCreateRequest }: ProjectC
             <div id="project-creator-container">
                 <h1 id="project-creator-title">Create New Project</h1>
                 <div className="input-container">
-                    <input type="text" className="input-group mb-3" id="project-name" placeholder="Project Name" aria-label="Project Name"/>
+                    <input type="text" className="input-group mb-3" id="project-creator-name" placeholder="Project Name" aria-label="Project Name"/>
                     <input type="text" className="input-group mb-3" id="project-description" placeholder="Project Description" aria-label="Project Description"/>
                 </div>
                 <div className="button-container">
