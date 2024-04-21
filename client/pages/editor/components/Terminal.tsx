@@ -7,6 +7,7 @@ export function Terminal() {
     const nm = NetworkManager.getInstance()
     const [output, setOutput] = useState<string>("")
     const [input, setInput] = useState<string>(cwd + "> ")
+    const commandHistory = useRef<string[]>([])
 
     useEffect(() => {
         nm.send("createExecuter", {}, (response) => {
@@ -53,9 +54,16 @@ export function Terminal() {
             let cmd = input.substring(cwd.length + 2)
             if (cmd != "") {
                 nm.send("executerCommand", {command: cmd})
+                commandHistory.current.push(cmd)
             }
 
             setInput(cwd + "> ")
+        }
+
+        if (event.key === "ArrowUp") {
+            event.preventDefault()
+            if (commandHistory.current.length === 0) return
+            setInput(cwd + "> " + commandHistory.current.pop()!)
         }
     }
 
