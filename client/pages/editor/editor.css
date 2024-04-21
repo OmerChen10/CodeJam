@@ -40,9 +40,10 @@
 }
 
 #editor-wrapper{
-    position: relative;
+    flex-grow: 1;
     width: 100%;
-    height: 100%;
+    overflow: auto;
+    position: relative;
 }
 
 #code-editor {
@@ -195,7 +196,7 @@
 /* Terminal */
 
 #terminal {
-    position: fixed;
+    position: relative;
     bottom: 0;
     width: inherit;
     height: 20rem;
