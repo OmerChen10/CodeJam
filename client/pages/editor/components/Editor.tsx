@@ -6,66 +6,48 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { SelectedProjectContext } from "../../../App";
 import { LoadingContext } from "../editor-page";
 import { Terminal } from "./Terminal";
+import { SelectedFileNameContext } from "../editor-page";
+
 
 interface props {
-    filePath: string
     fileSaved: (state: boolean) => void
 }
 
-export function CodeEditor({filePath, fileSaved}: props) {
+export function CodeEditor({fileSaved}: props) {
 
     const [selectedProject, _] = useContext(SelectedProjectContext)
+    const currFileName = useContext(SelectedFileNameContext)
+    const setLoading = useContext(LoadingContext)
+
     const nm = useRef<NetworkManager>(NetworkManager.getInstance()).current
     const editorRef = useRef<editor.IStandaloneCodeEditor>()
     const isProgrammaticChange = useRef<boolean>(false)
-    const [selectedFile, setSelectedFile] = useState<string>("")
-    const currFileName = useRef<string>("")
-
-    const duringCooldown = useRef<boolean>(false)
+    const prevFileName = useRef<string>("")
     const fileChangeTimestamp = useRef<number>(0)
-    const changeBuffer = useRef<editor.IModelContentChange[]>([])
-    const setLoading = useContext(LoadingContext)
+
+    const [editorText, updateEditorText] = useState<string>("")
+
 
     useEffect(() => {
-        if (filePath === "") return
-        if (currFileName.current === filePath) return
+        if (currFileName === "") return
+        if (currFileName === prevFileName.current) return
         if (editorRef.current) saveFile()
 
-        currFileName.current = filePath
+        prevFileName.current = currFileName
         setLoading(true)
-        fetch(EditorConfig.STORAGE_DIRECTORY + selectedProject.id + "//" + filePath).then((response) => {
+        fetch(EditorConfig.STORAGE_DIRECTORY + selectedProject.id + "//" + currFileName).then((response) => {
             setLoading(false)
+            fileSaved(true)
             response.text().then((text) => {
-                setSelectedFile(text)
+                updateEditorText(text)
             })
         })
-    }, [filePath])
+    }, [currFileName])
 
-    const handleChanges = (value: string | undefined, event: editor.IModelContentChangedEvent) => {
+    const handleChanges = () => {
         fileChangeTimestamp.current = Date.now()
         fileSaved(false)
-        SendChanges(value, event)
         autoSave()
-    }
-
-    const SendChanges = (value: string | undefined, event: editor.IModelContentChangedEvent) => {
-        if (value === undefined) {
-            return
-        }
-        if (isProgrammaticChange.current) {
-            isProgrammaticChange.current = false
-            return
-        }
-        
-        changeBuffer.current.push(...event.changes)
-        // if (!duringCooldown.current) {
-        //     duringCooldown.current = true
-        //     setTimeout(() => {
-        //         duringCooldown.current = false
-        //         nm.send("editorSend", changeBuffer.current) 
-        //         changeBuffer.current = []
-        //     }, EditorConfig.COOLDOWN_TIME)
-        // }
     }
 
     const autoSave = () => {
@@ -78,14 +60,14 @@ export function CodeEditor({filePath, fileSaved}: props) {
 
     const saveFile = () => {
         nm.send("autoSave", {
-            name: currFileName.current,
+            name: prevFileName.current,
             data: editorRef.current?.getValue()
         })
         fileSaved(true)
     }
 
     const renderEditor = () => {
-        if (filePath == "") {
+        if (currFileName == "") {
             return <h1 id="select-file-text">Select a file to edit</h1>
         }
         else return (
@@ -105,7 +87,7 @@ export function CodeEditor({filePath, fileSaved}: props) {
                 }}
                 onChange={handleChanges}
                 onMount={(ref) => {editorRef.current = ref}}
-                value={selectedFile}
+                value={editorText}
                 />
         )
     }

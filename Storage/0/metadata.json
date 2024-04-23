@@ -1,1 +1,6 @@
-{"id": 0, "name": "Project", "description": "test", "author": "OmerChen10"}
+{
+    "id": 0,
+    "name": "name",
+    "description": "description",
+    "author": "author"
+}

@@ -7,6 +7,7 @@ import { FileButton } from "./components/fileButton"
 import { toast } from "sonner"
 
 export const LoadingContext = createContext<(loading: boolean) => void>(() => {})
+export const SelectedFileNameContext = createContext<string>("")
 
 export function EditorPage() {
     const [fileList, setFileList] = useState<string[]>([])
@@ -41,10 +42,10 @@ export function EditorPage() {
                 }
                 onDelete={() => {
                     setFileList(fileList.filter((name) => name !== fileName))
-                    setSelectedFile("")
                     nm.send("deleteFile", {name: fileName}, (response) => {
                         if (response.success) {
                             toast.success("File deleted successfully!")
+                            setSelectedFile("")
                         }
                         else {
                             toast.error("Failed to delete file!")
@@ -96,9 +97,11 @@ export function EditorPage() {
                         {renderFileList()}
                     </div>
                 </div>
-                <LoadingContext.Provider value={setLoading}>
-                    <CodeEditor filePath={selectedFile} fileSaved={setFileSaved}/>
-                </LoadingContext.Provider>
+                <SelectedFileNameContext.Provider value={selectedFile}>
+                    <LoadingContext.Provider value={setLoading}>
+                        <CodeEditor fileSaved={setFileSaved}/>
+                    </LoadingContext.Provider>
+                </SelectedFileNameContext.Provider>
             </div>
             <div id="loading-spinner" className="spinner-border" role="status" 
             style={isLoading ? {} : { display: "none" }}/>

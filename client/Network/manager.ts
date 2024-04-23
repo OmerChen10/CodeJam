@@ -36,9 +36,7 @@ export class NetworkManager {
             const handler = NetworkManager.eventHandlers.get(event.eventName); 
             if (handler) {
                 handler(event.data);
-            } else {
-                console.log("[NetworkManager] No callback for event: ", event.eventName);
-            }
+            }  
         }
     }
 

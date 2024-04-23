@@ -53,6 +53,7 @@ export function LoginPage() {
         manager = NetworkManager.getInstance();
         manager.send("loginUser", {email: email, password: password}, (response) => {
             if (response.success) {
+                setUserLoggedIn(true);
                 toast.success("Logged in");
                 LocalStorageController.setUserToken(response.data);
                 navigate("/home");
