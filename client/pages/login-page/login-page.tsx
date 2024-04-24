@@ -3,12 +3,12 @@ import { NetworkManager } from "../../Network/manager";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { LocalStorageController } from "../../localStorageController";
-import { UserLoggedIn } from "../../App";
+import { currentUser } from "../../App";
 import "./login.css"
 
 export function LoginPage() {
     const [signup, setSignUp] = useState(false);
-    const [userLoggedIn, setUserLoggedIn] = useContext(UserLoggedIn);
+    const [user, setUser] = useContext(currentUser);
     const navigate = useNavigate();
 
     function createAccount() {
@@ -31,11 +31,11 @@ export function LoginPage() {
         }
     
         manager = NetworkManager.getInstance();
-        manager.send("createUser", {username: username, email: email, password: password}, (response) => {
+        manager.send("createUser", {username: username, email: email, password: password}, (response: any) => {
             if (response.success) {
                 toast.success("Account created!");
-                LocalStorageController.setUserToken(response.data);
-                setUserLoggedIn(true);
+                LocalStorageController.setUserToken(response.token);
+                setUser(response.user)
                 navigate("/home");
             }
             else {
@@ -51,11 +51,11 @@ export function LoginPage() {
         let password = (document.getElementById("password") as HTMLInputElement).value;
     
         manager = NetworkManager.getInstance();
-        manager.send("loginUser", {email: email, password: password}, (response) => {
+        manager.send("loginUser", {email: email, password: password}, (response: any) => {
             if (response.success) {
-                setUserLoggedIn(true);
+                setUser(response.user);
                 toast.success("Logged in");
-                LocalStorageController.setUserToken(response.data);
+                LocalStorageController.setUserToken(response.token);
                 navigate("/home");
             }
             else {

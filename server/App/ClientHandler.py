@@ -31,7 +31,10 @@ class ClientHandler():
             self.account = Account(user_id, props['username'], props['email'])
             token = secrets.token_hex(16)
             self.db_manager.create_token(user_id, token, time.time())
-            return token
+            return {
+                "token": token,
+                "user": self.formatAccountToJson()
+            }
         
         @self.socket.eventHandler
         def loginUser(props):
@@ -44,7 +47,10 @@ class ClientHandler():
             self.account = Account(id, username, props["email"])
             token = secrets.token_hex(16)
             self.db_manager.create_token(id, token, time.time())
-            return token
+            return {
+                "token": token,
+                "user": self.formatAccountToJson()
+            }
         
         @self.socket.eventHandler
         def autoLogin(props):
@@ -56,7 +62,9 @@ class ClientHandler():
             
             _, username, email, _ = ret
             self.account = Account(user_id, username, email)
-            return True
+            return {
+                "user": self.formatAccountToJson()
+            }
         
         @self.socket.eventHandler
         def getProjectListForUser(props):
@@ -135,6 +143,13 @@ class ClientHandler():
         def autoSave(props):
             self.storage_manager.save_file(self.project.id, props["name"], props["data"])
             return True
+        
+    
+    def formatAccountToJson(self):
+        return {
+            "username": self.account.name,
+            "email": self.account.email,
+        }
 
     
         
