@@ -5,6 +5,9 @@ export class EditorConfig {
     public static readonly STORAGE_DIRECTORY = 
     window.location.protocol + "//" + window.location.hostname + "//Storage//";
     public static readonly AUTO_SAVE_TIME = 1500; // in ms
+    public static readonly supportedLanguages: { [key: string]: string } = {
+        "py": "python"
+    };
 }
 
 export class Assets {
@@ -21,6 +24,12 @@ export interface ProjectInterface {
     name: string;
     description: string;
     author: string;
+}
+
+export interface UserInterface {
+    id: string;
+    username: string;
+    email: string;
 }
 
 export interface ServerResponseInterface {
