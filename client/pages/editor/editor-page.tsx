@@ -7,7 +7,7 @@ import { FileButton } from "./components/fileButton"
 import { toast } from "sonner"
 import { EditorConfig } from "../../Constants"
 import { ImageButton } from "../../components/ImageButton/ImageButton"
-
+import { Avatar } from "@mui/material"
 
 export const LoadingContext = createContext<(loading: boolean) => void>(() => {})
 export const SelectedFileNameContext = createContext<string>("")

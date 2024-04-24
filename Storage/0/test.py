@@ -1,5 +1,5 @@
 def func():
-    print(input("enter word: "))
+    print(input("enter word:"))
 
 
 func()

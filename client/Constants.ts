@@ -26,6 +26,12 @@ export interface ProjectInterface {
     author: string;
 }
 
+export interface UserInterface {
+    id: string;
+    username: string;
+    email: string;
+}
+
 export interface ServerResponseInterface {
     success: boolean;
     data: any;
