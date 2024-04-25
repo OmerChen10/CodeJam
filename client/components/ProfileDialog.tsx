@@ -43,6 +43,7 @@ export function ProfileDialog({ openDialog, setOpenDialog }: props) {
                 toast.error('Failed to update profile');
             }
         });
+
         handleClose();
 
     };

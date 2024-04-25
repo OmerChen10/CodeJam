@@ -3,31 +3,18 @@ import { NetworkManager } from "../../../Network/manager"
 
 
 export function Terminal() {
-    const [cwd, setCwd] = useState<string>("")
     const nm = NetworkManager.getInstance()
     const [output, setOutput] = useState<string>("")
-    const [input, setInput] = useState<string>(cwd + "> ")
+    const [input, setInput] = useState<string>("> ")
     const commandHistory = useRef<string[]>([])
 
     useEffect(() => {
-        nm.send("createExecuter", {}, (response) => {
-            if (response.data === undefined) return
-            setCwd(response.data)
-        })
-
-        nm.onEvent("executerCwd", (response) => {
-            if (response.data === undefined) return
-            setCwd(response.data)
-        })
+        nm.send("createExecuter", {})
 
         nm.onEvent("executerStdout", (stdout) => {
-            // if the last character is a newline, remove it
             addOutput(stdout.data)
         })
 
-        nm.onEvent("executerStderr", (stderr) => {
-            addOutput(stderr.data)
-        })
     }, [])
 
     useEffect(() => {
@@ -35,35 +22,30 @@ export function Terminal() {
         outputElement!.scrollTop = outputElement!.scrollHeight
     }, [output])
 
-    useEffect(() => {
-        if (cwd === undefined) return
-        setInput(cwd + "> " + input.substring(cwd.length + 2))
-    }, [cwd])
-
     function handleInputChange (event: any) {
         setInput(event.target.value)
     }
 
     function handleKeyDown(event: any) {
         // check if the user tries to delete the cwd
-        if (event.key === "Backspace" && input === cwd + "> ") {
+        if (event.key === "Backspace" && input === "> ") {
             event.preventDefault()
         }
         if (event.key === "Enter") {
             event.preventDefault()
-            let cmd = input.substring(cwd.length + 2)
+            let cmd = input.substring(2)
             if (cmd != "") {
                 nm.send("executerCommand", {command: cmd})
                 commandHistory.current.push(cmd)
             }
 
-            setInput(cwd + "> ")
+            setInput("> ")
         }
 
         if (event.key === "ArrowUp") {
             event.preventDefault()
             if (commandHistory.current.length === 0) return
-            setInput(cwd + "> " + commandHistory.current.pop()!)
+            setInput("> " + commandHistory.current.pop()!)
         }
     }
 
