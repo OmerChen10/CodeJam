@@ -8,7 +8,7 @@ import { createContext, useEffect, useState } from "react"
 import { ProjectInterface, UserInterface } from "./Constants"
 import { LocalStorageController } from "./localStorageController"
 import { useNavigate } from "react-router-dom"
-
+import { createTheme, ThemeProvider } from "@mui/material"
 
 export const SelectedProjectContext = createContext<[ProjectInterface, (project: ProjectInterface) => void]>([
     {} as ProjectInterface,
@@ -25,6 +25,12 @@ function App() {
     const [user, setUser] = useState({} as UserInterface)
     const nm = NetworkManager.getInstance()
     const navigate = useNavigate()
+
+    const darkTheme = createTheme({
+        palette: {
+            mode: "dark",
+        },
+    })
 
     useEffect(() => {
         autoNavigate();
@@ -75,15 +81,17 @@ function App() {
     }
     
     return (    
-        <currentUser.Provider value={[user, setUser]}>
-            <SelectedProjectContext.Provider value={[selectedProject, updateSelectedProject]}>
-                <Routes>
-                    <Route path="/" element={<LoginPage />} />
-                    <Route path="/home" element={<PrivatePage><HomePage/></PrivatePage>} />
-                    <Route path="/editor" element={<PrivatePage><EditorPage/></PrivatePage>} />
-                </Routes>
-            </SelectedProjectContext.Provider>
-        </currentUser.Provider>
+        <ThemeProvider theme={darkTheme}>
+            <currentUser.Provider value={[user, setUser]}>
+                <SelectedProjectContext.Provider value={[selectedProject, updateSelectedProject]}>
+                    <Routes>
+                        <Route path="/" element={<LoginPage />} />
+                        <Route path="/home" element={<PrivatePage><HomePage/></PrivatePage>} />
+                        <Route path="/editor" element={<PrivatePage><EditorPage/></PrivatePage>} />
+                    </Routes>
+                </SelectedProjectContext.Provider>
+            </currentUser.Provider>
+        </ThemeProvider>
     )
 }
 

@@ -67,6 +67,17 @@ class ClientHandler():
             }
         
         @self.socket.eventHandler
+        def updateUserData(props):
+            current_password = self.db_manager.get_user_password(self.account.id)
+            if current_password != props['currentPassword']: return False
+
+            self.db_manager.update_user(self.account.id, props['username'], props['email'], props['password'])
+            self.account = Account(self.account.id, props['username'], props['email'])
+            return {
+                "user": self.formatAccountToJson()
+            }
+
+        @self.socket.eventHandler
         def getProjectListForUser(props):
             id_list = self.db_manager.get_projects_for_user(self.account.id)
             if id_list is None: return True
