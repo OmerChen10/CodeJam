@@ -13,6 +13,10 @@ class DatabaseConfig:
 class StorageConfig:
     PROJECTS_PATH = os.path.normpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../Storage"))
     FILES_HEADER_BASE_PATH = "Storage"
+    HIDDEN_FILES = [
+        "metadata.json",
+        "__pycache__"
+    ]
 
 
 class ExecuterConfig:

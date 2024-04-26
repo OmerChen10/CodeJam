@@ -7,18 +7,20 @@ import { FileButton } from "./components/fileButton"
 import { toast } from "sonner"
 import { EditorConfig } from "../../Constants"
 import { EditorNavbar } from "./components/navbar"
-import { currentUser } from "../../App"
-
+import { ConfirmDialog } from "../../components/dialogs/ConfirmDialog"
 
 export const LoadingContext = createContext<(loading: boolean) => void>(() => {})
-export const SelectedFileNameContext = createContext<string>("")
 
 export function EditorPage() {
     const [fileList, setFileList] = useState<string[]>([])
     const [selectedProject] = useContext(SelectedProjectContext)
-    const [selectedFile, setSelectedFile] = useState<string>("")
+    const [currentFileName, setCurrentFileName] = useState<string>("")
+    const [prevFileName, setPrevFileName] = useState<string>("")
     const [isLoading, setLoading] = useState<boolean>(false)
     const [fileSaved, setFileSaved] = useState<boolean>(true)
+
+    const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false)
+    const fileNameToDelete = useRef<string>("")
 
     const nm = NetworkManager.getInstance()
     const runEnabled = useRef(false)
@@ -35,7 +37,8 @@ export function EditorPage() {
         return fileList.map((fileName) => {
             return <FileButton fileName={fileName} key={fileName} 
                 onOpen={() => {
-                    setSelectedFile(fileName)
+                    setPrevFileName(currentFileName)
+                    setCurrentFileName(fileName)
                     if (fileName.split(".")[1] in EditorConfig.supportedLanguages) {
                         runEnabled.current = true
                     }
@@ -54,25 +57,20 @@ export function EditorPage() {
                     }
                 }
                 onDelete={() => {
-                    setFileList(fileList.filter((name) => name !== fileName))
-                    nm.send("deleteFile", {name: fileName}, (response) => {
-                        if (response.success) {
-                            toast.success("File deleted successfully!")
-                            setSelectedFile("")
-                        }
-                        else {
-                            toast.error("Failed to delete file!")
-                        }
-                    })
+                    setOpenDeleteDialog(true)
+                    fileNameToDelete.current = fileName
                 }}/>
         })
     }
 
     function createNewFile() {
-        nm.send("createFile", {name: "New File"}, (response) => {
+        let name = prompt("Enter the name of the new file:")
+        if (!name) return
+        
+        nm.send("createFile", {name: name}, (response) => {
             if (response.success) {
                 toast.success("File created successfully!")
-                setFileList([...fileList, "New File"])
+                setFileList([...fileList, name])
             }
             else {
                 toast.error("Failed to create file!")
@@ -81,13 +79,31 @@ export function EditorPage() {
     }
 
     function runCurrentFile() {
-        const fileType = selectedFile.split(".")[1]
+        const fileType = currentFileName.split(".")[1]
         if (EditorConfig.supportedLanguages[fileType]) {
-            let command = EditorConfig.supportedLanguages[fileType] + " " + selectedFile
+            let command = EditorConfig.supportedLanguages[fileType] + " " + currentFileName
 
             nm.send("executerCommand", {command: command})
         }
 
+    }
+
+    function deleteFile(fileName: string) {
+        nm.send("deleteFile", {name: fileName}, (response) => {
+            if (response.success) {
+                toast.success("File deleted successfully!")
+                if (fileName === currentFileName) {
+                    setCurrentFileName("")
+                }
+                if (fileName === prevFileName) {
+                    setPrevFileName("")
+                }
+                setFileList(fileList.filter((name) => name !== fileName))
+            }
+            else {
+                toast.error("Failed to delete file!")
+            }
+        })
     }
 
     if (!selectedProject) return null
@@ -104,14 +120,15 @@ export function EditorPage() {
                         {renderFileList()}
                     </div>
                 </div>
-                <SelectedFileNameContext.Provider value={selectedFile}>
-                    <LoadingContext.Provider value={setLoading}>
-                        <CodeEditor fileSaved={setFileSaved}/>
-                    </LoadingContext.Provider>
-                </SelectedFileNameContext.Provider>
+                <LoadingContext.Provider value={setLoading}>
+                    <CodeEditor fileSaved={setFileSaved} currFileName={currentFileName} prevFileName={prevFileName}/>
+                </LoadingContext.Provider>
             </div>
             <div id="loading-spinner" className="spinner-border" role="status" 
             style={isLoading ? {} : { display: "none" }}/>
+            <ConfirmDialog openDialog={openDeleteDialog} setOpenDialog={setOpenDeleteDialog} onConfirm={() => deleteFile(fileNameToDelete.current)}>
+                Delete
+            </ConfirmDialog>
         </div>
     )
 }

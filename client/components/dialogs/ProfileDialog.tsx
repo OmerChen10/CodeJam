@@ -1,7 +1,7 @@
 import { useContext, useState } from "react";
-import { currentUser } from "../App";
+import { currentUser } from "../../App";
 import { Dialog, TextField, DialogContent, Box, DialogTitle, DialogActions, Button, IconButton, Avatar, Menu, MenuItem } from "@mui/material";
-import { NetworkManager } from "../Network/manager";
+import { NetworkManager } from "../../Network/manager";
 import { toast } from "sonner";
 
 
@@ -12,6 +12,9 @@ export function ProfileDialog() {
     const [openProfileDialog, setOpenProfileDialog] = useState(false);
     const openAvatarMenu = Boolean(anchorEl);
     const nm = NetworkManager.getInstance();
+
+    const [username, setUsername] = useState(user.username);
+    const [email, setEmail] = useState(user.email);
 
     const closeMenu = () => {setAnchorEl(null);}
     const closeDialog = () => {setOpenProfileDialog(false);}
@@ -89,7 +92,10 @@ export function ProfileDialog() {
                         type="text"
                         fullWidth
                         variant="standard"
-                        value={user.username}
+                        value={username}
+                        onChange={(event) => {
+                            setUsername(event.target.value);
+                        }}
                     />
                     <TextField
                         required
@@ -99,7 +105,10 @@ export function ProfileDialog() {
                         type="email"
                         fullWidth
                         variant="standard"
-                        value={user.email}
+                        value={email}
+                        onChange={(event) => {
+                            setEmail(event.target.value);
+                        }}
                     />
                     <TextField
                         required

@@ -1,3 +1,4 @@
+import time
 from Constants import StorageConfig
 from Logger import Logger
 import json
@@ -8,18 +9,6 @@ class StorageManager():
     def __init__(self, **kwargs):
         pass
 
-    def _check_path(self, path):
-        if not StorageConfig.PROJECTS_PATH in path:
-            Logger.log_error(f"[StorageManager] Path is not inside the projects directory: {path}")
-            return False
-        
-        # Check if about to delete windows system files.
-        if path in ["C:\\", "C:\\Windows", "C:\\Program Files", "C:\\Program Files (x86)"]:
-            Logger.log_error(f"[StorageManager] Attempted to delete system files: {path}")
-            return False
-        
-        return True
-    
     def create_project(self, **kwargs):
         id = kwargs.get("id")
         author = kwargs.get("author")
@@ -47,15 +36,13 @@ class StorageManager():
         
     def delete_project(self, project_id):
         path = os.path.join(StorageConfig.PROJECTS_PATH, str(project_id))
-        # Run a check for the path - inside the StorageConfig.PROJECTS_PATH directory.
-        if not self._check_path(path): return False
         shutil.rmtree(path)
     
     def get_files(self, project_id):
         # Get the list of file names in the project directory.
         path = os.path.join(StorageConfig.PROJECTS_PATH, str(project_id))
         filenames = os.listdir(path)
-        return filenames
+        return [file for file in filenames if file not in StorageConfig.HIDDEN_FILES]
 
     def create_file(self, project_id, name):
         # Check if the file already exists.
@@ -77,7 +64,6 @@ class StorageManager():
     
     def delete_file(self, project_id, name):
         path = os.path.join(StorageConfig.PROJECTS_PATH, str(project_id), name)
-        if not self._check_path(path): return False
         os.remove(path)
         return True
     

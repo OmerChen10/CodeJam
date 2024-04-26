@@ -1,6 +1,6 @@
 import { ProjectInterface } from "../../../Constants"
 import { ImageButton } from "../../../components/ImageButton/ImageButton"
-import { ProfileDialog } from "../../../components/ProfileDialog"
+import { ProfileDialog } from "../../../components/dialogs/ProfileDialog"
 
 interface props {
     runCurrentFile: () => void

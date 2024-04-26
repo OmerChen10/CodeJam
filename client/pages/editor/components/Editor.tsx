@@ -6,40 +6,33 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { SelectedProjectContext } from "../../../App";
 import { LoadingContext } from "../editor-page";
 import { Terminal } from "./Terminal";
-import { SelectedFileNameContext } from "../editor-page";
-
 
 interface props {
     fileSaved: (state: boolean) => void
+    currFileName: string
+    prevFileName: string
 }
 
-export function CodeEditor({fileSaved}: props) {
+export function CodeEditor({fileSaved, currFileName, prevFileName}: props) {
 
     const [selectedProject, _] = useContext(SelectedProjectContext)
-    const currFileName = useContext(SelectedFileNameContext)
     const setLoading = useContext(LoadingContext)
 
     const nm = useRef<NetworkManager>(NetworkManager.getInstance()).current
     const editorRef = useRef<editor.IStandaloneCodeEditor>()
-    const isProgrammaticChange = useRef<boolean>(false)
-    const prevFileName = useRef<string>("")
     const fileChangeTimestamp = useRef<number>(0)
-
-    const [editorText, updateEditorText] = useState<string>("")
-
 
     useEffect(() => {
         if (currFileName === "") return
-        if (currFileName === prevFileName.current) return
-        if (editorRef.current) saveFile()
-
-        prevFileName.current = currFileName
+        if (currFileName === prevFileName) return
+        saveFile(prevFileName)
+        
         setLoading(true)
         fetch(EditorConfig.STORAGE_DIRECTORY + selectedProject.id + "//" + currFileName).then((response) => {
             setLoading(false)
             fileSaved(true)
             response.text().then((text) => {
-                updateEditorText(text)
+                editorRef.current?.setValue(text)
             })
         })
     }, [currFileName])
@@ -53,14 +46,15 @@ export function CodeEditor({fileSaved}: props) {
     const autoSave = () => {
         setTimeout(() => {
             if (Date.now() - fileChangeTimestamp.current > EditorConfig.AUTO_SAVE_TIME) {
-                saveFile()
+                saveFile(currFileName)
             }
         }, EditorConfig.AUTO_SAVE_TIME)
     }
 
-    const saveFile = () => {
+    const saveFile = (fileName: string) => {
+        if (fileName === "") return
         nm.send("autoSave", {
-            name: prevFileName.current,
+            name: fileName,
             data: editorRef.current?.getValue()
         })
         fileSaved(true)
@@ -87,19 +81,9 @@ export function CodeEditor({fileSaved}: props) {
                 }}
                 onChange={handleChanges}
                 onMount={(ref) => {editorRef.current = ref}}
-                value={editorText}
                 />
         )
     }
-
-
-    nm.onEvent("editorReceive", (changes: object) => {
-        if (editorRef.current === undefined) {
-            return
-        }
-        isProgrammaticChange.current = true
-        editorRef.current.executeEdits("Server", (changes as any)["data"])
-    })
 
     return ((
         <div id="code-editor">

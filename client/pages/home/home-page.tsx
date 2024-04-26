@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import "./home.css";
 import { SelectedProjectContext } from "../../App.tsx";
 import { useNavigate } from "react-router-dom";
-import { ProfileDialog } from "../../components/ProfileDialog.tsx";
+import { ProfileDialog } from "../../components/dialogs/ProfileDialog.tsx";
 
 export function HomePage() {
     const [popUpMenuMode, setPopUpMenuMode] = useState("none");
