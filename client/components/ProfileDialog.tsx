@@ -1,23 +1,20 @@
 import { useContext, useState } from "react";
 import { currentUser } from "../App";
-import { Dialog, TextField, DialogContent, Box, DialogTitle, DialogActions, Button } from "@mui/material";
+import { Dialog, TextField, DialogContent, Box, DialogTitle, DialogActions, Button, IconButton, Avatar, Menu, MenuItem } from "@mui/material";
 import { NetworkManager } from "../Network/manager";
 import { toast } from "sonner";
 
 
-interface props {
-    openDialog: boolean
-    setOpenDialog: (open: boolean) => void
-}
-
-export function ProfileDialog({ openDialog, setOpenDialog }: props) {
+export function ProfileDialog() {
 
     const [user, setUser] = useContext(currentUser);
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const [openProfileDialog, setOpenProfileDialog] = useState(false);
+    const openAvatarMenu = Boolean(anchorEl);
     const nm = NetworkManager.getInstance();
 
-    const handleClose = () => {
-        setOpenDialog(false);
-    };
+    const closeMenu = () => {setAnchorEl(null);}
+    const closeDialog = () => {setOpenProfileDialog(false);}
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -45,78 +42,99 @@ export function ProfileDialog({ openDialog, setOpenDialog }: props) {
             }
         });
 
-        handleClose();
+        closeDialog();
 
     };
 
     return (
-        <Dialog
-            open={openDialog}
-            onClose={handleClose}
-            PaperProps={{
-                component: 'form',
-                onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
-                    event.preventDefault();
-                    handleSubmit(event);
-                },
-            }}
-        >
-            <DialogTitle>Profile</DialogTitle>
-            <DialogContent dividers>
-                <TextField
-                    autoFocus
-                    required
-                    margin="dense"
-                    name="username"
-                    label="Username"
-                    type="text"
-                    fullWidth
-                    variant="standard"
-                    value={user.username}
-                />
-                <TextField
-                    required
-                    margin="dense"
-                    name="email"
-                    label="Email Address"
-                    type="email"
-                    fullWidth
-                    variant="standard"
-                    value={user.email}
-                />
-                <TextField
-                    required
-                    margin="dense"
-                    name="currentPassword"
-                    label="Current Password"
-                    type="password"
-                    fullWidth
-                    variant="standard"
-                />
-                <TextField
-                    required
-                    margin="dense"
-                    name="password"
-                    label="Password"
-                    type="password"
-                    fullWidth
-                    variant="standard"
-                />
-                <TextField
-                    required
-                    margin="dense"
-                    name="confirmPassword"
-                    label="Confirm Password"
-                    type="password"
-                    fullWidth
-                    variant="standard"
-                />
+        <div>
+            <IconButton id="profile-button" onClick={(event: React.MouseEvent<HTMLElement>) => {
+                setAnchorEl(event.currentTarget)
+            }}>
+                <Avatar sx={{ bgcolor: '#4f575c', color: 'white' }}>{user.username[0]}</Avatar>
+            </IconButton>
+            <Menu
+                id="profile-menu"
+                open={openAvatarMenu}
+                anchorEl={anchorEl}
+                onClose={closeMenu}
+                MenuListProps={{
+                    'aria-labelledby': 'basic-button',
+                }}>
+                <MenuItem onClick={() => {
+                    setOpenProfileDialog(true)
+                    closeMenu()
+                }}>Profile</MenuItem>
+                <MenuItem>Logout</MenuItem>
+            </Menu>
+            <Dialog
+                open={openProfileDialog}
+                onClose={closeDialog}
+                PaperProps={{
+                    component: 'form',
+                    onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
+                        event.preventDefault();
+                        handleSubmit(event);
+                    },
+                }}
+            >
+                <DialogTitle>Profile</DialogTitle>
+                <DialogContent dividers>
+                    <TextField
+                        autoFocus
+                        required
+                        margin="dense"
+                        name="username"
+                        label="Username"
+                        type="text"
+                        fullWidth
+                        variant="standard"
+                        value={user.username}
+                    />
+                    <TextField
+                        required
+                        margin="dense"
+                        name="email"
+                        label="Email Address"
+                        type="email"
+                        fullWidth
+                        variant="standard"
+                        value={user.email}
+                    />
+                    <TextField
+                        required
+                        margin="dense"
+                        name="currentPassword"
+                        label="Current Password"
+                        type="password"
+                        fullWidth
+                        variant="standard"
+                    />
+                    <TextField
+                        required
+                        margin="dense"
+                        name="password"
+                        label="Password"
+                        type="password"
+                        fullWidth
+                        variant="standard"
+                    />
+                    <TextField
+                        required
+                        margin="dense"
+                        name="confirmPassword"
+                        label="Confirm Password"
+                        type="password"
+                        fullWidth
+                        variant="standard"
+                    />
 
-            </DialogContent>
-            <DialogActions>
-                <Button onClick={handleClose}>Cancel</Button>
-                <Button type="submit">Save</Button>
-            </DialogActions>
-        </Dialog>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={closeDialog}>Cancel</Button>
+                    <Button type="submit">Save</Button>
+                </DialogActions>
+            </Dialog>
+        </div>
     );
 }
