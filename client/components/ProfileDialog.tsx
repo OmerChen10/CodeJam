@@ -39,6 +39,7 @@ export function ProfileDialog({ openDialog, setOpenDialog }: props) {
             if (response.success) {
                 setUser(response.user);
                 toast.success('Profile updated');
+                window.location.reload();
             } else {
                 toast.error('Failed to update profile');
             }
