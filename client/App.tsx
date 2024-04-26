@@ -5,23 +5,32 @@ import { EditorPage } from "./pages/editor/editor-page"
 import { HomePage } from "./pages/home/home-page"
 import { toast } from "sonner"
 import { createContext, useEffect, useState } from "react"
-import { ProjectInterface } from "./Constants"
+import { ProjectInterface, UserInterface } from "./Constants"
 import { LocalStorageController } from "./localStorageController"
 import { useNavigate } from "react-router-dom"
-
+import { createTheme, ThemeProvider } from "@mui/material"
 
 export const SelectedProjectContext = createContext<[ProjectInterface, (project: ProjectInterface) => void]>([
     {} as ProjectInterface,
     () => {}
 ]);
 
-export const UserLoggedIn = createContext<[boolean, (loggedIn: boolean) => void]>([false, () => {}]);
+export const currentUser = createContext<[UserInterface, (user: UserInterface) => void]>([
+    {} as UserInterface,
+    () => {}
+]);
 
 function App() {
     const [selectedProject, setSelectedProject] = useState({} as ProjectInterface)
-    const [userLoggedIn, setUserLoggedIn] = useState(false)
+    const [user, setUser] = useState({} as UserInterface)
     const nm = NetworkManager.getInstance()
     const navigate = useNavigate()
+
+    const darkTheme = createTheme({
+        palette: {
+            mode: "dark",
+        },
+    })
 
     useEffect(() => {
         autoNavigate();
@@ -37,7 +46,7 @@ function App() {
         if (!token) navigate("/");
         nm.send("autoLogin", {token: token}, (response: any) => {
             if (response.success) {
-                setUserLoggedIn(true);
+                setUser(response.user);
                 switch (requestedEndpoint) {
                     case "/":
                         navigate("/home");
@@ -65,22 +74,24 @@ function App() {
     }
 
     function PrivatePage({children}: {children: any}) {
-        if (!userLoggedIn) {
+        if (Object.keys(user).length === 0) {
             return null;
         }
         return children;
     }
     
     return (    
-        <UserLoggedIn.Provider value={[userLoggedIn, setUserLoggedIn]}>
-            <SelectedProjectContext.Provider value={[selectedProject, updateSelectedProject]}>
-                <Routes>
-                    <Route path="/" element={<LoginPage />} />
-                    <Route path="/home" element={<PrivatePage><HomePage/></PrivatePage>} />
-                    <Route path="/editor" element={<PrivatePage><EditorPage/></PrivatePage>} />
-                </Routes>
-            </SelectedProjectContext.Provider>
-        </UserLoggedIn.Provider>
+        <ThemeProvider theme={darkTheme}>
+            <currentUser.Provider value={[user, setUser]}>
+                <SelectedProjectContext.Provider value={[selectedProject, updateSelectedProject]}>
+                    <Routes>
+                        <Route path="/" element={<LoginPage />} />
+                        <Route path="/home" element={<PrivatePage><HomePage/></PrivatePage>} />
+                        <Route path="/editor" element={<PrivatePage><EditorPage/></PrivatePage>} />
+                    </Routes>
+                </SelectedProjectContext.Provider>
+            </currentUser.Provider>
+        </ThemeProvider>
     )
 }
 

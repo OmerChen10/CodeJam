@@ -6,8 +6,9 @@ import { NetworkManager } from "../../Network/manager"
 import { FileButton } from "./components/fileButton"
 import { toast } from "sonner"
 import { EditorConfig } from "../../Constants"
-import { ImageButton } from "../../components/ImageButton/ImageButton"
-import { Avatar } from "@mui/material"
+import { EditorNavbar } from "./components/navbar"
+import { currentUser } from "../../App"
+
 
 export const LoadingContext = createContext<(loading: boolean) => void>(() => {})
 export const SelectedFileNameContext = createContext<string>("")
@@ -67,13 +68,6 @@ export function EditorPage() {
         })
     }
 
-    function renderSaveIndicator() {
-        if (fileSaved) {
-            return <img src="./client/assets/images/checkmark-icon.png"/>
-        }
-        return <div id="save-spinner" className="spinner-border" role="status"/>
-    }
-
     function createNewFile() {
         nm.send("createFile", {name: "New File"}, (response) => {
             if (response.success) {
@@ -99,18 +93,7 @@ export function EditorPage() {
     if (!selectedProject) return null
     return (
         <div id="main-editor">
-            <div id="navbar">
-                <h2 id="navbar-title">{'CodeJam</>'}</h2>
-                <div id="project-name">
-                    <h2 className="badge text-bg-secondary">{selectedProject.name}</h2>
-                    <div id="save-indicator">
-                        {renderSaveIndicator()}
-                    </div>
-                </div>
-                <div id="navbar-side-buttons">
-                    <ImageButton src="./client/assets/images/run-icon.png" enabled={runEnabled.current} onClick={runCurrentFile}/>
-                </div>
-            </div>
+            <EditorNavbar runCurrentFile={runCurrentFile} selectedProject={selectedProject} runEnabled={runEnabled.current} fileSaved={fileSaved}/>
             <div id="editor-container" className={isLoading ? "disabled" : ""}>
                 <div id="editor-nav">
                     <div id="file-list-title">

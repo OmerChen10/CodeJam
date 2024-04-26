@@ -8,7 +8,7 @@ import { toast } from "sonner";
 import "./home.css";
 import { SelectedProjectContext } from "../../App.tsx";
 import { useNavigate } from "react-router-dom";
-
+import { ProfileDialog } from "../../components/ProfileDialog.tsx";
 
 export function HomePage() {
     const [popUpMenuMode, setPopUpMenuMode] = useState("none");
@@ -59,6 +59,7 @@ export function HomePage() {
         <div id="main-home">
             <div id="navbar">
                 <h3 id="title">CodeJam</h3>
+                <ProfileDialog/>
             </div>
             <div id="projects-container" className={(popUpMenuMode != "none") ? "inactive" : "active"}>
                 <div onClick={() => {setPopUpMenuMode("createProject")}} className="project-button" id="create-project-button">
