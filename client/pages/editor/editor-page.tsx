@@ -39,12 +39,7 @@ export function EditorPage() {
                 onOpen={() => {
                     setPrevFileName(currentFileName)
                     setCurrentFileName(fileName)
-                    if (fileName.split(".")[1] in EditorConfig.supportedLanguages) {
-                        runEnabled.current = true
-                    }
-                    else {
-                        runEnabled.current = false
-                    }
+                    runEnabled.current = fileName.split(".")[1] in EditorConfig.supportedLanguages
                 }}
                 onRename={
                     (oldName: string, newName: string) => {

@@ -14,6 +14,8 @@ class ClientIO():
 
         self.send_buffer = []
         self.handler_map = {}
+
+        self.on_disconnect = None
     
     def eventHandler(self, handler: callable):
         """ Decorator for adding an event handler. """
@@ -61,6 +63,7 @@ class ClientIO():
         
         except websockets.exceptions.ConnectionClosed:
             Logger.log_info(f"[Client Handler] Client disconnected.")
+            self.on_disconnect()
 
         except Exception as e:
             Logger.log_error(f"[Client Handler] An error occurred in clientIO: {e}")
@@ -85,6 +88,11 @@ class ClientIO():
         msg = json.dumps({"eventName": event_name, "data": formattedResponse}) 
         self.send_buffer.append(msg) # Add the message to the list of pending messages.
 
+    @Logger.catch_exceptions
+    def setDisconnectHandler(self, handler: callable):
+        """ Sets the disconnect handler. """
+
+        self.on_disconnect = handler
 
     async def stop(self) -> None:
         """ Stops the client. """

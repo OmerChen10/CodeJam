@@ -1,8 +1,8 @@
 from Network import ClientIO
 from App.database.manager import DBManager
 from App.StorageManager import StorageManager
-from App.Executer import Executer
 from Constants import Account, Project
+from App.sessions import SessionManager, Session
 import time 
 import secrets
 
@@ -12,15 +12,12 @@ class ClientHandler():
         self.network_manager: NetworkManger = manager
         self.socket = socket
         self.db_manager: DBManager = DBManager.get_instance()
-
+        self.session_manager: SessionManager = SessionManager.get_instance()
+        self.storage_manager: StorageManager = StorageManager()
+        
         self.account: Account = None
         self.project: Project = None
-        self.storage_manager: StorageManager = StorageManager()
-        self.executer: Executer = None
-
-        @self.socket.eventHandler
-        def editorSend(msg):
-            self.network_manager.broadcast(self.socket, "editorReceive", msg)
+        self.session: Session = None
 
         @self.socket.eventHandler
         def createUser(props):
@@ -114,6 +111,9 @@ class ClientHandler():
         @self.socket.eventHandler
         def setCurrentProject(props):
             self.project = Project(props["id"], props["name"], props["author"], props["description"])
+            self.session = self.session_manager.get_session(self.project)
+            self.session.join(self.socket)
+
             return True
         
         @self.socket.eventHandler
@@ -134,20 +134,14 @@ class ClientHandler():
         
         @self.socket.eventHandler
         def clientInHomePage(props):
-            self.project = None
-            if self.executer is not None:
-                self.executer.close()
-                self.executer = None
+            if self.session is not None:
+                self.session.leave(self.socket)
+                self.session = None
+        
 
-            return True
-        
-        @self.socket.eventHandler
-        def createExecuter(props):
-            self.executer = Executer(self.project, self.socket)
-        
         @self.socket.eventHandler
         def executerCommand(props):
-            self.executer.send_input(props["command"])
+            self.session.executer.send_input(props["command"])
             return True
         
         @self.socket.eventHandler
