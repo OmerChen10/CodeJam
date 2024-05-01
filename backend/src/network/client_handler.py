@@ -130,7 +130,7 @@ class ClientHandler():
             return self.storage_manager.edit_file_name(self.project.id, props["oldName"], props["newName"])
         
         @self.socket.eventHandler
-        def getFile(props):
+        def fetchFile(props):
             return self.storage_manager.get_file(self.project.id, props["name"])
 
         @self.socket.eventHandler

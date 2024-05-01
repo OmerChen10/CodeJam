@@ -20,28 +20,31 @@ export function CodeEditor({fileSaved, currFileName, prevFileName}: props) {
     const setLoading = useContext(LoadingContext)
 
     const nm = useRef<NetworkManager>(NetworkManager.getInstance()).current
-    const editorRef = useRef<editor.IStandaloneCodeEditor>()
+    const [editor, setEditor] = useState<editor.IStandaloneCodeEditor>()
     const fileChangeTimestamp = useRef<number>(0)
+
 
     useEffect(() => {
         if (currFileName === "") return
         if (currFileName === prevFileName) return
         saveFile(prevFileName)
-        
-        setLoading(true)
-        fetch(EditorConfig.STORAGE_DIRECTORY + selectedProject.id + "//" + currFileName).then((response) => {
-            setLoading(false)
-            fileSaved(true)
-            response.text().then((text) => {
-                editorRef.current?.setValue(text)
-            })
-        })
-    }, [currFileName])
+        fetchFile(currFileName)
+    }, [currFileName, editor])
+
 
     const handleChanges = () => {
         fileChangeTimestamp.current = Date.now()
         fileSaved(false)
         autoSave()
+    }
+
+    const fetchFile = (fileName: string) => {
+        setLoading(true)
+        nm.send("fetchFile", {name: fileName}, (response) => {
+            setLoading(false)
+            fileSaved(true)
+            editor?.setValue(response.data)
+        })
     }
 
     const autoSave = () => {
@@ -56,7 +59,7 @@ export function CodeEditor({fileSaved, currFileName, prevFileName}: props) {
         if (fileName === "") return
         nm.send("autoSave", {
             name: fileName,
-            data: editorRef.current?.getValue()
+            data: editor?.getValue()
         })
         fileSaved(true)
     }
@@ -81,7 +84,7 @@ export function CodeEditor({fileSaved, currFileName, prevFileName}: props) {
                     cursorStyle: "line"
                 }}
                 onChange={handleChanges}
-                onMount={(ref) => {editorRef.current = ref}}
+                onMount={(ref) => {setEditor(ref)}}
                 />
         )
     }

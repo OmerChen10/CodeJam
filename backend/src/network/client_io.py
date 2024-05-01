@@ -62,7 +62,7 @@ class ClientIO():
         
         except websockets.exceptions.ConnectionClosed:
             Logger.log_info(f"[Client Handler] Client disconnected.")
-            self.on_disconnect()
+            if self.on_disconnect is not None: self.on_disconnect()
 
         except Exception as e:
             Logger.log_error(f"[Client Handler] An error occurred in clientIO: {e}")
