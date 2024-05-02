@@ -6,6 +6,7 @@ export default defineConfig({
     plugins: [react()],
     root: './frontend/src',
     server: {
+        host: '0.0.0.0',
         port: 80,
         strictPort: true,
         // https: {
@@ -13,5 +14,4 @@ export default defineConfig({
         //     cert: './.cert/cert.pem'
         // },
     },
-    
 })

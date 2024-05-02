@@ -26,7 +26,7 @@ export function HomePage() {
         nm.send("clientInHomePage", {});
     }, []);
 
-    const renderPopUp = () => {
+    function renderPopUp() {
         switch (popUpMenuMode) {
             case "createProject":
                 return <ProjectCreator setPopUpMenuMode={setPopUpMenuMode} sendCreateRequest={sendCreateRequest}/>
@@ -37,7 +37,7 @@ export function HomePage() {
         }
     }
     
-    const renderProjectButtons = () => {
+    function renderProjectButtons() {
         if (projectList == undefined){
             return;
         }
@@ -56,23 +56,6 @@ export function HomePage() {
                 }}
             />});
     }
-
-    return (
-        <div id="main-home">
-            <div id="navbar">
-                <h3 id="title">CodeJam</h3>
-                <ProfileDialog/>
-            </div>
-            <div id="projects-container" className={(popUpMenuMode != "none") ? "inactive" : "active"}>
-                <div onClick={() => {setPopUpMenuMode("createProject")}} className="project-button" id="create-project-button">
-                    <div className="project-button-text">Create New Project</div>
-                    <div className="button-text-background" id="plus-icon"/>
-                </div>
-                {renderProjectButtons()}
-            </div>
-            {renderPopUp()}
-        </div>
-    );
     
     function sendCreateRequest() {
         let projectName = (document.getElementById("project-creator-name") as HTMLInputElement).value;
@@ -116,4 +99,21 @@ export function HomePage() {
             }
         });
     }
+
+    return (
+        <div id="main-home">
+            <div id="navbar">
+                <h3 id="title">CodeJam</h3>
+                <ProfileDialog/>
+            </div>
+            <div id="projects-container" className={(popUpMenuMode != "none") ? "inactive" : "active"}>
+                <div onClick={() => {setPopUpMenuMode("createProject")}} className="project-button" id="create-project-button">
+                    <div className="project-button-text">Create New Project</div>
+                    <div className="button-text-background" id="plus-icon"/>
+                </div>
+                {renderProjectButtons()}
+            </div>
+            {renderPopUp()}
+        </div>
+    ); 
 }

@@ -10,6 +10,7 @@ import { createContext, useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { createTheme, ThemeProvider } from "@mui/material"
 import React from "react"
+import { blueGrey } from "@mui/material/colors"
 
 export const SelectedProjectContext = createContext<[ProjectInterface, (project: ProjectInterface) => void]>([
     {} as ProjectInterface,
@@ -30,7 +31,18 @@ function App() {
     const darkTheme = createTheme({
         palette: {
             mode: "dark",
+            secondary: {
+                light: blueGrey[300],
+                main: blueGrey[500],
+                dark: blueGrey[700],
+                contrastText: "#fff"
+            }
         },
+        typography: {
+            button: {
+                fontWeight: 'bold'
+            }
+        }
     })
 
     useEffect(() => {
@@ -39,6 +51,12 @@ function App() {
             toast.info(response.data);
         });
     }, []);
+
+    function updateSelectedProject(project: ProjectInterface) {
+        setSelectedProject(project);
+        nm.send("setCurrentProject", project);
+        LocalStorageController.setProject(project);
+    }
 
     function autoNavigate() {
         const token = LocalStorageController.getUserToken();
@@ -66,12 +84,6 @@ function App() {
             }
             else navigate("/");
         });
-    }
-
-    function updateSelectedProject(project: ProjectInterface) {
-        nm.send("setCurrentProject", project);
-        LocalStorageController.setProject(project);
-        setSelectedProject(project);
     }
 
     function PrivatePage({ children }: { children: any }) {

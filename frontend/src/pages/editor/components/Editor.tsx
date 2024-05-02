@@ -32,13 +32,13 @@ export function CodeEditor({fileSaved, currFileName, prevFileName}: props) {
     }, [currFileName, editor])
 
 
-    const handleChanges = () => {
+    function handleChanges() {
         fileChangeTimestamp.current = Date.now()
         fileSaved(false)
         autoSave()
     }
 
-    const fetchFile = (fileName: string) => {
+    function fetchFile(fileName: string) {
         setLoading(true)
         nm.send("fetchFile", {name: fileName}, (response) => {
             setLoading(false)
@@ -47,7 +47,7 @@ export function CodeEditor({fileSaved, currFileName, prevFileName}: props) {
         })
     }
 
-    const autoSave = () => {
+    function autoSave() {
         setTimeout(() => {
             if (Date.now() - fileChangeTimestamp.current > EditorConfig.AUTO_SAVE_TIME) {
                 saveFile(currFileName)
@@ -55,7 +55,7 @@ export function CodeEditor({fileSaved, currFileName, prevFileName}: props) {
         }, EditorConfig.AUTO_SAVE_TIME)
     }
 
-    const saveFile = (fileName: string) => {
+    function saveFile(fileName: string) {
         if (fileName === "") return
         nm.send("autoSave", {
             name: fileName,
@@ -64,7 +64,7 @@ export function CodeEditor({fileSaved, currFileName, prevFileName}: props) {
         fileSaved(true)
     }
 
-    const renderEditor = () => {
+    function renderEditor() {
         if (currFileName == "") {
             return <h1 id="select-file-text">Select a file to edit</h1>
         }

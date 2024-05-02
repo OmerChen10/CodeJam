@@ -35,9 +35,12 @@ class DBManager:
         )
     
     def execute(self, query: str, *args):
+        self.conn = sqlite3.connect(DatabaseConfig.PATH)
         self.cursor.execute(query, args)
         self.conn.commit()
         ret = self.cursor.fetchall()
+        self.conn.close()
+        
         if not ret: return None
         if len(ret) == 1: return ret[0]
         else: return ret
