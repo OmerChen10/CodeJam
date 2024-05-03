@@ -2,6 +2,7 @@ import { toast } from "sonner";
 import { GenericResponse, UserInterface } from "../config";
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import React from "react";
+import { LoadingScreen } from "./loading-screen";
 
 interface Event {
     eventName: string;
@@ -70,7 +71,7 @@ export function NetProvider({ children }: { children: React.ReactNode }) {
 
     return (
         <NetworkContext.Provider value={{ send, onEvent, connected }}>
-            { connected ? children : <div>Connecting to server...</div>}
+            { connected ? children : <LoadingScreen> Connecting to server </LoadingScreen>}
         </NetworkContext.Provider>
     );
 }

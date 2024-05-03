@@ -5,6 +5,7 @@ import { LocalStorageController } from "./localStorageController";
 import { RouteConfig, UserInterface, UserResponse } from "../config/constants";
 import { Navigate, useNavigate } from "react-router-dom";
 import React from "react";
+import { LoadingScreen } from "./loading-screen";
 
 interface authProviderProps {
     user: UserInterface;
@@ -92,7 +93,7 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
 
     return (
         <AuthContext.Provider value={{user, createAccount, login, logout, isLoggedIn}}>
-            {loading ? <div>Loading...</div> : children}
+            {loading ? <LoadingScreen>Authenticating... </LoadingScreen> : children}
         </AuthContext.Provider>
     );
 }
