@@ -2,8 +2,8 @@ import { ProjectInterface } from "../config/constants";
 
 export class LocalStorageController {
     
-    public static getUserToken(): string {
-        return localStorage.getItem("userToken") || "";
+    public static getUserToken(): string | null {
+        return localStorage.getItem("userToken");
     }
 
     public static setUserToken(token: string) {
@@ -18,9 +18,9 @@ export class LocalStorageController {
         localStorage.setItem("project", JSON.stringify(project));
     }
 
-    public static getProject(): ProjectInterface {
-        const project = localStorage.getItem("project") || "";
+    public static getProject(): ProjectInterface | null {
+        const project = localStorage.getItem("project");
         if (project === "") return {} as ProjectInterface;
-        return JSON.parse(project);
+        return JSON.parse(project!);
     }
 }

@@ -2,7 +2,7 @@ import "./editor.css"
 import { CodeEditor } from "./components/Editor"
 import { createContext, useContext, useEffect, useRef, useState } from "react"
 import { SelectedProjectContext } from "../../App"
-import { NetworkManager } from "../../network/manager"
+import { useNetwork } from "../../utils/net-provider"
 import { FileButton } from "./components/fileButton"
 import { toast } from "sonner"
 import { EditorConfig } from "../../config/constants"
@@ -24,11 +24,11 @@ export function EditorPage() {
     const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false)
     const fileNameToDelete = useRef<string>("")
 
-    const nm = NetworkManager.getInstance()
+    const nm = useNetwork()
     const runEnabled = useRef(false)
 
     useEffect(() => {
-        nm.send("getProjectFilePaths", {}, (response) => {
+        nm.send("getProjectFilePaths", {}).then((response) => {
             if (response.success) {
                 setFileList(response.data)
             }
@@ -64,7 +64,7 @@ export function EditorPage() {
         let name = prompt("Enter the name of the new file:")
         if (!name) return
         
-        nm.send("createFile", {name: name}, (response) => {
+        nm.send("createFile", {name: name}).then((response) => {
             if (response.success) {
                 toast.success("File created successfully!")
                 setFileList([...fileList, name])
@@ -86,7 +86,7 @@ export function EditorPage() {
     }
 
     function deleteFile(fileName: string) {
-        nm.send("deleteFile", {name: fileName}, (response) => {
+        nm.send("deleteFile", {name: fileName}).then((response) => {
             if (response.success) {
                 toast.success("File deleted successfully!")
                 if (fileName === currentFileName) {

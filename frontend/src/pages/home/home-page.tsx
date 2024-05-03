@@ -2,8 +2,8 @@ import { ProfileDialog } from "../../components/dialogs/ProfileDialog.tsx";
 import { ProjectPropEditor } from "./components/ProjectPropEditor.tsx";
 import { ProjectCreator } from "./components/ProjectCreator.tsx";
 import { ProjectButton } from "./components/ProjectButton.tsx";
-import { ProjectInterface } from "../../config/constants.ts";
-import { NetworkManager } from "../../network/manager.ts";
+import { ProjectInterface, ProjectListResponse, RouteConfig } from "../../config/constants.ts";
+import { useNetwork } from "../../utils/net-provider";
 import { useContext, useEffect, useState } from "react";
 import { SelectedProjectContext } from "../../App.tsx";
 import { useNavigate } from "react-router-dom";
@@ -17,7 +17,7 @@ export function HomePage() {
     const [projectList, setProjectList] = useState([] as ProjectInterface[]);
     const [projectToEdit, setProjectToEdit] = useState({} as ProjectInterface);
 
-    const nm = NetworkManager.getInstance();
+    const nm = useNetwork();
     const navigate = useNavigate();
     const [_, setSelectedProject] = useContext(SelectedProjectContext);
     
@@ -48,7 +48,7 @@ export function HomePage() {
                 onDelete={sendDeleteRequest} 
                 onOpen={() => {
                     setSelectedProject(project);
-                    navigate("/editor");
+                    navigate(RouteConfig.EDITOR);
                 }} 
                 onEdit={() => {
                     setProjectToEdit(project);
@@ -62,7 +62,7 @@ export function HomePage() {
         let projectDescription = (document.getElementById("project-description") as HTMLInputElement).value;
 
         // Send the request to create the project
-        nm.send("createProject", {name: projectName, description: projectDescription}, (response: any) => {
+        nm.send<any>("createProject", {name: projectName, description: projectDescription}).then((response) => {
             if (response.success){
                 toast.success("Project created successfully!");
                 fetchProjects();
@@ -76,7 +76,7 @@ export function HomePage() {
     }
 
     function sendDeleteRequest(project: ProjectInterface) {
-        nm.send("deleteProject", {"id": project.id}, (response: any) => {
+        nm.send("deleteProject", {"id": project.id}).then((response: any) => {
             if (response.success){
                 toast.success("Project deleted successfully!");
                 fetchProjects();
@@ -90,9 +90,9 @@ export function HomePage() {
     }
 
     function fetchProjects() {
-        nm.send("getProjectListForUser", {}, (response: any) => {
+        nm.send<ProjectListResponse>("getProjectListForUser", {}).then((response) => {
             if (response.success){
-                setProjectList(response.projects);
+                setProjectList(response.data.projects);
             }
             else {
                 toast.error("Failed to get projects");

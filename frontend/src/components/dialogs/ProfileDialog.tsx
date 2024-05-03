@@ -1,17 +1,17 @@
 import { useContext, useState } from "react";
-import { currentUser } from "../../App";
 import { Dialog, TextField, DialogContent, Box, DialogTitle, DialogActions, Button, IconButton, Avatar, Menu, MenuItem } from "@mui/material";
-import { NetworkManager } from "../../network/manager";
+import { useNetwork } from "../../utils/net-provider";
 import { toast } from "sonner";
 import React from "react";
+import { useAuth } from "../../utils";
 
 export function ProfileDialog() {
 
-    const [user, setUser] = useContext(currentUser);
+    const {user} = useAuth();
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [openProfileDialog, setOpenProfileDialog] = useState(false);
     const openAvatarMenu = Boolean(anchorEl);
-    const nm = NetworkManager.getInstance();
+    const nm = useNetwork()
 
     const [username, setUsername] = useState(user.username);
     const [email, setEmail] = useState(user.email);
@@ -20,6 +20,7 @@ export function ProfileDialog() {
     const closeDialog = () => {setOpenProfileDialog(false);}
 
     const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+
         event.preventDefault();
         const form = event.currentTarget as HTMLFormElement;
         const formData = new FormData(form);
@@ -35,9 +36,8 @@ export function ProfileDialog() {
             return;
         }
 
-        nm.send("updateUserData", data, (response: any) => {
+        nm.send("updateUserData", data).then((response) => {
             if (response.success) {
-                setUser(response.user);
                 toast.success('Profile updated');
                 window.location.reload();
             } else {

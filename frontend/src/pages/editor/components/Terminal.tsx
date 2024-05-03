@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from "react"
-import { NetworkManager } from "../../../network/manager"
+import { useNetwork } from "../../../utils/net-provider"
 import React from "react";
 
 
 export function Terminal() {
-    const nm = NetworkManager.getInstance()
+    const nm = useNetwork()
     const [output, setOutput] = useState<string>("")
     const [input, setInput] = useState<string>("> ")
     const commandHistory = useRef<string[]>([])

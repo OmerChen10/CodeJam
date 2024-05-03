@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { NetworkManager } from "../../../network/manager"
+import { useNetwork } from "../../../utils/net-provider"
 import { toast } from "sonner"
 import { Assets } from "../../../config/constants"
 import React from "react";
@@ -14,7 +14,7 @@ interface props {
 export function FileButton({fileName, onOpen, onRename, onDelete}: props) {
     const [fileTypeImgSrc, setFileTypeImgSrc] = useState<string>("")
     const [inputDisplayedText, setInputDisplayedText] = useState<string>("")
-    const nm = NetworkManager.getInstance()
+    const nm = useNetwork()
     const fileExtension = fileName.split(".")[1]
 
     function updateFileName() {
@@ -26,7 +26,7 @@ export function FileButton({fileName, onOpen, onRename, onDelete}: props) {
 
     function saveFileName() {
         nm.send("renameFile", 
-        {oldName: fileName, newName: inputDisplayedText}, (response) => {
+        {oldName: fileName, newName: inputDisplayedText}).then((response) => {
             if (response.success) {
                 toast.success("File name updated successfully!")
                 updateFileName()

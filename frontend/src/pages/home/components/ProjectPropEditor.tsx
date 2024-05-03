@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { ProjectInterface } from "../../../config/constants";
-import { NetworkManager } from "../../../network/manager";
 import { toast } from "sonner";
 import React from "react";
+import { useNetwork } from "../../../utils";
 
 interface ProjectPropEditorProps {
     setPopUpMenuMode: (mode: string) => void;
@@ -34,8 +34,8 @@ export function ProjectPropEditor({ setPopUpMenuMode, fetchProjects, project }: 
 
     function updateMetadata() {
         // Send the request to update the project
-        let nm = NetworkManager.getInstance();
-        nm.send("updateProjectMetadata", {id: project.id, name: name, description: description}, (response: any) => {
+        let nm = useNetwork();
+        nm.send("updateProjectMetadata", {id: project.id, name: name, description: description}).then((response) => {
             if (response.success){
                 toast.success("Project updated successfully!");
                 setPopUpMenuMode("none");

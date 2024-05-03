@@ -1,5 +1,11 @@
 
 
+export class RouteConfig {
+    public static readonly LOGIN = "/login";
+    public static readonly HOME = "/";
+    public static readonly EDITOR = "/editor";
+}
+
 export class EditorConfig {
     public static readonly COOLDOWN_TIME = 100; // in ms
     public static readonly STORAGE_DIRECTORY = 
@@ -31,7 +37,28 @@ export interface UserInterface {
     email: string;
 }
 
-export interface ServerResponseInterface {
-    success: boolean;
-    data: any;
+interface SuccessResponse<T> {
+    success: true;
+    data: T;
 }
+
+interface ErrorResponse {
+    success: false;
+    message: string;
+}
+
+interface UserResponseInterface {
+    token: string;
+    user: UserInterface;
+}
+
+interface ProjectListResponseInterface {
+    projects: ProjectInterface[];
+}
+
+type ServerResponse<T> = SuccessResponse<T> | ErrorResponse;
+export type GenericResponse = ServerResponse<any>;
+export type UserResponse = ServerResponse<UserResponseInterface>;
+export type ProjectResponse = ServerResponse<ProjectInterface>;
+export type ProjectListResponse = ServerResponse<ProjectListResponseInterface>;
+

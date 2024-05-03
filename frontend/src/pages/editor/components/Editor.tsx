@@ -1,4 +1,4 @@
-import { NetworkManager } from "../../../network/manager";
+import { useNetwork } from "../../../utils/net-provider";
 import { EditorConfig } from "../../../config/constants";
 import { Editor } from "@monaco-editor/react";
 import { editor } from "monaco-editor";
@@ -19,7 +19,7 @@ export function CodeEditor({fileSaved, currFileName, prevFileName}: props) {
     const [selectedProject, _] = useContext(SelectedProjectContext)
     const setLoading = useContext(LoadingContext)
 
-    const nm = useRef<NetworkManager>(NetworkManager.getInstance()).current
+    const nm = useNetwork()
     const [editor, setEditor] = useState<editor.IStandaloneCodeEditor>()
     const fileChangeTimestamp = useRef<number>(0)
 
@@ -40,10 +40,12 @@ export function CodeEditor({fileSaved, currFileName, prevFileName}: props) {
 
     function fetchFile(fileName: string) {
         setLoading(true)
-        nm.send("fetchFile", {name: fileName}, (response) => {
-            setLoading(false)
-            fileSaved(true)
-            editor?.setValue(response.data)
+        nm.send("fetchFile", {name: fileName}).then((response) => {
+            if (response.success) {
+                setLoading(false)
+                fileSaved(true)
+                editor?.setValue(response.data)
+            }
         })
     }
 

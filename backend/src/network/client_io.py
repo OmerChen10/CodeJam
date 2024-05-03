@@ -72,19 +72,22 @@ class ClientIO():
     def send(self, event_name: int, response):
         """ Sends a message to the client. """ 
 
+        resp = {
+            "eventName": event_name,
+            "success": True,
+        }
+
         if type(response) == bool:
-            formattedResponse = {"success": response}
+            resp["success"] = response
 
         elif type(response) == dict:
-            formattedResponse = response
-            formattedResponse["success"] = True
+            resp["data"] = response
 
         else:
-            formattedResponse = {"success": True}
-            formattedResponse["data"] = response
+            resp["data"] = response
         
         # Create the message. (Using json to serialize the data).
-        msg = json.dumps({"eventName": event_name, "data": formattedResponse}) 
+        msg = json.dumps(resp)
         self.send_buffer.append(msg) # Add the message to the list of pending messages.
 
     @Logger.catch_exceptions
