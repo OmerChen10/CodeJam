@@ -4,6 +4,7 @@ from colorama import Fore, Back, Style
 
 class Logger:
 
+    enabled = True
     logger = logging.getLogger("CodeJam")
     logger.setLevel(logging.DEBUG)
 
@@ -13,6 +14,10 @@ class Logger:
     fh.setFormatter(formatter)
 
     logger.addHandler(fh)
+
+    @staticmethod
+    def disable():
+        Logger.enabled = False
 
     @staticmethod
     def log_info(message):
