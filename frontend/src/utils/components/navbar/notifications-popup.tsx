@@ -1,7 +1,7 @@
 import { Badge, Box, Button, Container, IconButton, Popover, Stack } from "@mui/material";
 import { ProjectInterface, ProjectListResponse } from "../../../config";
 import NotificationsIcon from '@mui/icons-material/Notifications';
-import { useNetwork } from "../../net-provider";
+import { useNetwork } from "../../providers/net-provider";
 import { useEffect, useState } from "react";
 import React from "react";
 

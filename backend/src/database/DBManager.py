@@ -107,8 +107,9 @@ class DBManager:
         self.execute(f"UPDATE projects SET container_id = '{container_id}' WHERE project_id = {project_id}")
 
     def get_container_id(self, project_id: int):
-        return self.execute(f"SELECT container_id FROM projects WHERE project_id = {project_id}")[0]
-    
+        id = self.execute(f"SELECT container_id FROM projects WHERE project_id = {project_id}")
+        return id[0] if id is not None else None
+
     def create_token(self, user_id: int, token: str, timestamp: str):
         self.execute(f"INSERT INTO user_tokens (user_id, token, timestamp) VALUES {user_id, token, timestamp}")
 

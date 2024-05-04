@@ -1,9 +1,8 @@
-import { useNetwork } from "../../../utils/net-provider";
+import { useNetwork } from "../../../utils";
 import { EditorConfig } from "../../../config/constants";
 import { Editor } from "@monaco-editor/react";
 import { editor } from "monaco-editor";
 import { useContext, useEffect, useRef, useState } from "react";
-import { SelectedProjectContext } from "../../../App";
 import { LoadingContext } from "../editor-page";
 import { Terminal } from "./Terminal";
 import React from "react";
@@ -16,9 +15,7 @@ interface props {
 
 export function CodeEditor({fileSaved, currFileName, prevFileName}: props) {
 
-    const [selectedProject, _] = useContext(SelectedProjectContext)
     const setLoading = useContext(LoadingContext)
-
     const nm = useNetwork()
     const [editor, setEditor] = useState<editor.IStandaloneCodeEditor>()
     const fileChangeTimestamp = useRef<number>(0)

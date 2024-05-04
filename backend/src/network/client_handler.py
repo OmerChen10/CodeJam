@@ -113,6 +113,8 @@ class ClientHandler():
         @self.socket.eventHandler
         def setCurrentProject(props):
             self.project = Project(props["id"], props["name"], props["author"], props["description"])
+            if self.session is not None:
+                self.session.leave(self.socket)
             self.session = self.session_manager.get_session(self.project)
             self.session.join(self.socket)
 

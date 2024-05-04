@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react"
-import { useNetwork } from "../../../utils/net-provider"
+import { useNetwork } from "../../../utils"
 import React from "react";
 
 

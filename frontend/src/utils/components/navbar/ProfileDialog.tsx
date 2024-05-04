@@ -1,9 +1,9 @@
 import { useContext, useState } from "react";
 import { Dialog, TextField, DialogContent, Box, DialogTitle, DialogActions, Button, IconButton, Avatar, Menu, MenuItem } from "@mui/material";
-import { useNetwork } from "../../net-provider";
+import { useNetwork } from "../../providers/net-provider";
 import { toast } from "sonner";
 import React from "react";
-import { useAuth } from "../../auth-provider";
+import { useAuth } from "../../providers/auth-provider";
 
 export function ProfileDialog() {
 

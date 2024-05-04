@@ -1,11 +1,11 @@
 import { useContext, useState, createContext, useEffect } from "react"
 import { toast } from "sonner";
 import { useNetwork } from "./net-provider";
-import { LocalStorageController } from "./localStorageController";
-import { RouteConfig, UserInterface, UserResponse } from "../config/constants";
+import { LocalStorageController } from "../localStorageController";
+import { RouteConfig, UserInterface, UserResponse } from "../../config/constants";
 import { Navigate, useNavigate } from "react-router-dom";
 import React from "react";
-import { LoadingScreen } from "../utils/components";
+import { LoadingScreen } from "../components";
 
 interface authProviderProps {
     user: UserInterface;

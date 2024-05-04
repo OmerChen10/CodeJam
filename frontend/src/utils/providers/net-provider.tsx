@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useRef, useState } from "react";
-import { LoadingScreen } from "../utils/components";
-import { AnyResponse} from "../config";
+import { LoadingScreen } from "../components";
+import { AnyResponse} from "../../config";
 import React from "react";
 
 interface Event {

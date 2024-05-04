@@ -5,7 +5,7 @@ import "./main.css"
 import { Toaster } from 'sonner';
 import { BrowserRouter } from 'react-router-dom';
 import React from 'react';
-import { AuthProvider } from './utils';
+import { AuthProvider, ProjectProvider } from './utils';
 import { NetProvider } from './utils';
 import { ThemeProvider, createTheme } from '@mui/material';
 import { blueGrey } from '@mui/material/colors';
@@ -39,10 +39,12 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         <BrowserRouter>
             <NetProvider>
                 <AuthProvider>
-                    <div id='main-app'>
-                        <App />
-                        <Toaster richColors/>
-                    </div>
+                    <ProjectProvider>
+                        <div id='main-app'>
+                            <App />
+                            <Toaster richColors/>
+                        </div>
+                    </ProjectProvider>
                 </AuthProvider>
             </NetProvider>
         </BrowserRouter>

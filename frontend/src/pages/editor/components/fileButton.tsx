@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { useNetwork } from "../../../utils/net-provider"
+import { useNetwork } from "../../../utils/"
 import { toast } from "sonner"
 import { Assets } from "../../../config/constants"
 import React from "react";

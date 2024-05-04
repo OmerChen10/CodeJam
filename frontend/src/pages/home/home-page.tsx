@@ -3,9 +3,8 @@ import { ProjectPropEditor } from "./components/ProjectPropEditor.tsx";
 import { ProjectCreator } from "./components/ProjectCreator.tsx";
 import { ProjectButton } from "./components/ProjectButton.tsx";
 import { ProjectInterface, ProjectListResponse, RouteConfig } from "../../config/constants.ts";
-import { useNetwork } from "../../utils/net-provider";
+import { useNetwork, useProject } from "../../utils/";
 import { useContext, useEffect, useState } from "react";
-import { SelectedProjectContext } from "../../App.tsx";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import React from "react";
@@ -19,7 +18,7 @@ export function HomePage() {
 
     const nm = useNetwork();
     const navigate = useNavigate();
-    const [_, setSelectedProject] = useContext(SelectedProjectContext);
+    const { setCurrentProject } = useProject();
     
     useEffect(() => {
         fetchProjects();
@@ -47,7 +46,7 @@ export function HomePage() {
                 project={project} 
                 onDelete={sendDeleteRequest} 
                 onOpen={() => {
-                    setSelectedProject(project);
+                    setCurrentProject(project);
                     navigate(RouteConfig.EDITOR);
                 }} 
                 onEdit={() => {

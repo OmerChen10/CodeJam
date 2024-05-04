@@ -2,7 +2,7 @@ import "./editor.css"
 import { CodeEditor } from "./components/Editor"
 import { createContext, useContext, useEffect, useRef, useState } from "react"
 import { SelectedProjectContext } from "../../App"
-import { useNetwork } from "../../utils/net-provider"
+import { useNetwork, useProject } from "../../utils/"
 import { FileButton } from "./components/fileButton"
 import { toast } from "sonner"
 import { EditorConfig } from "../../config/constants"
@@ -16,16 +16,15 @@ export const LoadingContext = createContext<(loading: boolean) => void>(() => {}
 
 export function EditorPage() {
     const [fileList, setFileList] = useState<string[]>([])
-    const [selectedProject, setSelectedProject] = useContext(SelectedProjectContext)
     const [currentFileName, setCurrentFileName] = useState<string>("")
     const [prevFileName, setPrevFileName] = useState<string>("")
     const [isLoading, setLoading] = useState<boolean>(false)
     const [fileSaved, setFileSaved] = useState<boolean>(true)
-
     const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false)
     const fileNameToDelete = useRef<string>("")
 
     const nm = useNetwork()
+    const { currentProject, setCurrentProject } = useProject()
     const runEnabled = useRef(false)
 
     useEffect(() => {
@@ -104,10 +103,10 @@ export function EditorPage() {
         })
     }
 
-    if (!selectedProject) return null
+    if (!currentProject) return null
     return (
         <div id="main-editor">
-            <EditorNavbar runCurrentFile={runCurrentFile} selectedProject={selectedProject} runEnabled={runEnabled.current} fileSaved={fileSaved}/>
+            <EditorNavbar runCurrentFile={runCurrentFile} selectedProject={currentProject} runEnabled={runEnabled.current} fileSaved={fileSaved}/>
             <div id="editor-container" className={isLoading ? "disabled" : ""}>
                 <div id="editor-nav">
                     <div id="file-list-title">
