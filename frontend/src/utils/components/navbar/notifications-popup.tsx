@@ -1,4 +1,4 @@
-import { Badge, Box, Button, Container, IconButton, Popover } from "@mui/material";
+import { Badge, Box, Button, Container, Divider, IconButton, Popover, Stack } from "@mui/material";
 import { ProjectInterface, ProjectListResponse } from "../../../config";
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import { useNetwork } from "../../net-provider";
@@ -62,14 +62,9 @@ export function NotificationPopup() {
                     horizontal: 'left',
                 }}
             >
-                <Container sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    padding: "0.5rem",
-                    gap: "0.5rem"
-                }}>
+                <Stack spacing={1} sx={{ p: 2 }}>
                     {renderNotifications()}
-                </Container>
+                </Stack>
             </Popover>
         </Box>
     );
