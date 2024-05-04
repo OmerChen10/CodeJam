@@ -18,11 +18,18 @@ const darkTheme = createTheme({
             main: blueGrey[500],
             dark: blueGrey[700],
             contrastText: "#fff"
-        }
+        },
+        success: {
+            light: '#4caf50',
+            main: '#4caf50',
+            dark: '#4caf50',
+            contrastText: '#fff',
+        },
     },
     typography: {
         button: {
-            fontWeight: 'bold'
+            fontWeight: 'bold',
+            fontFamily: 'Roboto, Helvetica, Arial, sans-serif',
         }
     }
 })

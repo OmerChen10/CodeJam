@@ -10,7 +10,7 @@ interface Event {
 }
 
 interface NetProviderInterface {
-    send: <T extends GenericResponse>(eventName: string, message: any) => Promise<T>;
+    send: <T extends GenericResponse>(eventName: string, message?: any) => Promise<T>;
     onEvent: (event: string, callback: (data: any) => void) => void;
     connected: boolean;
 }
@@ -46,11 +46,13 @@ export function NetProvider({ children }: { children: React.ReactNode }) {
         }
     }, []);
 
-    function send<T extends GenericResponse>(eventName: string, message: any): Promise<T> {
+    function send<T extends GenericResponse>(eventName: string, message?: any): Promise<T> {
         return new Promise((resolve, reject) => {
             try {
                 // Check if the massage is a json object
-                if (typeof message === "object") {
+                if (message === undefined) {
+                    message = {};
+                } else if (typeof message === "object") {
                     message = JSON.stringify(message);
                 }
                 

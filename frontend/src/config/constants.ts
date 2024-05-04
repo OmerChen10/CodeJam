@@ -26,7 +26,7 @@ export class Assets {
 }
 
 export interface ProjectInterface {
-    id: string;
+    id: number;
     name: string;
     description: string;
     author: string;

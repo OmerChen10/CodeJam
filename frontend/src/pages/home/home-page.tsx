@@ -1,4 +1,4 @@
-import { ProfileDialog } from "../../utils/components";
+import { NotificationPopup, ProfileDialog } from "../../utils/components";
 import { ProjectPropEditor } from "./components/ProjectPropEditor.tsx";
 import { ProjectCreator } from "./components/ProjectCreator.tsx";
 import { ProjectButton } from "./components/ProjectButton.tsx";
@@ -104,6 +104,7 @@ export function HomePage() {
         <div id="main-home">
             <div id="navbar">
                 <h3 id="title">{"CodeJam</>"}</h3>
+                <NotificationPopup/>
                 <ProfileDialog/>
             </div>
             <div id="projects-container" className={(popUpMenuMode != "none") ? "inactive" : "active"}>

@@ -28,10 +28,13 @@ class DBManager:
             "CREATE TABLE users (id INTEGER, username TEXT, email TEXT, password TEXT)"
         )
         self.execute(
-            "CREATE TABLE projects (project_id INTEGER, user_id INTEGER, container_id TEXT DEFAULT NULL)"
+            "CREATE TABLE projects (project_id INTEGER, user_id INTEGER, owner BOOLEAN, container_id TEXT DEFAULT NULL)"
         )
         self.execute(
             "CREATE TABLE user_tokens (user_id INTEGER, token TEXT, timestamp TEXT)"
+        )
+        self.execute(
+            "CREATE TABLE user_invites (user_id INTEGER, project_id INTEGER)"
         )
     
     def execute(self, query: str, *args):
@@ -59,7 +62,6 @@ class DBManager:
     def update_user(self, user_id: int, username: str, email: str, password: str):
         self.execute(f"UPDATE users SET username = '{username}', email = '{email}', password = '{password}' WHERE id = {user_id}")
 
-
     def get_user_password(self, user_id: int):
         return self.execute(f"SELECT password FROM users WHERE id = {user_id}")[0]
     
@@ -70,15 +72,16 @@ class DBManager:
         return self.execute(f"SELECT * FROM users WHERE id = {user_id}")
     
     def create_project(self, user_id: int):
-
         # Generate id
         project_id = self.execute("SELECT MAX(project_id) FROM projects")[0]
         if project_id is None: project_id = 0
         else: project_id = 0 if project_id is None else project_id + 1
 
-        self.execute(f"INSERT INTO projects (project_id, user_id) VALUES {project_id, user_id}")
+        self.execute(f"INSERT INTO projects (project_id, user_id, owner) VALUES {project_id, user_id, True}")
         return project_id
 
+    def add_user_to_project(self, user_id: int, project_id: int):
+        self.execute(f"INSERT INTO projects (project_id, user_id, owner) VALUES {project_id, user_id, False}")
 
     def get_projects_for_user(self, user_id: int):
         ret = self.execute(f"SELECT project_id FROM projects WHERE user_id = {user_id}")
@@ -107,5 +110,17 @@ class DBManager:
     
     def delete_token(self, token: str):
         self.execute(f"DELETE FROM user_tokens WHERE token = '{token}'")
+
+    def create_invite(self, user_id: int, project_id: int):
+        self.execute(f"INSERT INTO user_invites (user_id, project_id) VALUES {user_id, project_id}")
+
+    def get_invites_for_user(self, user_id: int):
+        ret = self.execute(f"SELECT project_id FROM user_invites WHERE user_id = {user_id}")
+        if ret is None: return None
+        if len(ret) == 1: return ret
+        return [x[0] for x in ret] if ret is not None else None
+    
+    def delete_invite(self, user_id: int, project_id: int):
+        self.execute(f"DELETE FROM user_invites WHERE user_id = {user_id} AND project_id = {project_id}")
 
     

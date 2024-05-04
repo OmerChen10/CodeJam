@@ -31,7 +31,7 @@ class ClientHandler():
             self.db_manager.create_token(user_id, token, time.time())
             return {
                 "token": token,
-                "user": self.formatAccountToJson()
+                "user": self._formatAccountToJson()
             }
         
         @self.socket.eventHandler
@@ -47,7 +47,7 @@ class ClientHandler():
             self.db_manager.create_token(id, token, time.time())
             return {
                 "token": token,
-                "user": self.formatAccountToJson()
+                "user": self._formatAccountToJson()
             }
         
         @self.socket.eventHandler
@@ -57,11 +57,12 @@ class ClientHandler():
 
             ret = self.db_manager.get_user_by_id(user_id)
             if ret is None: return False
+
             
             _, username, email, _ = ret
             self.account = Account(user_id, username, email)
             return {
-                "user": self.formatAccountToJson()
+                "user": self._formatAccountToJson()
             }
         
         @self.socket.eventHandler
@@ -72,7 +73,7 @@ class ClientHandler():
             self.db_manager.update_user(self.account.id, props['username'], props['email'], props['password'])
             self.account = Account(self.account.id, props['username'], props['email'])
             return {
-                "user": self.formatAccountToJson()
+                "user": self._formatAccountToJson()
             }
 
         @self.socket.eventHandler
@@ -154,8 +155,27 @@ class ClientHandler():
             self.storage_manager.save_file(self.project.id, props["name"], props["data"])
             return True
         
+        @self.socket.eventHandler
+        def getInvitationRequests(props):
+            project_id_list = self.db_manager.get_invites_for_user(self.account.id)
+            if project_id_list is None: return {"projects": []}
+            return {
+                "projects": [self.storage_manager.get_metadata(id) for id in project_id_list]
+            }
+        
+        @self.socket.eventHandler
+        def acceptInvite(props):
+            self.db_manager.delete_invite(self.account.id, props["id"])
+            self.db_manager.add_user_to_project(self.account.id, props["id"])
+            return True
+        
+        @self.socket.eventHandler
+        def declineInvite(props):
+            self.db_manager.delete_invite(self.account.id, props["id"])
+            return True
+        
     
-    def formatAccountToJson(self):
+    def _formatAccountToJson(self):
         return {
             "username": self.account.name,
             "email": self.account.email,

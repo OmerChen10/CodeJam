@@ -1,5 +1,5 @@
 import { ProjectInterface } from "../../../config/constants"
-import { ImageButton } from "../../../utils/components"
+import { ImageButton, NotificationPopup } from "../../../utils/components"
 import { ProfileDialog } from "../../../utils/components"
 import React from "react";
 
@@ -29,6 +29,7 @@ export function EditorNavbar({ runCurrentFile, selectedProject, runEnabled, file
             </div>
             <div id="navbar-side-buttons">
                 <ImageButton src="../../assets/images/run-icon.png" enabled={runEnabled} onClick={runCurrentFile} />
+                <NotificationPopup />
                 <ProfileDialog/>
             </div>
         </div>
