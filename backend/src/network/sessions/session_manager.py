@@ -6,7 +6,7 @@ class SessionManager:
     __instance = None
 
     def __init__(self):
-        self.sessions = {}
+        self.sessions: dict = {}
 
     @staticmethod
     def get_instance():
@@ -16,7 +16,8 @@ class SessionManager:
         return SessionManager.__instance
 
     def get_session(self, project: Project) -> Session:
-        if self.sessions.get(project.id) is None:
+        session = self.sessions.get(project.id)
+        if session is None or len(session._sockets) == 0:
             self.sessions[project.id] = Session(project)
 
         return self.sessions[project.id]

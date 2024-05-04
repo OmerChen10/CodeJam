@@ -18,9 +18,13 @@ export class LocalStorageController {
         localStorage.setItem("project", JSON.stringify(project));
     }
 
+    public static removeProject() {
+        localStorage.removeItem("project");
+    }
+
     public static getProject(): ProjectInterface | null {
         const project = localStorage.getItem("project");
-        if (project === "") return {} as ProjectInterface;
+        if (project === "") return null;
         return JSON.parse(project!);
     }
 }

@@ -2,6 +2,7 @@ from database import DBManager
 from executer import StorageManager
 from constants import Account, Project
 from network.sessions import SessionManager, Session
+from utils import Logger
 import secrets
 import time 
 
@@ -87,12 +88,18 @@ class ClientHandler():
         @self.socket.eventHandler
         def createProject(props):
             project_id = self.db_manager.create_project(self.account.id)
-            self.storage_manager.create_project(
-                id=project_id,
-                author=self.account.name,
-                name=props["name"],
-                description=props["description"]
-            )
+            try: 
+                self.storage_manager.create_project(
+                    id=project_id,
+                    author=self.account.name,
+                    name=props["name"],
+                    description=props["description"]
+                )
+            except Exception as e:
+                self.db_manager.delete_project(project_id)
+                Logger.log_error(f"Error creating project: {e}")
+                return False
+                
             return True
         
         @self.socket.eventHandler
@@ -112,12 +119,9 @@ class ClientHandler():
         
         @self.socket.eventHandler
         def setCurrentProject(props):
+            if not self.db_manager.project_exists(props["id"]): return False
             self.project = Project(props["id"], props["name"], props["author"], props["description"])
-            if self.session is not None:
-                self.session.leave(self.socket)
-            self.session = self.session_manager.get_session(self.project)
-            self.session.join(self.socket)
-
+            
             return True
         
         @self.socket.eventHandler
@@ -145,7 +149,12 @@ class ClientHandler():
             if self.session is not None:
                 self.session.leave(self.socket)
                 self.session = None
-        
+
+        @self.socket.eventHandler
+        def joinSession(props):
+            self.session = self.session_manager.get_session(self.project)
+            self.session.join(self.socket)
+            return True
 
         @self.socket.eventHandler
         def executerCommand(props):
@@ -194,6 +203,10 @@ class ClientHandler():
             user = self.db_manager.get_user_by_username(props["username"])
             if user is None: return False
             self.db_manager.create_invite(user[0], self.project.id)
+
+            self.network_manager.send_to_user(user[0], 
+                                              "inviteRequest", 
+                                              self.storage_manager.get_metadata(self.project.id))
             return True
         
     

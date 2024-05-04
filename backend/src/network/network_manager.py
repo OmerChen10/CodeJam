@@ -44,9 +44,11 @@ class NetworkManger(threading.Thread):
         await asyncio.gather(new_client.start_receiving_loop(), 
                              new_client.start_sending_loop())
 
-    def broadcast(self, curr_client: ClientIO, event_name: str, server_msg) -> None: 
-        """ Sends a message to all clients. """
+    def send_to_user(self, user_id: int, event_name: str, data: str):
+        """ Sends data to a specific client. """
 
-        for client in self.clients:
-            if client is curr_client: continue
-            client.send(event_name, server_msg)
+        for user in self.handlers:
+            if user.account != None:
+                if user.account.id == user_id:
+                    user.socket.send(event_name, data)
+                    break

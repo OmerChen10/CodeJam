@@ -19,7 +19,7 @@ class Session():
         if socket in self._sockets:
             self._sockets.remove(socket)
             if len(self._sockets) == 0:
-                Logger.log_info(f"[Session] No clients connected to project: {self.project.name}. Closing the session.")
+                Logger.log_info(f"Closing session for project {self.project.id}")
                 self.controller.close()
 
 

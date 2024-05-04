@@ -1,5 +1,5 @@
 import { Badge, Box, Button, Container, IconButton, Popover, Stack } from "@mui/material";
-import { ProjectInterface, ProjectListResponse } from "../../../config";
+import { GenericResponse, ProjectInterface, ProjectListResponse } from "../../../config";
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import { useNetwork } from "../../providers/net-provider";
 import { useEffect, useState } from "react";
@@ -18,6 +18,12 @@ export function NotificationPopup() {
                 setNotifications(response.data.projects);
             }
         });
+
+        nm.onEvent<GenericResponse<ProjectInterface>>("inviteRequest", (response) => {
+            if (response.success) {
+                setNotifications([...notifications, response.data]);
+            }
+        });
     }, []);
 
     function declineInvite(project: ProjectInterface) {
@@ -27,6 +33,7 @@ export function NotificationPopup() {
 
     function acceptInvite(project: ProjectInterface) {
         nm.send("acceptInvite", { id: project.id })
+        document.location.reload();
         setNotifications(notifications.filter((p) => p.id !== project.id));
     }
 

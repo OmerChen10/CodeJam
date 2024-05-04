@@ -53,14 +53,14 @@ class ContainerController:
         
         try:
             container = self.client.containers.get(past_container)
-            # Run the container if it is not running/
+            # Run the container if it is not running
             if container.status != "running":
                 container.start()
 
             self.broadcast("showToast", "User environment loaded.")
             return container
 
-        except:
+        except Exception as e:
             container = self.create_container()
             self.db_manager.set_container_id(self.project.id, container.id)
             return container

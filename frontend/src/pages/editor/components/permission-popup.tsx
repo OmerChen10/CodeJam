@@ -8,7 +8,7 @@ import SendIcon from '@mui/icons-material/Send';
 import React, { useEffect } from "react";
 import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
 import { useNetwork } from "../../../utils/providers/net-provider";
-import { GenericResponse } from "../../../config";
+import { GenericResponse, UserListResponse } from "../../../config";
 import { toast } from "sonner";
 
 const StyledDivider = styled(Divider)({
@@ -26,16 +26,16 @@ export function PermissionPopup() {
     useEffect(() => {
         nm.send<GenericResponse<string[]>>("getUsersForProject", {}).then((response) => {
             if (response.success) {
-                console.log(response.data);
                 setUsers(response.data);
             }
         });
-    }, []);
+    }, [anchorEl]);
 
     function handleRemoveUser(username: string) {
         nm.send("removeUserFromProject", {username: username}).then((response) => {
             if (response.success) {
-                setUsers(response.data);
+                setUsers(users.filter((user) => user !== username));
+                toast.success("Successfully removed user");
             }
         });
     }

@@ -97,7 +97,9 @@ class DBManager:
         if ret is None: return None
         if len(ret) == 1: return ret[0]
         return [x[0] for x in ret] if ret is not None else None
-        
+    
+    def project_exists(self, project_id: int):
+        return self.execute(f"SELECT project_id FROM projects WHERE project_id = {project_id}") is not None
     
     def delete_project(self, project_id: int):
         self.execute(f"DELETE FROM projects WHERE project_id = {project_id}")
@@ -108,7 +110,7 @@ class DBManager:
 
     def get_container_id(self, project_id: int):
         id = self.execute(f"SELECT container_id FROM projects WHERE project_id = {project_id}")
-        return id[0] if id is not None else None
+        return id[0][0] if id is not None else None
 
     def create_token(self, user_id: int, token: str, timestamp: str):
         self.execute(f"INSERT INTO user_tokens (user_id, token, timestamp) VALUES {user_id, token, timestamp}")

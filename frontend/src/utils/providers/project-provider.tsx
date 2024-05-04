@@ -31,8 +31,8 @@ export function ProjectProvider({children}: {children: React.ReactNode}) {
     function updateSelectedProject(project: ProjectInterface) {
         nm.send("setCurrentProject", project).then((response) => {
             if (response.success) {
-                setCurrentProject(project)
                 LocalStorageController.setProject(project)
+                setCurrentProject(project)
             }
         })
     }

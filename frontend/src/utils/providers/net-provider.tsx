@@ -10,7 +10,7 @@ interface Event {
 
 interface NetProviderInterface {
     send: <T extends AnyResponse>(eventName: string, message?: any) => Promise<T>;
-    onEvent: (event: string, callback: (data: any) => void) => void;
+    onEvent: <T extends AnyResponse>(event: string, callback: (data: T) => void) => void;
     connected: boolean;
 }
 
@@ -22,7 +22,7 @@ export function useNetwork() {
 
 export function NetProvider({ children }: { children: React.ReactNode }) {
     const socket = useRef<WebSocket>();
-    const eventHandlers = useRef<Map<string, (event: object) => void>>(new Map());
+    const eventHandlers = useRef(new Map<string, Function>());
     const [connected, setConnected] = useState(false);
 
     useEffect(() => {
@@ -66,7 +66,7 @@ export function NetProvider({ children }: { children: React.ReactNode }) {
         });
     }
 
-    function onEvent(event: string, callback: (data: any) => void) {
+    function onEvent<T extends AnyResponse>(event: string, callback: (data: T) => void) {
         eventHandlers.current.set(event, callback);
     }
 

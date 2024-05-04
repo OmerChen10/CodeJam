@@ -1,7 +1,6 @@
 import "./editor.css"
 import { CodeEditor } from "./components/Editor"
-import { createContext, useContext, useEffect, useRef, useState } from "react"
-import { SelectedProjectContext } from "../../App"
+import { createContext, useEffect, useRef, useState } from "react"
 import { useNetwork, useProject } from "../../utils/"
 import { FileButton } from "./components/fileButton"
 import { toast } from "sonner"
@@ -9,7 +8,6 @@ import { EditorConfig } from "../../config/constants"
 import { EditorNavbar } from "./components/navbar"
 import { ConfirmDialog } from "../../utils/components"
 import React from "react"
-import { LocalStorageController } from "../../utils"
 
 
 export const LoadingContext = createContext<(loading: boolean) => void>(() => {})
@@ -28,7 +26,8 @@ export function EditorPage() {
     const runEnabled = useRef(false)
 
     useEffect(() => {
-        nm.send("getProjectFilePaths", {}).then((response) => {
+        nm.send("joinSession")
+        nm.send("getProjectFilePaths").then((response) => {
             if (response.success) {
                 setFileList(response.data)
             }

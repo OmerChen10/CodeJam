@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import React from "react";
-
+import { LocalStorageController } from "../../localStorageController";
 
 interface props {
     condition: boolean;
@@ -15,8 +15,8 @@ export function ConditionalRoute({condition, fallback, children}: props) {
     const [openRoute, setOpenRoute] = useState<boolean>(false);
 
     useEffect(() => {
-        if (!(condition)) {
-            navigate(fallback);     
+        if (condition === false) {
+            navigate(fallback);    
         }
         setOpenRoute(condition);
     }, []);

@@ -3,7 +3,7 @@ import { ProjectPropEditor } from "./components/ProjectPropEditor.tsx";
 import { ProjectCreator } from "./components/ProjectCreator.tsx";
 import { ProjectButton } from "./components/ProjectButton.tsx";
 import { ProjectInterface, ProjectListResponse, RouteConfig } from "../../config/constants.ts";
-import { useNetwork, useProject } from "../../utils/";
+import { LocalStorageController, useNetwork, useProject } from "../../utils/";
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -47,6 +47,7 @@ export function HomePage() {
                 onDelete={sendDeleteRequest} 
                 onOpen={() => {
                     setCurrentProject(project);
+                    LocalStorageController.setProject(project);
                     navigate(RouteConfig.EDITOR);
                 }} 
                 onEdit={() => {
