@@ -52,13 +52,19 @@ interface UserResponseInterface {
     user: UserInterface;
 }
 
+interface UserListResponseInterface {
+    users: UserInterface[];
+}
+
 interface ProjectListResponseInterface {
     projects: ProjectInterface[];
 }
 
 type ServerResponse<T> = SuccessResponse<T> | ErrorResponse;
-export type GenericResponse = ServerResponse<any>;
+export type AnyResponse = ServerResponse<any>;
+export type GenericResponse<T> = ServerResponse<T>;
 export type UserResponse = ServerResponse<UserResponseInterface>;
 export type ProjectResponse = ServerResponse<ProjectInterface>;
 export type ProjectListResponse = ServerResponse<ProjectListResponseInterface>;
+export type UserListResponse = ServerResponse<UserListResponseInterface>;
 

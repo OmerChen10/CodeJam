@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { LoadingScreen } from "../utils/components";
-import { GenericResponse} from "../config";
+import { AnyResponse} from "../config";
 import React from "react";
 
 interface Event {
@@ -9,7 +9,7 @@ interface Event {
 }
 
 interface NetProviderInterface {
-    send: <T extends GenericResponse>(eventName: string, message?: any) => Promise<T>;
+    send: <T extends AnyResponse>(eventName: string, message?: any) => Promise<T>;
     onEvent: (event: string, callback: (data: any) => void) => void;
     connected: boolean;
 }
@@ -45,7 +45,7 @@ export function NetProvider({ children }: { children: React.ReactNode }) {
         }
     }, []);
 
-    function send<T extends GenericResponse>(eventName: string, message?: any): Promise<T> {
+    function send<T extends AnyResponse>(eventName: string, message?: any): Promise<T> {
         return new Promise((resolve, reject) => {
             try {
                 // Check if the massage is a json object

@@ -1,4 +1,4 @@
-import { Box } from "@mui/material";
+import { Avatar, Box, Dialog, DialogActions, DialogContent, DialogTitle, Stack, styled } from "@mui/material";
 import Container from "@mui/material/Container"
 import Divider from "@mui/material/Divider"
 import IconButton from "@mui/material/IconButton"
@@ -7,11 +7,55 @@ import TextField from "@mui/material/TextField"
 import Typography from "@mui/material/Typography"
 import PeopleIcon from '@mui/icons-material/People';
 import SendIcon from '@mui/icons-material/Send';
-import React from "react";
+import React, { useEffect } from "react";
+import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
+import { useNetwork } from "../../../utils/net-provider";
+import { GenericResponse, UserInterface, UserListResponse } from "../../../config";
+import { toast } from "sonner";
+
+const StyledDivider = styled(Divider)({
+    backgroundColor: 'white',
+    borderRightWidth: 2,
+});
 
 export function PermissionPopup() {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
+    const [users, setUsers] = React.useState<string[]>([]);
+    const [searchValue, setSearchValue] = React.useState<string>("");
     const open = Boolean(anchorEl);
+    const nm = useNetwork();
+
+    useEffect(() => {
+        nm.send<GenericResponse<string[]>>("getUsersForProject", {}).then((response) => {
+            if (response.success) {
+                console.log(response.data);
+                setUsers(response.data);
+            }
+        });
+    }, []);
+
+    function handleRemoveUser(username: string) {
+        nm.send("removeUserFromProject", {username: username}).then((response) => {
+            if (response.success) {
+                setUsers(response.data);
+            }
+        });
+    }
+
+    function sendInvite() {
+        if (searchValue === "") {
+            toast.warning("Please enter a username");
+            return;
+        }
+        nm.send("sendInvite", {username: searchValue}).then((response) => {
+            if (response.success) {
+                toast.success("Successfully sent invite");
+            }
+            else {
+                toast.error("User not found");
+            }
+        });
+    }
     
     function handleClick(event: React.MouseEvent<HTMLElement>) {
         setAnchorEl(event.currentTarget);
@@ -23,7 +67,25 @@ export function PermissionPopup() {
 
     function renderUsers() {
         return (
-            <h5>User</h5>
+            users.map((user) => {
+                return (
+                    <Box key={user} sx={{
+                        display: 'flex',
+                        justifyContent: 'space-around',
+                        alignItems: 'center',
+                        p: 1,
+                        bgcolor: "gray",
+                        borderRadius: "0.5rem",
+                    }}>
+                        <Typography variant="h6">{user}</Typography>
+                        <Avatar sx={{ bgcolor: '#4f575c', color: 'white' }}>{user[0]}</Avatar>
+                        <StyledDivider orientation="vertical" flexItem/>
+                        <IconButton onClick={() => {handleRemoveUser(user)}}>
+                            <PersonRemoveIcon />
+                        </IconButton>
+                    </Box>
+                );
+            })
         );
     }
 
@@ -32,20 +94,26 @@ export function PermissionPopup() {
             <IconButton onClick={handleClick}>
                 <PeopleIcon />
             </IconButton>
-            <Popover open={open} onClose={handleClose}>
-                <Container>
-                    <Typography variant="h2">Permissions</Typography>
-                    <Divider variant="fullWidth"/>
-                    <Container>
-                        <TextField/>
-                        <IconButton>
-                            <SendIcon/>
+            <Dialog open={open} onClose={handleClose}>
+                <DialogTitle variant="h4">Permissions:</DialogTitle>
+                <DialogContent dividers>
+                    <DialogActions>
+                        <TextField
+                            id="outlined-basic"
+                            label="Send invite"
+                            variant="outlined"
+                            value={searchValue}
+                            onChange={(e) => setSearchValue(e.target.value)}
+                        />
+                        <IconButton onClick={sendInvite}>
+                            <SendIcon />
                         </IconButton>
-                    </Container>
-                    <Typography variant="h3">Users</Typography>
+                    </DialogActions>
+                </DialogContent>
+                <Stack spacing={1} sx={{p: 1}}>
                     {renderUsers()}
-                </Container>
-            </Popover>
+                </Stack>
+            </Dialog>
         </Box>
     );
 }

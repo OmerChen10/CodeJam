@@ -21,13 +21,11 @@ export function NotificationPopup() {
     }, []);
 
     function declineInvite(project: ProjectInterface) {
-        console.log("Declining invite");
         nm.send("declineInvite", { id: project.id });
            setNotifications(notifications.filter((p) => p.id !== project.id));
     }
 
     function acceptInvite(project: ProjectInterface) {
-        console.log("Accepting invite");
         nm.send("acceptInvite", { id: project.id })
         setNotifications(notifications.filter((p) => p.id !== project.id));
     }

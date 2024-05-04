@@ -65,8 +65,17 @@ class DBManager:
     def get_user_password(self, user_id: int):
         return self.execute(f"SELECT password FROM users WHERE id = {user_id}")[0]
     
-    def get_user(self, email: str):
+    def get_user_by_email(self, email: str):
+        """
+        Returns a tuple containing the user's id, username, email, and password.
+        """
         return self.execute(f"SELECT * FROM users WHERE email = '{email}'")
+    
+    def get_user_by_username(self, username: str):
+        """
+        Returns a tuple containing the user's id, username, email, and password.
+        """
+        return self.execute(f"SELECT * FROM users WHERE username = '{username}'")
     
     def get_user_by_id(self, user_id: int): 
         return self.execute(f"SELECT * FROM users WHERE id = {user_id}")
@@ -122,5 +131,14 @@ class DBManager:
     
     def delete_invite(self, user_id: int, project_id: int):
         self.execute(f"DELETE FROM user_invites WHERE user_id = {user_id} AND project_id = {project_id}")
+
+    def get_users_for_project(self, project_id: int):
+        ret = self.execute(f"SELECT user_id FROM projects WHERE project_id = {project_id}")
+        if ret is None: return None
+        if len(ret) == 1: return ret
+        return [x[0] for x in ret] if ret is not None else None
+    
+    def remove_user_from_project(self, user_id: int, project_id: int):
+        self.execute(f"DELETE FROM projects WHERE user_id = {user_id} AND project_id = {project_id}")
 
     

@@ -24,7 +24,6 @@ export function EditorNavbar({ runCurrentFile, selectedProject, runEnabled, file
     return (
         <div id="navbar">
             <h2 id="navbar-title">{'CodeJam</>'}</h2>
-            <PermissionPopup />
             <div id="project-name">
                 <h2 className="badge text-bg-secondary">{selectedProject.name}</h2>
                 <div id="save-indicator">
@@ -37,6 +36,7 @@ export function EditorNavbar({ runCurrentFile, selectedProject, runEnabled, file
                         <PlayArrowIcon sx={runEnabled ? {color: "lightgreen"} : {color: "gray"}}/>
                     </IconButton>
                 </Paper>
+                <PermissionPopup />
                 <NotificationPopup />
                 <ProfileDialog/>
             </div>

@@ -22,7 +22,7 @@ class ClientHandler():
 
         @self.socket.eventHandler
         def createUser(props):
-            if self.db_manager.get_user(props['username']) != None:
+            if self.db_manager.get_user_by_email(props['username']) != None:
                 return False
             
             user_id = self.db_manager.create_user(props['username'], props['email'], props['password'])
@@ -36,7 +36,7 @@ class ClientHandler():
         
         @self.socket.eventHandler
         def loginUser(props):
-            ret = self.db_manager.get_user(props['email'])
+            ret = self.db_manager.get_user_by_email(props['email'])
             if ret is None: return False
 
             id, username, email, password = ret
@@ -172,6 +172,26 @@ class ClientHandler():
         @self.socket.eventHandler
         def declineInvite(props):
             self.db_manager.delete_invite(self.account.id, props["id"])
+            return True
+        
+        @self.socket.eventHandler
+        def getUsersForProject(props):
+            id_list = self.db_manager.get_users_for_project(self.project.id)
+            if id_list is None: return {"users": []}
+            username_list = [self.db_manager.get_user_by_id(id)[1] for id in id_list if id != self.account.id]
+            return username_list
+        
+        @self.socket.eventHandler
+        def removeUserFromProject(props):
+            user_id = self.db_manager.get_user_by_username(props["username"])[0]
+            self.db_manager.remove_user_from_project(user_id, self.project.id)
+            return True
+        
+        @self.socket.eventHandler
+        def sendInvite(props):
+            user = self.db_manager.get_user_by_username(props["username"])
+            if user is None: return False
+            self.db_manager.create_invite(user[0], self.project.id)
             return True
         
     
