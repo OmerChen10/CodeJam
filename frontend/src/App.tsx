@@ -19,6 +19,13 @@ function App() {
     const [selectedProject, setSelectedProject] = useState({} as ProjectInterface)
     const nm = useNetwork()
 
+    useEffect(() => {
+        const project = LocalStorageController.getProject()
+        if (project) {
+            updateSelectedProject(project)
+        }
+    }, [])
+
     function updateSelectedProject(project: ProjectInterface) {
         setSelectedProject(project);
         nm.send("setCurrentProject", project);

@@ -51,16 +51,16 @@ class ClientHandler():
             }
         
         @self.socket.eventHandler
-        def autoLogin(props):
+        def autoLogin(props: dict):
             user_id = self.db_manager.get_user_id_by_token(props['token'])
             if user_id is None: return False
 
             ret = self.db_manager.get_user_by_id(user_id)
             if ret is None: return False
-
             
             _, username, email, _ = ret
             self.account = Account(user_id, username, email)
+
             return {
                 "user": self._formatAccountToJson()
             }

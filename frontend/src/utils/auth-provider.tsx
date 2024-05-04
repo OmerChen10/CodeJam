@@ -33,7 +33,8 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
             navigate(RouteConfig.LOGIN);
             return;
         }
-        nm.send<UserResponse>("autoLogin", { token: LocalStorageController.getUserToken() })
+
+        nm.send<UserResponse>("autoLogin", {token: LocalStorageController.getUserToken()})
             .then((response) => {
                 if (response.success) {
                     setUser(response.data.user);

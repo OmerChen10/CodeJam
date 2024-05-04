@@ -1,4 +1,4 @@
-import { Badge, Box, Button, Container, Divider, IconButton, Popover, Stack } from "@mui/material";
+import { Badge, Box, Button, Container, IconButton, Popover, Stack } from "@mui/material";
 import { ProjectInterface, ProjectListResponse } from "../../../config";
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import { useNetwork } from "../../net-provider";

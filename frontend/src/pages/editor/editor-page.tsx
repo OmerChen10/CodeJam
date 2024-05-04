@@ -9,13 +9,14 @@ import { EditorConfig } from "../../config/constants"
 import { EditorNavbar } from "./components/navbar"
 import { ConfirmDialog } from "../../utils/components"
 import React from "react"
+import { LocalStorageController } from "../../utils"
 
 
 export const LoadingContext = createContext<(loading: boolean) => void>(() => {})
 
 export function EditorPage() {
     const [fileList, setFileList] = useState<string[]>([])
-    const [selectedProject] = useContext(SelectedProjectContext)
+    const [selectedProject, setSelectedProject] = useContext(SelectedProjectContext)
     const [currentFileName, setCurrentFileName] = useState<string>("")
     const [prevFileName, setPrevFileName] = useState<string>("")
     const [isLoading, setLoading] = useState<boolean>(false)

@@ -1,8 +1,7 @@
-import { toast } from "sonner";
-import { GenericResponse, UserInterface } from "../config";
 import { createContext, useContext, useEffect, useRef, useState } from "react";
-import React from "react";
 import { LoadingScreen } from "../utils/components";
+import { GenericResponse} from "../config";
+import React from "react";
 
 interface Event {
     eventName: string;
