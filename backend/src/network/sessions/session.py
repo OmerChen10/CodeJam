@@ -16,10 +16,11 @@ class Session():
 
     @Logger.catch_exceptions
     def leave(self, socket):
-        self._sockets.remove(socket)
-        if len(self._sockets) == 0:
-            Logger.log_info(f"[Session] No clients connected to project: {self.project.name}. Closing the session.")
-            self.controller.close()
+        if socket in self._sockets:
+            self._sockets.remove(socket)
+            if len(self._sockets) == 0:
+                Logger.log_info(f"[Session] No clients connected to project: {self.project.name}. Closing the session.")
+                self.controller.close()
 
 
     @Logger.catch_exceptions

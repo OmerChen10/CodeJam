@@ -7,7 +7,7 @@ import { FileButton } from "./components/fileButton"
 import { toast } from "sonner"
 import { EditorConfig } from "../../config/constants"
 import { EditorNavbar } from "./components/navbar"
-import { ConfirmDialog } from "../../components/dialogs/ConfirmDialog"
+import { ConfirmDialog } from "../../utils/components"
 import React from "react"
 
 

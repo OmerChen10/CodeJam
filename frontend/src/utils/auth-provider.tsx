@@ -5,7 +5,7 @@ import { LocalStorageController } from "./localStorageController";
 import { RouteConfig, UserInterface, UserResponse } from "../config/constants";
 import { Navigate, useNavigate } from "react-router-dom";
 import React from "react";
-import { LoadingScreen } from "./loading-screen";
+import { LoadingScreen } from "../utils/components";
 
 interface authProviderProps {
     user: UserInterface;
@@ -35,7 +35,6 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
         }
         nm.send<UserResponse>("autoLogin", { token: LocalStorageController.getUserToken() })
             .then((response) => {
-                console.log(response);
                 if (response.success) {
                     setUser(response.data.user);
                 }
@@ -95,20 +94,5 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
         <AuthContext.Provider value={{user, createAccount, login, logout, isLoggedIn}}>
             {loading ? <LoadingScreen>Authenticating... </LoadingScreen> : children}
         </AuthContext.Provider>
-    );
-}
-
-export function ProtectedEndpoint({ children, requirement=true}: { children: React.ReactNode, requirement?: boolean}) {
-    const navigate = useNavigate();
-    const auth = useAuth();
-
-    useEffect(() => {
-        if (!(requirement && auth.isLoggedIn())) {
-            navigate(RouteConfig.LOGIN);
-        }
-    }, []);
-
-    return (
-        <>{children}</>
     );
 }

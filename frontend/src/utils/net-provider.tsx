@@ -2,7 +2,7 @@ import { toast } from "sonner";
 import { GenericResponse, UserInterface } from "../config";
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import React from "react";
-import { LoadingScreen } from "./loading-screen";
+import { LoadingScreen } from "../utils/components";
 
 interface Event {
     eventName: string;

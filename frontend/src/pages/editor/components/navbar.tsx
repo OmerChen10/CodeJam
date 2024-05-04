@@ -1,6 +1,6 @@
 import { ProjectInterface } from "../../../config/constants"
-import { ImageButton } from "../../../components/ImageButton/ImageButton"
-import { ProfileDialog } from "../../../components/dialogs/ProfileDialog"
+import { ImageButton } from "../../../utils/components"
+import { ProfileDialog } from "../../../utils/components"
 import React from "react";
 
 interface props {
