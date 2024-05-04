@@ -76,7 +76,7 @@ export function HomePage() {
     }
 
     function sendDeleteRequest(project: ProjectInterface) {
-        nm.send("deleteProject", {"id": project.id}).then((response: any) => {
+        nm.send("deleteProject", {"id": project.id}).then((response) => {
             if (response.success){
                 toast.success("Project deleted successfully!");
                 fetchProjects();

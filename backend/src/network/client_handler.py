@@ -78,7 +78,7 @@ class ClientHandler():
         @self.socket.eventHandler
         def getProjectListForUser(props):
             id_list = self.db_manager.get_projects_for_user(self.account.id)
-            if id_list is None: return True
+            if id_list is None: return {"projects": []}
             if type(id_list) == int: id_list = [id_list]
             return {"projects": [self.storage_manager.get_metadata(id) for id in id_list]}
             
