@@ -7,6 +7,14 @@ class NetworkConfig:
     EXECUTER_IO_PORT = 5801
     LENGTH_HEADER_SIZE = 4
 
+    CERT_PATH = os.path.normpath(
+        os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../.cert/cert.pem"
+    ))
+
+    KEY_PATH = os.path.normpath(
+        os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../.cert/key.pem")
+    )
+
 class DatabaseConfig:
     PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "database/database.db")
 

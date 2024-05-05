@@ -1,3 +1,4 @@
+import ssl
 import websockets
 import asyncio
 import threading
@@ -16,6 +17,9 @@ class NetworkManger(threading.Thread):
         self.handlers: list[ClientHandler] = []
         self.num_clients: int = 0
 
+        self.ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+        self.ssl_context.load_cert_chain(NetworkConfig.CERT_PATH, NetworkConfig.KEY_PATH)
+
     def run(self):
         """ Starts listening for new connections. """
 
@@ -28,7 +32,7 @@ class NetworkManger(threading.Thread):
         self.loop.run_forever()
 
     async def start_server(self):
-        await websockets.serve(self.handle_connection, "0.0.0.0", NetworkConfig.COM_PORT)
+        await websockets.serve(self.handle_connection, "0.0.0.0", NetworkConfig.COM_PORT, ssl=self.ssl_context)
 
     async def handle_connection(self, websocket):
         """ Handles a new connection and create a new client handler for it. """

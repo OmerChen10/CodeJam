@@ -9,9 +9,9 @@ export default defineConfig({
         host: '0.0.0.0',
         port: 80,
         strictPort: true,
-        // https: {
-        //     key: './.cert/key.pem',
-        //     cert: './.cert/cert.pem'
-        // },
+        https: {
+            key: './.cert/key.pem',
+            cert: './.cert/cert.pem'
+        },
     },
 })
