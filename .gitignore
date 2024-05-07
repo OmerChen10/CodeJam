@@ -23,5 +23,8 @@ dist-ssr
 *.sln
 *.sw?
 
+__pycache__
+.pyc
+
 # Certificates
 .cert
