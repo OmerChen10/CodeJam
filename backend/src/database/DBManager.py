@@ -28,7 +28,7 @@ class DBManager:
             "CREATE TABLE users (id INTEGER, username TEXT, email TEXT, password TEXT)"
         )
         self.execute(
-            "CREATE TABLE projects (project_id INTEGER, user_id INTEGER, owner BOOLEAN, container_id TEXT DEFAULT NULL)"
+            "CREATE TABLE projects (project_id INTEGER, user_id INTEGER, admin BOOLEAN, container_id TEXT DEFAULT NULL)"
         )
         self.execute(
             "CREATE TABLE user_tokens (user_id INTEGER, token TEXT, timestamp TEXT)"
@@ -86,11 +86,11 @@ class DBManager:
         if project_id is None: project_id = 0
         else: project_id = 0 if project_id is None else project_id + 1
 
-        self.execute(f"INSERT INTO projects (project_id, user_id, owner) VALUES {project_id, user_id, True}")
+        self.execute(f"INSERT INTO projects (project_id, user_id, admin) VALUES {project_id, user_id, True}")
         return project_id
 
     def add_user_to_project(self, user_id: int, project_id: int):
-        self.execute(f"INSERT INTO projects (project_id, user_id, owner) VALUES {project_id, user_id, False}")
+        self.execute(f"INSERT INTO projects (project_id, user_id, admin) VALUES {project_id, user_id, False}")
 
     def get_projects_for_user(self, user_id: int):
         ret = self.execute(f"SELECT project_id FROM projects WHERE user_id = {user_id}")
@@ -98,19 +98,25 @@ class DBManager:
         if len(ret) == 1: return ret[0]
         return [x[0] for x in ret] if ret is not None else None
     
-    def project_exists(self, project_id: int):
-        return self.execute(f"SELECT project_id FROM projects WHERE project_id = {project_id}") is not None
+    def check_user_permission(self, user_id: int, project_id: int):
+        return self.execute(f"SELECT project_id FROM projects WHERE project_id = {project_id} AND user_id = {user_id}") is not None
+    
+    def is_user_admin(self, user_id: int, project_id: int):
+        return self.execute(f"SELECT admin FROM projects WHERE user_id = {user_id} AND project_id = {project_id}")[0]
     
     def delete_project(self, project_id: int):
         self.execute(f"DELETE FROM projects WHERE project_id = {project_id}")
 
+    def delete_project_for_user(self, user_id: int, project_id: int):
+        self.execute(f"DELETE FROM projects WHERE user_id = {user_id} AND project_id = {project_id}")
 
     def set_container_id(self, project_id: int, container_id: str):
         self.execute(f"UPDATE projects SET container_id = '{container_id}' WHERE project_id = {project_id}")
 
     def get_container_id(self, project_id: int):
         id = self.execute(f"SELECT container_id FROM projects WHERE project_id = {project_id}")
-        return id[0][0] if id is not None else None
+        if id is None or id[0] is None: return None
+        return id[0][0] 
 
     def create_token(self, user_id: int, token: str, timestamp: str):
         self.execute(f"INSERT INTO user_tokens (user_id, token, timestamp) VALUES {user_id, token, timestamp}")

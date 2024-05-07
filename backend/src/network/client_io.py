@@ -69,7 +69,7 @@ class ClientIO():
 
 
     @Logger.catch_exceptions
-    def send(self, event_name: int, response):
+    def send(self, event_name: int, response=None):
         """ Sends a message to the client. """ 
 
         resp = {
@@ -77,14 +77,15 @@ class ClientIO():
             "success": True,
         }
 
-        if type(response) == bool:
-            resp["success"] = response
+        if response is not None:
+            if type(response) == bool:
+                resp["success"] = response
 
-        elif type(response) == dict:
-            resp["data"] = response
+            elif type(response) == dict:
+                resp["data"] = response
 
-        else:
-            resp["data"] = response
+            else:
+                resp["data"] = response
         
         # Create the message. (Using json to serialize the data).
         msg = json.dumps(resp)

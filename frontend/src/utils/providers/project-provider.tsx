@@ -1,9 +1,8 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { ProjectInterface, RouteConfig } from "../../config";
+import { ProjectInterface, ProjectListResponse, ProjectResponse, RouteConfig } from "../../config";
 import { useNetwork } from "./net-provider";
 import { LocalStorageController } from "../localStorageController";
 import React from "react";
-import { LoadingScreen } from "../components";
 import { useNavigate } from "react-router-dom";
 
 interface ProjectProviderInterface {
@@ -20,6 +19,7 @@ export function useProject() {
 export function ProjectProvider({children}: {children: React.ReactNode}) {
     const [currentProject, setCurrentProject] = useState<ProjectInterface>(null!);
     const nm = useNetwork();
+    const navigate = useNavigate();
 
     useEffect(() => {
         const project = LocalStorageController.getProject()
@@ -29,10 +29,14 @@ export function ProjectProvider({children}: {children: React.ReactNode}) {
     }, [])
 
     function updateSelectedProject(project: ProjectInterface) {
-        nm.send("setCurrentProject", project).then((response) => {
+        nm.send<ProjectResponse>("setCurrentProject", project.id).then((response) => {
             if (response.success) {
-                LocalStorageController.setProject(project)
-                setCurrentProject(project)
+                LocalStorageController.setProject(response.data)
+                setCurrentProject(response.data)
+            } else {
+                LocalStorageController.removeProject()
+                setCurrentProject(null!)
+                navigate(RouteConfig.HOME)
             }
         })
     }

@@ -23,13 +23,18 @@ class ClientHandler():
 
         @self.socket.eventHandler
         def createUser(props):
-            if self.db_manager.get_user_by_email(props['username']) != None:
+            if self.db_manager.get_user_by_email(props['email']) != None:
+                return False
+            
+            if self.db_manager.get_user_by_username(props['username']) != None:
                 return False
             
             user_id = self.db_manager.create_user(props['username'], props['email'], props['password'])
             self.account = Account(user_id, props['username'], props['email'])
+
             token = secrets.token_hex(16)
             self.db_manager.create_token(user_id, token, time.time())
+            
             return {
                 "token": token,
                 "user": self._formatAccountToJson()
@@ -82,7 +87,13 @@ class ClientHandler():
             id_list = self.db_manager.get_projects_for_user(self.account.id)
             if id_list is None: return {"projects": []}
             if type(id_list) == int: id_list = [id_list]
-            return {"projects": [self.storage_manager.get_metadata(id) for id in id_list]}
+            project_list = [self.storage_manager.get_metadata(id) for id in id_list]
+            for project in project_list:
+                project["isAdmin"] = self.db_manager.is_user_admin(self.account.id, project["id"])
+
+            return {
+                "projects": project_list
+            }
             
         
         @self.socket.eventHandler
@@ -113,16 +124,24 @@ class ClientHandler():
         
         @self.socket.eventHandler
         def deleteProject(props):
-            self.db_manager.delete_project(props["id"])
-            self.storage_manager.delete_project(props["id"])
+            if self.db_manager.is_user_admin(self.account.id, props["id"]):
+                self.db_manager.delete_project(props["id"])
+                self.storage_manager.delete_project(props["id"])
+
+            else:
+                self.db_manager.delete_project_for_user(self.account.id, props["id"])
+
             return True
         
         @self.socket.eventHandler
-        def setCurrentProject(props):
-            if not self.db_manager.project_exists(props["id"]): return False
-            self.project = Project(props["id"], props["name"], props["author"], props["description"])
+        def setCurrentProject(project_id):
+            if not self.db_manager.check_user_permission(self.account.id, project_id): return False
+            is_admin = self.db_manager.is_user_admin(self.account.id, project_id)
+            self.project = self._metadataToProject(self.storage_manager.get_metadata(project_id), is_admin)
             
-            return True
+            project_json = self._formatProjectToJson()
+            project_json["isAdmin"] = is_admin
+            return project_json
         
         @self.socket.eventHandler
         def getProjectFilePaths(props):
@@ -147,13 +166,13 @@ class ClientHandler():
         @self.socket.eventHandler
         def clientInHomePage(props):
             if self.session is not None:
-                self.session.leave(self.socket)
+                self.session.leave(self)
                 self.session = None
 
         @self.socket.eventHandler
         def joinSession(props):
             self.session = self.session_manager.get_session(self.project)
-            self.session.join(self.socket)
+            self.session.join(self)
             return True
 
         @self.socket.eventHandler
@@ -196,6 +215,9 @@ class ClientHandler():
         def removeUserFromProject(props):
             user_id = self.db_manager.get_user_by_username(props["username"])[0]
             self.db_manager.remove_user_from_project(user_id, self.project.id)
+            for user in self.session.get_users():
+                if user.account.id == user_id:
+                    user.socket.send("goToHome")
             return True
         
         @self.socket.eventHandler
@@ -215,6 +237,16 @@ class ClientHandler():
             "username": self.account.name,
             "email": self.account.email,
         }
+    
+    def _formatProjectToJson(self):
+        return {
+            "id": self.project.id,
+            "name": self.project.name,
+            "author": self.project.author,
+            "description": self.project.description,
+                }
 
+    def _metadataToProject(self, metadata, admin=False):
+        return Project(metadata["id"], metadata["name"], metadata["author"], metadata["description"], admin)
     
         

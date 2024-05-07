@@ -1,5 +1,6 @@
 from constants import Project, ExecuterConfig, StorageConfig
 from database import DBManager
+from utils import Logger
 import threading
 import docker
 import os
@@ -8,11 +9,11 @@ import atexit
 
 class ContainerController:
     def __init__(self, project: Project, web_clients):
-        from network import ClientIO
+        from network import ClientHandler
         
         self.project_path = os.path.join(
             StorageConfig.PROJECTS_PATH, str(project.id))
-        self.web_clients: list[ClientIO] = web_clients
+        self.web_clients: list[ClientHandler] = web_clients
         self.project = project
         self.db_manager = DBManager.get_instance()
 
@@ -32,22 +33,28 @@ class ContainerController:
 
         self.stdout_thread.start()
 
+    @Logger.catch_exceptions
     def handle_output(self, stream, stream_type: str):
         buffer = b""
         for text in stream:
             buffer += text
             if b"\n" in buffer or b"\r" in buffer:
-                self.broadcast(f"executerStdout", buffer.decode("utf-8"))
+                if buffer == b"\n" or buffer == b"\r":
+                    buffer = b""
+                    continue
+                
+                self.broadcast("executerStdout", buffer.decode("utf-8"))
                 buffer = b""
 
+    @Logger.catch_exceptions
     def send_input(self, input: str):
         self.stdin.send((input + "\n").encode("utf-8"))
 
+    @Logger.catch_exceptions
     def get_container(self):
         past_container = self.db_manager.get_container_id(self.project.id)
         if past_container is None:
             container = self.create_container()
-            self.broadcast("showToast", "User environment created.")
             self.db_manager.set_container_id(self.project.id, container.id)
             return container
         
@@ -57,14 +64,15 @@ class ContainerController:
             if container.status != "running":
                 container.start()
 
-            self.broadcast("showToast", "User environment loaded.")
             return container
 
         except Exception as e:
+            Logger.log_error(f"Error getting container: {e}")
             container = self.create_container()
             self.db_manager.set_container_id(self.project.id, container.id)
             return container
 
+    @Logger.catch_exceptions
     def create_container(self):
         return self.client.containers.run(
             image=ExecuterConfig.IMAGE,
@@ -78,10 +86,12 @@ class ContainerController:
             environment={"PYTHONUNBUFFERED": "1", "TERM": "dumb", "PS1": "$ "}
         )
 
+    @Logger.catch_exceptions
     def broadcast(self, event_name: str, server_msg) -> None:
         for web_client in self.web_clients:
-            web_client.send(event_name, server_msg)
+            web_client.socket.send(event_name, server_msg)
 
+    @Logger.catch_exceptions
     def close(self):
         self.send_input("exit")
         self.stdin.close()

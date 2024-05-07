@@ -1,7 +1,9 @@
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { LoadingScreen } from "../components";
-import { AnyResponse} from "../../config";
+import { AnyResponse, GenericResponse, RouteConfig} from "../../config";
 import React from "react";
+import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 interface Event {
     eventName: string;
@@ -24,6 +26,7 @@ export function NetProvider({ children }: { children: React.ReactNode }) {
     const socket = useRef<WebSocket>();
     const eventHandlers = useRef(new Map<string, Function>());
     const [connected, setConnected] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         console.log("[NetworkManager] Connecting to server");
@@ -43,6 +46,8 @@ export function NetProvider({ children }: { children: React.ReactNode }) {
                 handler(event);
             }  
         }
+
+        setupBaseEventHandlers();
     }, []);
 
     function send<T extends AnyResponse>(eventName: string, message?: any): Promise<T> {
@@ -68,6 +73,26 @@ export function NetProvider({ children }: { children: React.ReactNode }) {
 
     function onEvent<T extends AnyResponse>(event: string, callback: (data: T) => void) {
         eventHandlers.current.set(event, callback);
+    }
+
+    function setupBaseEventHandlers() {
+        onEvent<GenericResponse<string>>("showInfoToast", (response) => {
+            console.log(response);
+            if (response.success) {
+                toast.info(response.data);
+            }
+        });
+
+        onEvent<GenericResponse<string>>("showWarningToast", (response) => {
+            if (response.success) {
+                toast.success(response.data);
+            }
+        });
+
+        onEvent("goToHome", () => {
+            toast.info("You have been removed from the project")
+            navigate(RouteConfig.HOME);
+        });
     }
 
     return (

@@ -8,7 +8,7 @@ import SendIcon from '@mui/icons-material/Send';
 import React, { useEffect } from "react";
 import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
 import { useNetwork } from "../../../utils/providers/net-provider";
-import { GenericResponse, UserListResponse } from "../../../config";
+import { GenericResponse } from "../../../config";
 import { toast } from "sonner";
 
 const StyledDivider = styled(Divider)({

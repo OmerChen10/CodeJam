@@ -46,3 +46,4 @@ class Project:
     name: str
     author: str
     description: str
+    admin: bool

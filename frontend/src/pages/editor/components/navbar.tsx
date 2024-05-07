@@ -1,10 +1,11 @@
 import { ProjectInterface } from "../../../config/constants"
-import { ImageButton, NotificationPopup } from "../../../utils/components"
+import { NotificationPopup } from "../../../utils/components"
 import { ProfileDialog } from "../../../utils/components"
 import React from "react";
 import { PermissionPopup } from "./permission-popup";
 import { IconButton, Paper } from "@mui/material";
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
+import { useProject } from "../../../utils";
 
 interface props {
     runCurrentFile: () => void
@@ -14,6 +15,9 @@ interface props {
 }
 
 export function EditorNavbar({ runCurrentFile, selectedProject, runEnabled, fileSaved }: props) {
+    const { currentProject } = useProject();
+    console.log(currentProject)
+    
     const renderSaveIndicator = () => {
         if (fileSaved) {
             return <img src="../../assets/images/checkmark-icon.png" />
@@ -36,7 +40,7 @@ export function EditorNavbar({ runCurrentFile, selectedProject, runEnabled, file
                         <PlayArrowIcon sx={runEnabled ? {color: "lightgreen"} : {color: "gray"}}/>
                     </IconButton>
                 </Paper>
-                <PermissionPopup />
+                {currentProject.isAdmin ? <PermissionPopup /> : null}
                 <NotificationPopup />
                 <ProfileDialog/>
             </div>

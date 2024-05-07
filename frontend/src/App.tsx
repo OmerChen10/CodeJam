@@ -5,7 +5,7 @@ import { Route, Routes } from "react-router-dom"
 import { HomePage } from "./pages/home/home-page"
 import React from "react"
 import { ConditionalRoute } from "./utils/components"
-import { LocalStorageController, useProject } from "./utils"
+import { LocalStorageController } from "./utils"
 
 function App() {
     return (

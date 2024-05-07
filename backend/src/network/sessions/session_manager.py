@@ -1,12 +1,12 @@
 from constants import Project
 from network.sessions import Session
-
+from typing import Dict
 
 class SessionManager:
     __instance = None
 
     def __init__(self):
-        self.sessions: dict = {}
+        self.sessions: Dict[int, Session] = {}
 
     @staticmethod
     def get_instance():
@@ -17,7 +17,7 @@ class SessionManager:
 
     def get_session(self, project: Project) -> Session:
         session = self.sessions.get(project.id)
-        if session is None or len(session._sockets) == 0:
+        if session is None or len(session._clientHandlers) == 0:
             self.sessions[project.id] = Session(project)
 
         return self.sessions[project.id]

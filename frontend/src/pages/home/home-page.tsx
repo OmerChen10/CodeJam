@@ -91,6 +91,7 @@ export function HomePage() {
 
     function fetchProjects() {
         nm.send<ProjectListResponse>("getProjectListForUser", {}).then((response) => {
+            console.log(response);
             if (response.success){
                 setProjectList(response.data.projects);
             }

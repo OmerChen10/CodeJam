@@ -30,6 +30,7 @@ export interface ProjectInterface {
     name: string;
     description: string;
     author: string;
+    isAdmin: boolean;
 }
 
 export interface UserInterface {
@@ -59,6 +60,7 @@ interface UserListResponseInterface {
 interface ProjectListResponseInterface {
     projects: ProjectInterface[];
 }
+
 
 type ServerResponse<T> = SuccessResponse<T> | ErrorResponse;
 export type AnyResponse = ServerResponse<any>;
