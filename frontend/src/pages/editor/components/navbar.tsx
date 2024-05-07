@@ -16,7 +16,6 @@ interface props {
 
 export function EditorNavbar({ runCurrentFile, selectedProject, runEnabled, fileSaved }: props) {
     const { currentProject } = useProject();
-    console.log(currentProject)
     
     const renderSaveIndicator = () => {
         if (fileSaved) {
