@@ -59,8 +59,11 @@ class DBManager:
         self.execute(f"INSERT INTO users (id, username, email, password) VALUES {user_id, username, email, password}")
         return user_id
     
-    def update_user(self, user_id: int, username: str, email: str, password: str):
-        self.execute(f"UPDATE users SET username = '{username}', email = '{email}', password = '{password}' WHERE id = {user_id}")
+    def update_user_credentials(self, user_id: int, username: str, email: str):
+        self.execute(f"UPDATE users SET username = '{username}', email = '{email}' WHERE id = {user_id}")
+
+    def update_user_password(self, user_id: int, password: str):
+        self.execute(f"UPDATE users SET password = '{password}' WHERE id = {user_id}")
 
     def get_user_password(self, user_id: int):
         return self.execute(f"SELECT password FROM users WHERE id = {user_id}")[0]

@@ -27,4 +27,8 @@ export class LocalStorageController {
         if (project === "") return null;
         return JSON.parse(project!);
     }
+
+    public static clear() {
+        localStorage.clear();
+    }
 }

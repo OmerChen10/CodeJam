@@ -3,7 +3,7 @@ import { toast } from "sonner";
 import { useNetwork } from "./net-provider";
 import { LocalStorageController } from "../localStorageController";
 import { RouteConfig, UserInterface, UserResponse } from "../../config/constants";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import React from "react";
 import { LoadingScreen } from "../components";
 
@@ -87,9 +87,9 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
     }
 
     function logout() {
-        LocalStorageController.removeUserToken();
+        LocalStorageController.clear();
         setUser(null!);
-        navigate("/");
+        navigate(RouteConfig.LOGIN);
     }
 
     function withAuth(callback: () => void) {
