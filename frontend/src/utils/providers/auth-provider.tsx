@@ -13,6 +13,7 @@ interface authProviderProps {
     login: (email: string, password: string) => void;
     logout: () => void;
     isLoggedIn: () => boolean;
+    withAuth: (callback: () => void) => void;
 }
 
 export const AuthContext = createContext<authProviderProps>(null!);
@@ -91,8 +92,14 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
         navigate("/");
     }
 
+    function withAuth(callback: () => void) {
+        if (isLoggedIn()) {
+            callback();
+        }
+    }
+
     return (
-        <AuthContext.Provider value={{user, createAccount, login, logout, isLoggedIn}}>
+        <AuthContext.Provider value={{user, createAccount, login, logout, isLoggedIn, withAuth}}>
             {loading ? <LoadingScreen>Authenticating... </LoadingScreen> : children}
         </AuthContext.Provider>
     );

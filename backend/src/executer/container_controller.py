@@ -78,7 +78,7 @@ class ContainerController:
             image=ExecuterConfig.IMAGE,
             command=ExecuterConfig.COMMAND,
             volumes={self.project_path: {
-                "bind": f"{ExecuterConfig.WORKING_DIR}/{self.project.name}", "mode": "rw"}},
+                "bind": f"{ExecuterConfig.WORKING_DIR}/{self.project.name}/src", "mode": "rw"}},
             detach=True,
             stdin_open=True,
             tty=True,

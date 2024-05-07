@@ -4,6 +4,7 @@ import { useNetwork } from "./net-provider";
 import { LocalStorageController } from "../localStorageController";
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "./auth-provider";
 
 interface ProjectProviderInterface {
     currentProject: ProjectInterface;
@@ -20,12 +21,15 @@ export function ProjectProvider({children}: {children: React.ReactNode}) {
     const [currentProject, setCurrentProject] = useState<ProjectInterface>(null!);
     const nm = useNetwork();
     const navigate = useNavigate();
+    const auth = useAuth();
 
     useEffect(() => {
-        const project = LocalStorageController.getProject()
-        if (project) {
-            updateSelectedProject(project)
-        }
+        auth.withAuth(() => {
+            const project = LocalStorageController.getProject()
+            if (project) {
+                updateSelectedProject(project)
+            }
+        })
     }, [])
 
     function updateSelectedProject(project: ProjectInterface) {
