@@ -16,7 +16,7 @@ class ClientIO():
 
         self.on_disconnect = None
     
-    def eventHandler(self, handler: callable):
+    def event_handler(self, handler: callable):
         """ Decorator for adding an event handler. """
         
         self.handler_map[handler.__name__] = handler
@@ -34,7 +34,7 @@ class ClientIO():
         except Exception:
             Logger.log_info(f"[Client Handler] Client disconnected.")
 
-    async def start_receiving_loop(self) -> dict:
+    async def start_receiving_loop(self):
         try:
             while True:
                 msg = await self.socket.recv() # Receive a message from the client.
@@ -78,14 +78,10 @@ class ClientIO():
         }
 
         if response is not None:
-            if type(response) == bool:
+            if type(response) == bool: # If the response is a boolean, override the success field.
                 resp["success"] = response
 
-            elif type(response) == dict:
-                resp["data"] = response
-
-            else:
-                resp["data"] = response
+            else: resp["data"] = response 
         
         # Create the message. (Using json to serialize the data).
         msg = json.dumps(resp)

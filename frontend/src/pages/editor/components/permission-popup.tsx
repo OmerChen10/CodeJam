@@ -24,11 +24,15 @@ export function PermissionPopup() {
     const nm = useNetwork();
 
     useEffect(() => {
-        nm.send<GenericResponse<string[]>>("getUsersForProject", {}).then((response) => {
-            if (response.success) {
-                setUsers(response.data);
-            }
-        });
+        if (users === undefined || users.length === 0) {
+            setUsers([])
+        } else {
+            nm.send<GenericResponse<string[]>>("getUsersForProject", {}).then((response) => {
+                if (response.success) {
+                    setUsers(response.data);
+                }
+            });
+        }
     }, [anchorEl]);
 
     function handleRemoveUser(username: string) {

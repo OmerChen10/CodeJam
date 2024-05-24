@@ -20,6 +20,7 @@ export function ProfileDialog() {
     const closeDialog = () => {setOpenProfileDialog(false);}
 
     function handleUEdit(event: React.FormEvent<HTMLFormElement>) {
+        // Update user credentials
         event.preventDefault();
         const form = new FormData(event.currentTarget);
         nm.send("updateUserCredentials", {username: form.get("username") as string, email: form.get("email") as string})
@@ -33,6 +34,7 @@ export function ProfileDialog() {
     }
 
     function handlePEdit(event: React.FormEvent<HTMLFormElement>) {
+        // Update password
         event.preventDefault();
         const form = new FormData(event.currentTarget);
         const password = form.get("newPassword") as string;

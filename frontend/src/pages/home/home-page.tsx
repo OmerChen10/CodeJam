@@ -26,6 +26,7 @@ export function HomePage() {
     }, []);
 
     function renderPopUp() {
+        // Render the popup menu based on the current mode
         switch (popUpMenuMode) {
             case "createProject":
                 return <ProjectCreator setPopUpMenuMode={setPopUpMenuMode} sendCreateRequest={sendCreateRequest}/>
@@ -76,6 +77,7 @@ export function HomePage() {
     }
 
     function sendDeleteRequest(project: ProjectInterface) {
+        // Send the request to delete the project
         nm.send("deleteProject", {"id": project.id}).then((response) => {
             if (response.success){
                 toast.success("Project deleted successfully!");
@@ -90,6 +92,7 @@ export function HomePage() {
     }
 
     function fetchProjects() {
+        // Fetch the projects for the user
         nm.send<ProjectListResponse>("getProjectListForUser", {}).then((response) => {
             console.log(response);
             if (response.success){

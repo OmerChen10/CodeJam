@@ -1,4 +1,4 @@
-import { ProjectInterface } from "../config/constants";
+import { ProjectInterface } from "../../config/constants";
 
 export class LocalStorageController {
     

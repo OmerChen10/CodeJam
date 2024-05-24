@@ -10,10 +10,10 @@ export function Terminal() {
     const commandHistory = useRef<string[]>([])
 
     useEffect(() => {
-        nm.send("createExecuter", {})
-
-        nm.onEvent("executerStdout", (stdout) => {
-            addOutput(stdout.data)
+        nm.onEvent("executerStdout", (response) => {
+            if (response.success) {
+                addOutput(response.data)
+            }
         })
 
     }, [])

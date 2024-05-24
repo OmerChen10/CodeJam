@@ -1,2 +1,2 @@
-export * from './localStorageController';
+export * from './controllers';
 export * from './providers';

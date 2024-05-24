@@ -1,7 +1,7 @@
 import { useContext, useState, createContext, useEffect } from "react"
 import { toast } from "sonner";
 import { useNetwork } from "./net-provider";
-import { LocalStorageController } from "../localStorageController";
+import { LocalStorageController } from "../controllers";
 import { RouteConfig, UserInterface, UserResponse } from "../../config/constants";
 import { useNavigate } from "react-router-dom";
 import React from "react";
@@ -29,6 +29,7 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
     const navigate = useNavigate();
 
     useEffect(() => {
+        // Preform auto login
         if (!LocalStorageController.getUserToken()){
             setLoading(false);
             navigate(RouteConfig.LOGIN);
@@ -41,6 +42,7 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
                     setUser(response.data.user);
                 }
                 else {
+                    // Invalid token
                     LocalStorageController.removeUserToken();
                     navigate(RouteConfig.LOGIN);
                 }
@@ -49,6 +51,7 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
     }, []);
 
     function createAccount(password: string, email: string, username: string) {
+        // Send request to create account
         nm.send<UserResponse>("createUser", { password: password, email: email, username: username })
             .then((response) => {
                 if (response.success) {
@@ -68,7 +71,6 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
             .then((response) => {
                 if (response.success) {
                     LocalStorageController.setUserToken(response.data.token);
-                    console.log(response.data);
                     setUser(response.data.user);
                     navigate(RouteConfig.HOME);
                     toast.success("Logged in successfully!");
@@ -87,18 +89,21 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
     }
 
     function logout() {
+        // Send request to logout
         LocalStorageController.clear();
         setUser(null!);
         navigate(RouteConfig.LOGIN);
     }
 
     function withAuth(callback: () => void) {
+        // Execute the callback if the user is logged in
         if (isLoggedIn()) {
             callback();
         }
     }
 
     return (
+        // Provide the auth context, and display a loading screen while the user is being authenticated
         <AuthContext.Provider value={{user, createAccount, login, logout, isLoggedIn, withAuth}}>
             {loading ? <LoadingScreen>Authenticating... </LoadingScreen> : children}
         </AuthContext.Provider>

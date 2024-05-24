@@ -14,10 +14,11 @@ class CodeJamServer():
         self.manager = NetworkManger()
 
     def run(self):
-        self.start_react()
+        self.start_shareDB_server()
+        self.start_http_server()
         self.manager.start()
 
-    def start_react(self):
+    def start_http_server(self):
         Logger.log_info(
             "==================== Starting CodeJam server ====================")
 
@@ -41,3 +42,9 @@ class CodeJamServer():
                              stdout=subprocess.DEVNULL)
 
             Logger.log_info("Server running")
+
+    def start_shareDB_server(self):
+        Logger.log_info("Starting ShareDB server")
+        subprocess.Popen(['start', 'cmd', '/c', 'node', './src/shareDB/server.cjs'],
+                 shell=True, cwd=self.root_dir)
+        Logger.log_info("ShareDB server running")

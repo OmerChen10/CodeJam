@@ -5,9 +5,10 @@ import { Route, Routes } from "react-router-dom"
 import { HomePage } from "./pages/home/home-page"
 import React from "react"
 import { ConditionalRoute } from "./utils/components"
-import { LocalStorageController } from "./utils"
+import { LocalStorageController, ShareDBManager } from "./utils"
 
 function App() {
+    ShareDBManager.getInstance()
     return (
         <Routes>
             <Route path="/login" element={<LoginPage />} />

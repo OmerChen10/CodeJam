@@ -7,3 +7,6 @@ WORKDIR /app
 # Create a non-root user and switch to that user
 RUN useradd -m user -d /app
 USER user
+
+
+
