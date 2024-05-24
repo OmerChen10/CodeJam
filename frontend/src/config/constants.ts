@@ -12,7 +12,8 @@ export class EditorConfig {
     window.location.protocol + "//" + window.location.hostname + "//..//Storage//";
     public static readonly AUTO_SAVE_TIME = 1500; // in ms
     public static readonly supportedLanguages: { [key: string]: string } = {
-        "py": "python"
+        "py": "python",
+        "js": "css",
     };
 }
 

@@ -25,7 +25,7 @@ export class ShareDBManager {
         return ShareDBManager.instance;
     }
 
-    mount(editorRef: editor.ICodeEditor, project_id: number) {
+    initialize_model(editorRef: editor.ICodeEditor, project_id: number) {
         this.initialize_doc(project_id.toString(), editorRef.getModel()?.uri.toString()!);
         this.editor = editorRef;
         this.binding = new ShareDBMonaco({

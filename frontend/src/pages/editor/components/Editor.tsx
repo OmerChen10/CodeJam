@@ -7,7 +7,6 @@ import { LoadingContext } from "../editor-page";
 import { Terminal } from "./Terminal";
 import React from "react";
 
-
 interface props {
     fileSaved: (state: boolean) => void
     currFileName: string
@@ -31,21 +30,22 @@ export function CodeEditor({fileSaved, currFileName}: props) {
 
     useEffect(() => {
         // Update on file change
-        updateBinding(editor!)
+        updateBinding()
         
-    }, [currFileName, editor])
+    }, [currFileName])
 
-    function updateBinding(editor: monaco.editor.IStandaloneCodeEditor) {
+    function updateBinding() {
         if (currFileName === "") return
         
-        setEditor(editor)
-        let model = monaco.editor.getModel(monaco.Uri.file(currFileName))
+        let uri = monaco.Uri.file(currFileName + "cj")
+        let model = monaco.editor.getModel(uri)
         if (!model) {
-           model = monaco.editor.createModel("", getLanguage(), monaco.Uri.file(currFileName)) 
+           model = monaco.editor.createModel("", getLanguage()!, uri)
+           editor!.setModel(model)
+           otController.initialize_model(editor!, projectProvider.currentProject.id)
         } 
 
-        editor.setModel(model)
-        otController.mount(editor, projectProvider.currentProject.id)
+        editor!.setModel(model)
     }
 
     function getLanguage() {

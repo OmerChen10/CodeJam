@@ -15,5 +15,3 @@ wss.on('connection', function (ws) {
     var stream = new WebSocketJSONStream(ws); // Create a stream
     backend.listen(stream); // Connect the stream to ShareDB
 });
-
-console.log('Listening on http://localhost:5802');
