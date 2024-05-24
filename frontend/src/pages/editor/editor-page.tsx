@@ -15,7 +15,6 @@ export const LoadingContext = createContext<(loading: boolean) => void>(() => {}
 export function EditorPage() {
     const [fileList, setFileList] = useState<string[]>([])
     const [currentFileName, setCurrentFileName] = useState<string>("")
-    const [prevFileName, setPrevFileName] = useState<string>("")
     const [isLoading, setLoading] = useState<boolean>(false)
     const [fileSaved, setFileSaved] = useState<boolean>(true)
     const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false)
@@ -38,7 +37,6 @@ export function EditorPage() {
         return fileList.map((fileName) => {
             return <FileButton fileName={fileName} key={fileName} 
                 onOpen={() => {
-                    setPrevFileName(currentFileName)
                     setCurrentFileName(fileName)
                     runEnabled.current = fileName.split(".")[1] in EditorConfig.supportedLanguages
                 }}
@@ -91,9 +89,6 @@ export function EditorPage() {
                 if (fileName === currentFileName) {
                     setCurrentFileName("")
                 }
-                if (fileName === prevFileName) {
-                    setPrevFileName("")
-                }
                 setFileList(fileList.filter((name) => name !== fileName))
             }
             else {
@@ -117,7 +112,7 @@ export function EditorPage() {
                     </div>
                 </div>
                 <LoadingContext.Provider value={setLoading}>
-                    <CodeEditor fileSaved={setFileSaved} currFileName={currentFileName} prevFileName={prevFileName}/>
+                    <CodeEditor fileSaved={setFileSaved} currFileName={currentFileName}/>
                 </LoadingContext.Provider>
             </div>
             <div id="loading-spinner" className="spinner-border" role="status" 

@@ -11,10 +11,9 @@ import React from "react";
 interface props {
     fileSaved: (state: boolean) => void
     currFileName: string
-    prevFileName: string
 }
 
-export function CodeEditor({fileSaved, currFileName, prevFileName}: props) {
+export function CodeEditor({fileSaved, currFileName}: props) {
 
     const setLoading = useContext(LoadingContext)
     const nm = useNetwork()
@@ -27,20 +26,25 @@ export function CodeEditor({fileSaved, currFileName, prevFileName}: props) {
         const editor = monaco.editor.create(document.getElementById("editor-wrapper")!, {
             theme: "vs-dark"
         })
-        updateBinding(editor)
+        setEditor(editor)
     }, [])
 
     useEffect(() => {
         // Update on file change
-        if (currFileName === "") return
-        if (currFileName === prevFileName) return
         updateBinding(editor!)
         
     }, [currFileName, editor])
 
     function updateBinding(editor: monaco.editor.IStandaloneCodeEditor) {
+        if (currFileName === "") return
+        
         setEditor(editor)
-        editor.setModel(monaco.editor.createModel("", getLanguage(), monaco.Uri.parse(currFileName)))
+        let model = monaco.editor.getModel(monaco.Uri.file(currFileName))
+        if (!model) {
+           model = monaco.editor.createModel("", getLanguage(), monaco.Uri.file(currFileName)) 
+        } 
+
+        editor.setModel(model)
         otController.mount(editor, projectProvider.currentProject.id)
     }
 

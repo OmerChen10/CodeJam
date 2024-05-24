@@ -55,7 +55,6 @@ export class ShareDBManager {
 
             // If doc.type is undefined, the document has not been created, so let's create it
             if (!doc.type) {
-                console.log("Creating new document")
                 doc.create({ content: "" }, (error) => {
                     if (error) console.error(error)
                 })
