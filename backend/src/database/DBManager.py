@@ -39,9 +39,10 @@ class DBManager:
     
     def execute(self, query: str, *args):
         self.cursor.execute(query, args)
-        self.conn.commit()
+        self.conn.commit() # Commit the changes to the database.
         ret = self.cursor.fetchall()
         
+        # Preform cleanup on the return value.
         if not ret: return None
         if len(ret) == 1: return ret[0]
         else: return ret

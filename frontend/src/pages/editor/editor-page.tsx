@@ -15,11 +15,11 @@ export const LoadingContext = createContext<(loading: boolean) => void>(() => {}
 export function EditorPage() {
     const [fileList, setFileList] = useState<string[]>([])
     const [currentFileName, setCurrentFileName] = useState<string>("")
-    const [prevFileName, setPrevFileName] = useState<string>("")
     const [isLoading, setLoading] = useState<boolean>(false)
     const [fileSaved, setFileSaved] = useState<boolean>(true)
     const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false)
     const fileNameToDelete = useRef<string>("")
+
 
     const nm = useNetwork()
     const { currentProject, setCurrentProject } = useProject()
@@ -38,9 +38,8 @@ export function EditorPage() {
         return fileList.map((fileName) => {
             return <FileButton fileName={fileName} key={fileName} 
                 onOpen={() => {
-                    setPrevFileName(currentFileName)
                     setCurrentFileName(fileName)
-                    runEnabled.current = fileName.split(".")[1] in EditorConfig.supportedLanguages
+                    runEnabled.current = fileName.split(".")[1] in EditorConfig.supportedLanguagesCommands
                 }}
                 onRename={
                     (oldName: string, newName: string) => {
@@ -50,6 +49,9 @@ export function EditorPage() {
                             }
                             return name
                         }))
+                        if (currentFileName === oldName) {
+                            setCurrentFileName(newName)
+                        }
                     }
                 }
                 onDelete={() => {
@@ -76,8 +78,8 @@ export function EditorPage() {
 
     function runCurrentFile() {
         const fileType = currentFileName.split(".")[1]
-        if (EditorConfig.supportedLanguages[fileType]) {
-            let command = EditorConfig.supportedLanguages[fileType] + " " + currentFileName
+        if (EditorConfig.supportedLanguagesCommands[fileType]) {
+            let command = EditorConfig.supportedLanguagesCommands[fileType] + " " + currentFileName
 
             nm.send("executerCommand", {command: command})
         }
@@ -90,9 +92,6 @@ export function EditorPage() {
                 toast.success("File deleted successfully!")
                 if (fileName === currentFileName) {
                     setCurrentFileName("")
-                }
-                if (fileName === prevFileName) {
-                    setPrevFileName("")
                 }
                 setFileList(fileList.filter((name) => name !== fileName))
             }
@@ -117,7 +116,7 @@ export function EditorPage() {
                     </div>
                 </div>
                 <LoadingContext.Provider value={setLoading}>
-                    <CodeEditor fileSaved={setFileSaved} currFileName={currentFileName} prevFileName={prevFileName}/>
+                    <CodeEditor fileSaved={setFileSaved} currFileName={currentFileName}/>
                 </LoadingContext.Provider>
             </div>
             <div id="loading-spinner" className="spinner-border" role="status" 

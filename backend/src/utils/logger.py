@@ -21,17 +21,20 @@ class Logger:
 
     @staticmethod
     def log_info(message):
+        """ Log an info message."""
         print(Fore.WHITE + Style.BRIGHT + "[INFO] " + Style.RESET_ALL + message)
         Logger.logger.info("[INFO] " + message)
 
     
     @staticmethod
     def log_debug(message):
+        """ Log a debug message."""
         print(Fore.YELLOW + Style.BRIGHT + "[DEBUG] " + Style.RESET_ALL + message)
         Logger.logger.debug("[DEBUG] " + message)
 
     
     def log_error(message, e: Exception =None):
+        """ Log an error message."""
         print(Fore.RED + Style.BRIGHT + "[ERROR] " + Style.RESET_ALL + message)
         Logger.logger.error("[ERROR] " + message + "\n" + traceback.format_exc() if e is not None else "")
 
@@ -39,6 +42,7 @@ class Logger:
 
     @staticmethod
     def catch_exceptions(func):
+        """ Decorator to catch exceptions in a function. """
         def handle(*args, **kwargs):
             try:
                 return func(*args, **kwargs)

@@ -26,6 +26,9 @@ class StorageConfig:
         "__pycache__"
     ]
 
+class ShareDBConfig:
+    ID_HEADER = "file:///"
+
 
 class ExecuterConfig:
     IMAGE = "executer"

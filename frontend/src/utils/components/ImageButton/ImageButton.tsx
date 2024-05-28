@@ -9,6 +9,7 @@ interface props {
 }
 
 export function ImageButton({onClick, enabled, src, style}: props) {
+    // A button wrapper that contains an image
     return (
         <div className={`image-button-wrapper ${enabled ? "" : "disabled-button"}`}>
             <img src={src} onClick={onClick} style={style}/>  

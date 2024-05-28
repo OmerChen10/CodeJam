@@ -13,12 +13,14 @@ export function NotificationPopup() {
     function handleClose() { setAnchorEl(null) }
 
     useEffect(() => {
+        // Fetch the notifications
         nm.send<ProjectListResponse>("getInvitationRequests", {}).then((response) => {
             if (response.success) {
                 setNotifications(response.data.projects);
             }
         });
 
+        // Listen for new notifications
         nm.onEvent<GenericResponse<ProjectInterface>>("inviteRequest", (response) => {
             if (response.success) {
                 setNotifications([...notifications, response.data]);
@@ -28,12 +30,14 @@ export function NotificationPopup() {
 
     function declineInvite(project: ProjectInterface) {
         nm.send("declineInvite", { id: project.id });
-           setNotifications(notifications.filter((p) => p.id !== project.id));
+        // Remove the notification from the list
+        setNotifications(notifications.filter((p) => p.id !== project.id));
     }
 
     function acceptInvite(project: ProjectInterface) {
         nm.send("acceptInvite", { id: project.id })
         document.location.reload();
+        // Remove the notification from the list
         setNotifications(notifications.filter((p) => p.id !== project.id));
     }
 
@@ -82,6 +86,7 @@ interface InviteRequestProps {
 }
 
 function InviteRequest({ project, onDecline, onAccept }: InviteRequestProps) {
+    // A single notification card
     return (
         <Container sx={{
             display: "flex",

@@ -14,6 +14,7 @@ interface NetProviderInterface {
     send: <T extends AnyResponse>(eventName: string, message?: any) => Promise<T>;
     onEvent: <T extends AnyResponse>(event: string, callback: (data: T) => void) => void;
     connected: boolean;
+    socket?: WebSocket;
 }
 
 export const NetworkContext = createContext<NetProviderInterface>(null!);
@@ -51,12 +52,14 @@ export function NetProvider({ children }: { children: React.ReactNode }) {
     }, []);
 
     function send<T extends AnyResponse>(eventName: string, message?: any): Promise<T> {
+        // Send a message to the server and wait for a response
         return new Promise((resolve, reject) => {
             try {
                 // Check if the massage is a json object
                 if (message === undefined) {
                     message = {};
                 } else if (typeof message === "object") {
+                    // Convert the message to a string
                     message = JSON.stringify(message);
                 }
                 
@@ -72,10 +75,12 @@ export function NetProvider({ children }: { children: React.ReactNode }) {
     }
 
     function onEvent<T extends AnyResponse>(event: string, callback: (data: T) => void) {
+        // Add an event listener for a specific event
         eventHandlers.current.set(event, callback);
     }
 
     function setupBaseEventHandlers() {
+        // Setup base event handlers 
         onEvent<GenericResponse<string>>("showInfoToast", (response) => {
             console.log(response);
             if (response.success) {
@@ -96,7 +101,9 @@ export function NetProvider({ children }: { children: React.ReactNode }) {
     }
 
     return (
-        <NetworkContext.Provider value={{ send, onEvent, connected }}>
+        // Provide the network context to the children
+        // Display a loading screen while the user is connecting to the server
+        <NetworkContext.Provider value={{ send, onEvent, connected, socket: socket.current }}>
             { connected ? children : <LoadingScreen> Connecting to server </LoadingScreen>}
         </NetworkContext.Provider>
     );

@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { ProjectInterface, ProjectListResponse, ProjectResponse, RouteConfig } from "../../config";
+import { ProjectInterface, ProjectResponse, RouteConfig } from "../../config";
 import { useNetwork } from "./net-provider";
-import { LocalStorageController } from "../localStorageController";
+import { LocalStorageController } from "../controllers";
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "./auth-provider";
@@ -24,6 +24,7 @@ export function ProjectProvider({children}: {children: React.ReactNode}) {
     const auth = useAuth();
 
     useEffect(() => {
+        // Update project selection only if the user is authenticated
         auth.withAuth(() => {
             const project = LocalStorageController.getProject()
             if (project) {
@@ -33,6 +34,7 @@ export function ProjectProvider({children}: {children: React.ReactNode}) {
     }, [])
 
     function updateSelectedProject(project: ProjectInterface) {
+        // Send request to set the current project
         nm.send<ProjectResponse>("setCurrentProject", project.id).then((response) => {
             if (response.success) {
                 LocalStorageController.setProject(response.data)
