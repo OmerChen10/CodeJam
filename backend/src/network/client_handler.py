@@ -1,4 +1,3 @@
-import os
 from database import DBManager
 from executer import StorageManager
 from constants import Account, Project
@@ -7,6 +6,7 @@ from utils import Logger
 import secrets
 import time 
 from shareDB import ShareDBManager
+from utils import HashUtils
 
 class ClientHandler():
     def __init__(self, manager, socket) -> None:
@@ -32,7 +32,9 @@ class ClientHandler():
             if self.db_manager.get_user_by_username(props['username']) != None:
                 return False
             
-            user_id = self.db_manager.create_user(props['username'], props['email'], props['password'])
+            salt = HashUtils.generate_salt()
+            hashed_password = HashUtils.hash_password(props['password'], salt)
+            user_id = self.db_manager.create_user(props['username'], props['email'], hashed_password, salt)
             self.account = Account(user_id, props['username'], props['email'])
 
             token = secrets.token_hex(16)
@@ -49,7 +51,9 @@ class ClientHandler():
             if ret is None: return False
 
             id, username, email, password = ret
-            if password != props['password']: return False
+            salt = self.db_manager.get_user_salt(id)
+            if password != HashUtils.hash_password(props['password'], salt):
+                return False
             
             self.account = Account(id, username, props["email"])
             token = secrets.token_hex(16)
@@ -82,10 +86,11 @@ class ClientHandler():
         
         @self.socket.event_handler
         def updateUserPassword(props):
-            if self.db_manager.get_user_password(self.account.id) != props["oldPassword"]:
+            salt = self.db_manager.get_user_salt(self.account.id)
+            if self.db_manager.get_user_password(self.account.id) != HashUtils.hash_password(props["oldPassword"], salt):
                 return False
             
-            self.db_manager.update_user_password(self.account.id, props["newPassword"])
+            self.db_manager.update_user_password(self.account.id, HashUtils.hash_password(props["newPassword"], salt))
             return True
 
         @self.socket.event_handler
