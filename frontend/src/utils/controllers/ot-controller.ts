@@ -11,7 +11,6 @@ export class ShareDBManager {
     private binding: ShareDBMonaco;
     private socket: ReconnectingWebSocket;
     private connection: any;
-
     constructor() {
         // Create a new WebSocket connection
         this.socket = new ReconnectingWebSocket("ws://" + window.location.hostname + ":5802");

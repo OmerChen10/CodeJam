@@ -1,3 +1,4 @@
+import os
 from database import DBManager
 from executer import StorageManager
 from constants import Account, Project
@@ -5,6 +6,7 @@ from network.sessions import SessionManager, Session
 from utils import Logger
 import secrets
 import time 
+from shareDB import ShareDBManager
 
 class ClientHandler():
     def __init__(self, manager, socket) -> None:
@@ -16,6 +18,7 @@ class ClientHandler():
         self.db_manager: DBManager = DBManager.get_instance()
         self.session_manager: SessionManager = SessionManager.get_instance()
         self.storage_manager: StorageManager = StorageManager()
+        self.shareDB_manager: ShareDBManager = ShareDBManager.get_instance()
         
         self.account: Account = None
         self.project: Project = None
@@ -130,6 +133,7 @@ class ClientHandler():
             if self.db_manager.is_user_admin(self.account.id, props["id"]):
                 self.db_manager.delete_project(props["id"])
                 self.storage_manager.delete_project(props["id"])
+                self.shareDB_manager.delete_project(props["id"])
 
             else:
                 self.db_manager.delete_project_for_user(self.account.id, props["id"])
@@ -156,6 +160,7 @@ class ClientHandler():
 
         @self.socket.event_handler
         def renameFile(props):
+            self.shareDB_manager.rename_file(self.project.id, props["oldName"], props["newName"])
             return self.storage_manager.edit_file_name(self.project.id, props["oldName"], props["newName"])
         
         @self.socket.event_handler
@@ -164,6 +169,7 @@ class ClientHandler():
 
         @self.socket.event_handler
         def deleteFile(props):
+            self.shareDB_manager.delete_file(self.project.id, props["name"])
             return self.storage_manager.delete_file(self.project.id, props["name"])
         
         @self.socket.event_handler
@@ -184,8 +190,9 @@ class ClientHandler():
             return True
         
         @self.socket.event_handler
-        def autoSave(props):
-            self.storage_manager.save_file(self.project.id, props["name"], props["data"])
+        def saveFile(props):
+            self.storage_manager.save_file(self.project.id, props["name"], 
+                                           self.shareDB_manager.read_file(self.project.id, props["name"]))
             return True
         
         @self.socket.event_handler

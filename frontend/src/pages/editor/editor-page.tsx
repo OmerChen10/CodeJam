@@ -20,6 +20,7 @@ export function EditorPage() {
     const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false)
     const fileNameToDelete = useRef<string>("")
 
+
     const nm = useNetwork()
     const { currentProject, setCurrentProject } = useProject()
     const runEnabled = useRef(false)
@@ -38,7 +39,7 @@ export function EditorPage() {
             return <FileButton fileName={fileName} key={fileName} 
                 onOpen={() => {
                     setCurrentFileName(fileName)
-                    runEnabled.current = fileName.split(".")[1] in EditorConfig.supportedLanguages
+                    runEnabled.current = fileName.split(".")[1] in EditorConfig.supportedLanguagesCommands
                 }}
                 onRename={
                     (oldName: string, newName: string) => {
@@ -48,6 +49,9 @@ export function EditorPage() {
                             }
                             return name
                         }))
+                        if (currentFileName === oldName) {
+                            setCurrentFileName(newName)
+                        }
                     }
                 }
                 onDelete={() => {
@@ -74,8 +78,8 @@ export function EditorPage() {
 
     function runCurrentFile() {
         const fileType = currentFileName.split(".")[1]
-        if (EditorConfig.supportedLanguages[fileType]) {
-            let command = EditorConfig.supportedLanguages[fileType] + " " + currentFileName
+        if (EditorConfig.supportedLanguagesCommands[fileType]) {
+            let command = EditorConfig.supportedLanguagesCommands[fileType] + " " + currentFileName
 
             nm.send("executerCommand", {command: command})
         }

@@ -11,9 +11,13 @@ export class EditorConfig {
     public static readonly STORAGE_DIRECTORY = 
     window.location.protocol + "//" + window.location.hostname + "//..//Storage//";
     public static readonly AUTO_SAVE_TIME = 1500; // in ms
-    public static readonly supportedLanguages: { [key: string]: string } = {
+    public static readonly monacoSupportedLanguages: { [key: string]: string } = {
         "py": "python",
-        "js": "css",
+        "js": "javascript",
+    };
+    public static readonly supportedLanguagesCommands: { [key: string]: string } = {
+        "py": "python",
+        "js": "node",
     };
 }
 

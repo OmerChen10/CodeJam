@@ -30,10 +30,10 @@ export function FileButton({fileName, onOpen, onRename, onDelete}: props) {
             if (response.success) {
                 toast.success("File name updated successfully!")
                 updateFileName()
+                onRename(fileName, inputDisplayedText)
+                fileName = inputDisplayedText
             }
         })
-        onRename(fileName, inputDisplayedText)
-        fileName = inputDisplayedText
     }
 
     useEffect(() => {
