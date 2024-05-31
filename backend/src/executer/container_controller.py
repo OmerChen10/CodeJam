@@ -74,7 +74,7 @@ class ContainerController:
             return container
 
         except Exception as e:
-            Logger.log_error(f"Error getting container: {e}")
+            Logger.log_info(f"Container not found: {e}")
             container = self.create_container()
             self.db_manager.set_container_id(self.project.id, container.id)
             return container

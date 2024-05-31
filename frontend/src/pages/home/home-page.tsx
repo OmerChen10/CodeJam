@@ -48,7 +48,6 @@ export function HomePage() {
                 onDelete={sendDeleteRequest} 
                 onOpen={() => {
                     setCurrentProject(project);
-                    LocalStorageController.setProject(project);
                     navigate(RouteConfig.EDITOR);
                 }} 
                 onEdit={() => {

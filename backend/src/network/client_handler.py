@@ -156,7 +156,19 @@ class ClientHandler():
             
             project_json = self._formatProjectToJson()
             project_json["isAdmin"] = is_admin
-            return project_json
+            return {
+                "project": project_json,
+                "projectToken": self.aes.encrypt(str(project_id))
+            }
+        
+        @self.socket.event_handler
+        def setCurrentProjectToken(token):
+            project_id = self.aes.decrypt(token)
+            if not self.db_manager.check_user_permission(self.account.id, project_id): return False
+            admin = self.db_manager.is_user_admin(self.account.id, project_id)
+            self.project = self._metadataToProject(self.storage_manager.get_metadata(project_id), admin)
+            
+            return {"project": self._formatProjectToJson()}
         
         @self.socket.event_handler
         def getProjectFilePaths(props):

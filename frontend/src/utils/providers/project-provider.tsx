@@ -26,9 +26,18 @@ export function ProjectProvider({children}: {children: React.ReactNode}) {
     useEffect(() => {
         // Update project selection only if the user is authenticated
         auth.withAuth(() => {
-            const project = LocalStorageController.getProject()
-            if (project) {
-                updateSelectedProject(project)
+            const projectToken = LocalStorageController.getProjectToken();
+            if (projectToken) {
+                nm.send<ProjectResponse>("setCurrentProjectToken", projectToken).then((response) => {
+                    if (response.success) {
+                        setCurrentProject(response.data.project)
+                    }
+                    else {
+                        LocalStorageController.removeProjectToken()
+                        setCurrentProject(null!)
+                        navigate(RouteConfig.HOME)
+                    }
+                })
             }
         })
     }, [])
@@ -37,10 +46,10 @@ export function ProjectProvider({children}: {children: React.ReactNode}) {
         // Send request to set the current project
         nm.send<ProjectResponse>("setCurrentProject", project.id).then((response) => {
             if (response.success) {
-                LocalStorageController.setProject(response.data)
-                setCurrentProject(response.data)
+                LocalStorageController.setProjectToken(response.data.projectToken)
+                setCurrentProject(response.data.project)
             } else {
-                LocalStorageController.removeProject()
+                LocalStorageController.removeProjectToken()
                 setCurrentProject(null!)
                 navigate(RouteConfig.HOME)
             }
