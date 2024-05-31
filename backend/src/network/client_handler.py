@@ -1,12 +1,12 @@
-import os
-from database import DBManager
-from executer import StorageManager
-from constants import Account, Project
 from network.sessions import SessionManager, Session
+from constants import Account, Project
+from executer import StorageManager
+from shareDB import ShareDBManager
+from database import DBManager
+from utils import HashUtils, AesUtils
 from utils import Logger
 import secrets
 import time 
-from shareDB import ShareDBManager
 
 class ClientHandler():
     def __init__(self, manager, socket) -> None:
@@ -19,6 +19,7 @@ class ClientHandler():
         self.session_manager: SessionManager = SessionManager.get_instance()
         self.storage_manager: StorageManager = StorageManager()
         self.shareDB_manager: ShareDBManager = ShareDBManager.get_instance()
+        self.aes = AesUtils()
         
         self.account: Account = None
         self.project: Project = None
@@ -32,14 +33,15 @@ class ClientHandler():
             if self.db_manager.get_user_by_username(props['username']) != None:
                 return False
             
-            user_id = self.db_manager.create_user(props['username'], props['email'], props['password'])
+            salt = HashUtils.generate_salt()
+            hashed_password = HashUtils.hash_password(props['password'], salt)
+            user_id = self.db_manager.create_user(props['username'], props['email'], hashed_password, salt)
             self.account = Account(user_id, props['username'], props['email'])
 
             token = secrets.token_hex(16)
             self.db_manager.create_token(user_id, token, time.time())
-            
             return {
-                "token": token,
+                "token": self.aes.encrypt(token + " " + self.socket.socket.remote_address[0]),
                 "user": self._formatAccountToJson()
             }
         
@@ -49,19 +51,24 @@ class ClientHandler():
             if ret is None: return False
 
             id, username, email, password = ret
-            if password != props['password']: return False
+            salt = self.db_manager.get_user_salt(id)
+            if password != HashUtils.hash_password(props['password'], salt):
+                return False
             
             self.account = Account(id, username, props["email"])
             token = secrets.token_hex(16)
             self.db_manager.create_token(id, token, time.time())
             return {
-                "token": token,
+                "token": self.aes.encrypt(token + " " + self.socket.socket.remote_address[0]),
                 "user": self._formatAccountToJson()
             }
         
         @self.socket.event_handler
         def autoLogin(props: dict):
-            user_id = self.db_manager.get_user_id_by_token(props['token'])
+            token, signed_ip = self.aes.decrypt(props["token"]).split(" ")
+            if (self.socket.socket.remote_address[0] != signed_ip): return False
+
+            user_id = self.db_manager.get_user_id_by_token(token)
             if user_id is None: return False
 
             ret = self.db_manager.get_user_by_id(user_id)
@@ -82,10 +89,11 @@ class ClientHandler():
         
         @self.socket.event_handler
         def updateUserPassword(props):
-            if self.db_manager.get_user_password(self.account.id) != props["oldPassword"]:
+            salt = self.db_manager.get_user_salt(self.account.id)
+            if self.db_manager.get_user_password(self.account.id) != HashUtils.hash_password(props["oldPassword"], salt):
                 return False
             
-            self.db_manager.update_user_password(self.account.id, props["newPassword"])
+            self.db_manager.update_user_password(self.account.id, HashUtils.hash_password(props["newPassword"], salt))
             return True
 
         @self.socket.event_handler
@@ -148,7 +156,19 @@ class ClientHandler():
             
             project_json = self._formatProjectToJson()
             project_json["isAdmin"] = is_admin
-            return project_json
+            return {
+                "project": project_json,
+                "projectToken": self.aes.encrypt(str(project_id))
+            }
+        
+        @self.socket.event_handler
+        def setCurrentProjectToken(token):
+            project_id = self.aes.decrypt(token)
+            if not self.db_manager.check_user_permission(self.account.id, project_id): return False
+            admin = self.db_manager.is_user_admin(self.account.id, project_id)
+            self.project = self._metadataToProject(self.storage_manager.get_metadata(project_id), admin)
+            
+            return {"project": self._formatProjectToJson()}
         
         @self.socket.event_handler
         def getProjectFilePaths(props):

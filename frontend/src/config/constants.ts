@@ -62,6 +62,11 @@ interface UserListResponseInterface {
     users: UserInterface[];
 }
 
+interface ProjectResponseInterface {
+    project: ProjectInterface;
+    projectToken: string;
+}
+
 interface ProjectListResponseInterface {
     projects: ProjectInterface[];
 }
@@ -71,7 +76,7 @@ type ServerResponse<T> = SuccessResponse<T> | ErrorResponse;
 export type AnyResponse = ServerResponse<any>;
 export type GenericResponse<T> = ServerResponse<T>;
 export type UserResponse = ServerResponse<UserResponseInterface>;
-export type ProjectResponse = ServerResponse<ProjectInterface>;
+export type ProjectResponse = ServerResponse<ProjectResponseInterface>;
 export type ProjectListResponse = ServerResponse<ProjectListResponseInterface>;
 export type UserListResponse = ServerResponse<UserListResponseInterface>;
 

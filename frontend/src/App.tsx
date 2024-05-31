@@ -6,6 +6,7 @@ import { HomePage } from "./pages/home/home-page"
 import React from "react"
 import { ConditionalRoute } from "./utils/components"
 import { LocalStorageController, ShareDBManager } from "./utils"
+import { ThemeProvider } from "@emotion/react"
 
 function App() {
     ShareDBManager.getInstance()
@@ -14,7 +15,7 @@ function App() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/" element={<HomePage />}/>
             <Route path="/editor" element={
-                <ConditionalRoute condition={LocalStorageController.getProject != null} fallback={RouteConfig.HOME}>
+                <ConditionalRoute condition={LocalStorageController.getUserToken() != null} fallback={RouteConfig.HOME}>
                     <EditorPage />
                 </ConditionalRoute>
             } />

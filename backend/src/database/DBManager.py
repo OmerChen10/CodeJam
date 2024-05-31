@@ -25,7 +25,7 @@ class DBManager:
 
     def create_tables(self):
         self.execute(
-            "CREATE TABLE users (id INTEGER, username TEXT, email TEXT, password TEXT)"
+            "CREATE TABLE users (id INTEGER, username TEXT, email TEXT, password TEXT, salt TEXT DEFAULT NULL)"
         )
         self.execute(
             "CREATE TABLE projects (project_id INTEGER, user_id INTEGER, admin BOOLEAN, container_id TEXT DEFAULT NULL)"
@@ -51,13 +51,13 @@ class DBManager:
         self.conn.close()
         self.cursor.close()
 
-    def create_user(self, username: str,  email: str, password: str):
+    def create_user(self, username: str,  email: str, password: str, salt: str = None):
         # Generate id
         # If the table is empty, set the id to 0.
         user_id = self.execute("SELECT MAX(id) FROM users")[0]
         user_id = 0 if user_id is None else user_id + 1
 
-        self.execute(f"INSERT INTO users (id, username, email, password) VALUES {user_id, username, email, password}")
+        self.execute(f"INSERT INTO users (id, username, email, password, salt) VALUES {user_id, username, email, password, salt}")
         return user_id
     
     def update_user_credentials(self, user_id: int, username: str, email: str):
@@ -73,16 +73,16 @@ class DBManager:
         """
         Returns a tuple containing the user's id, username, email, and password.
         """
-        return self.execute(f"SELECT * FROM users WHERE email = '{email}'")
+        return self.execute(f"SELECT id, username, email, password FROM users WHERE email = '{email}'")
     
     def get_user_by_username(self, username: str):
         """
         Returns a tuple containing the user's id, username, email, and password.
         """
-        return self.execute(f"SELECT * FROM users WHERE username = '{username}'")
+        return self.execute(f"SELECT id, username, email, password FROM users WHERE username = '{username}'")
     
     def get_user_by_id(self, user_id: int): 
-        return self.execute(f"SELECT * FROM users WHERE id = {user_id}")
+        return self.execute(f"SELECT id, username, email, password FROM users WHERE id = {user_id}")
     
     def create_project(self, user_id: int):
         # Generate id
@@ -153,5 +153,8 @@ class DBManager:
     
     def remove_user_from_project(self, user_id: int, project_id: int):
         self.execute(f"DELETE FROM projects WHERE user_id = {user_id} AND project_id = {project_id}")
+
+    def get_user_salt(self, user_id: int):
+        return self.execute(f"SELECT salt FROM users WHERE id = {user_id}")[0]
 
     

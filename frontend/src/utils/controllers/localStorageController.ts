@@ -14,18 +14,18 @@ export class LocalStorageController {
         localStorage.removeItem("userToken");
     }
 
-    public static setProject(project: ProjectInterface) {
-        localStorage.setItem("project", JSON.stringify(project));
+    public static setProjectToken(projectToken: string) {
+        localStorage.setItem("projectToken", projectToken);
     }
 
-    public static removeProject() {
-        localStorage.removeItem("project");
+    public static removeProjectToken() {
+        localStorage.removeItem("projectToken");
     }
 
-    public static getProject(): ProjectInterface | null {
-        const project = localStorage.getItem("project");
+    public static getProjectToken(): string | null {
+        const project = localStorage.getItem("projectToken");
         if (project === "") return null;
-        return JSON.parse(project!);
+        return project;
     }
 
     public static clear() {

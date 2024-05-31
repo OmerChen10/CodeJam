@@ -15,6 +15,7 @@ class Session():
         """ Add a client to the session. """
         self._clientHandlers.append(handler)
         handler.socket.setDisconnectHandler(lambda: self.leave(handler))
+        handler.socket.send("showInfoToast", "Connected to session")
 
 
     @Logger.catch_exceptions

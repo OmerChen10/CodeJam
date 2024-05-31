@@ -8,11 +8,17 @@ class NetworkConfig:
     LENGTH_HEADER_SIZE = 4
 
     CERT_PATH = os.path.normpath(
-        os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../.cert/cert.pem"
+        os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../.keys/cert.pem"
     ))
 
     KEY_PATH = os.path.normpath(
-        os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../.cert/key.pem")
+        os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../.keys/key.pem")
+    )
+
+    PEPPER = "waabTWDf301n5XJRw71qbkXvYdMi7vOA"
+
+    AES_KEY_PATH = os.path.normpath(
+        os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../.keys/aes_key.bin")
     )
 
 class DatabaseConfig:
