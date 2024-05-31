@@ -1,12 +1,12 @@
-from database import DBManager
-from executer import StorageManager
-from constants import Account, Project
 from network.sessions import SessionManager, Session
+from constants import Account, Project
+from executer import StorageManager
+from shareDB import ShareDBManager
+from database import DBManager
+from utils import HashUtils, AesUtils
 from utils import Logger
 import secrets
 import time 
-from shareDB import ShareDBManager
-from utils import HashUtils
 
 class ClientHandler():
     def __init__(self, manager, socket) -> None:
@@ -19,6 +19,7 @@ class ClientHandler():
         self.session_manager: SessionManager = SessionManager.get_instance()
         self.storage_manager: StorageManager = StorageManager()
         self.shareDB_manager: ShareDBManager = ShareDBManager.get_instance()
+        self.aes = AesUtils()
         
         self.account: Account = None
         self.project: Project = None
@@ -39,9 +40,8 @@ class ClientHandler():
 
             token = secrets.token_hex(16)
             self.db_manager.create_token(user_id, token, time.time())
-            
             return {
-                "token": token,
+                "token": self.aes.encrypt(token + " " + self.socket.socket.remote_address[0]),
                 "user": self._formatAccountToJson()
             }
         
@@ -59,13 +59,16 @@ class ClientHandler():
             token = secrets.token_hex(16)
             self.db_manager.create_token(id, token, time.time())
             return {
-                "token": token,
+                "token": self.aes.encrypt(token + " " + self.socket.socket.remote_address[0]),
                 "user": self._formatAccountToJson()
             }
         
         @self.socket.event_handler
         def autoLogin(props: dict):
-            user_id = self.db_manager.get_user_id_by_token(props['token'])
+            token, signed_ip = self.aes.decrypt(props["token"]).split(" ")
+            if (self.socket.socket.remote_address[0] != signed_ip): return False
+
+            user_id = self.db_manager.get_user_id_by_token(token)
             if user_id is None: return False
 
             ret = self.db_manager.get_user_by_id(user_id)

@@ -6,6 +6,7 @@ import { HomePage } from "./pages/home/home-page"
 import React from "react"
 import { ConditionalRoute } from "./utils/components"
 import { LocalStorageController, ShareDBManager } from "./utils"
+import { ThemeProvider } from "@emotion/react"
 
 function App() {
     ShareDBManager.getInstance()

@@ -17,6 +17,10 @@ class NetworkConfig:
 
     PEPPER = "waabTWDf301n5XJRw71qbkXvYdMi7vOA"
 
+    AES_KEY_PATH = os.path.normpath(
+        os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../.keys/aes_key.bin")
+    )
+
 class DatabaseConfig:
     PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "database/database.db")
 

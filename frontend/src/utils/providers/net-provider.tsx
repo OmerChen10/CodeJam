@@ -60,6 +60,7 @@ export function NetProvider({ children }: { children: React.ReactNode }) {
                     message = {};
                 } else if (typeof message === "object") {
                     // Convert the message to a string
+                    
                     message = JSON.stringify(message);
                 }
                 
