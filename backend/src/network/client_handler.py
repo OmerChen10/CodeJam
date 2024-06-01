@@ -65,7 +65,9 @@ class ClientHandler():
         
         @self.socket.event_handler
         def autoLogin(props: dict):
-            token, signed_ip = self.aes.decrypt(props["token"]).split(" ")
+            signed_token = self.aes.decrypt(props["token"])
+            if signed_token is None: return False
+            token, signed_ip = signed_token.split(" ")
             if (self.socket.socket.remote_address[0] != signed_ip): return False
 
             user_id = self.db_manager.get_user_id_by_token(token)
@@ -238,7 +240,7 @@ class ClientHandler():
         
         @self.socket.event_handler
         def getUsersForProject(props):
-            id_list = self.db_manager.get_users_for_project(self.project.id)
+            id_list = self.db_manager.get_users_for_project(self.project.id) 
             if id_list is None: return {"users": []}
             username_list = [self.db_manager.get_user_by_id(id)[1] for id in id_list if id != self.account.id]
             return username_list
@@ -255,7 +257,11 @@ class ClientHandler():
         @self.socket.event_handler
         def sendInvite(props):
             user = self.db_manager.get_user_by_username(props["username"])
-            if user is None: return False
+            if user is None: return False, "User not found"
+            # Check if the user is already in the project
+            if self.db_manager.check_user_permission(user[0], self.project.id): return False, "User is already in the project"
+            # Check if the user has already been invited
+            if self.db_manager.check_invite_for_user(user[0], self.project.id): return False, "User has already been invited"
             self.db_manager.create_invite(user[0], self.project.id)
 
             self.network_manager.send_to_user(user[0], 

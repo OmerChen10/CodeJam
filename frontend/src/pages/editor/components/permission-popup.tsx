@@ -26,13 +26,12 @@ export function PermissionPopup() {
     useEffect(() => {
         if (users === undefined || users.length === 0) {
             setUsers([])
-        } else {
-            nm.send<GenericResponse<string[]>>("getUsersForProject", {}).then((response) => {
-                if (response.success) {
-                    setUsers(response.data);
-                }
-            });
-        }
+        } 
+        nm.send<GenericResponse<string[]>>("getUsersForProject", {}).then((response) => {
+            if (response.success) {
+                setUsers(response.data);
+            }
+        });
     }, [anchorEl]);
 
     function handleRemoveUser(username: string) {
@@ -54,7 +53,7 @@ export function PermissionPopup() {
                 toast.success("Successfully sent invite");
             }
             else {
-                toast.error("User not found");
+                toast.error(response.message)
             }
         });
     }

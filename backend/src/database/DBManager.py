@@ -151,6 +151,9 @@ class DBManager:
         if len(ret) == 1: return ret
         return [x[0] for x in ret] if ret is not None else None
     
+    def check_invite_for_user(self, user_id: int, project_id: int) -> bool:
+        return self.execute(f"SELECT project_id FROM user_invites WHERE project_id = {project_id} AND user_id = {user_id}") is not None
+    
     def remove_user_from_project(self, user_id: int, project_id: int):
         self.execute(f"DELETE FROM projects WHERE user_id = {user_id} AND project_id = {project_id}")
 

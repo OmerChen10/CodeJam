@@ -27,10 +27,10 @@ class Logger:
 
     
     @staticmethod
-    def log_debug(message):
+    def log_warning(message):
         """ Log a debug message."""
-        print(Fore.YELLOW + Style.BRIGHT + "[DEBUG] " + Style.RESET_ALL + message)
-        Logger.logger.debug("[DEBUG] " + message)
+        print(Fore.YELLOW + Style.BRIGHT + "[WARNING] " + Style.RESET_ALL + message)
+        Logger.logger.debug("[WARNING] " + message)
 
     
     def log_error(message, e: Exception =None):

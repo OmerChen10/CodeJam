@@ -81,6 +81,10 @@ class ClientIO():
             if type(response) == bool: # If the response is a boolean, override the success field.
                 resp["success"] = response
 
+            if type(response) == tuple: # If the response is a tuple, unpack it.
+                resp["success"] = response[0]
+                resp["message"] = response[1]
+
             else: resp["data"] = response 
         
         # Create the message. (Using json to serialize the data).

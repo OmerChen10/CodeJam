@@ -1,12 +1,12 @@
-import pickle
 from Crypto.Cipher import AES
 from Crypto.Random import get_random_bytes
 from Crypto.Util.Padding import pad, unpad
 from constants import NetworkConfig
 import binascii
+from utils import Logger
+
 
 class AesUtils:
-
     def __init__(self) -> None:
         with open(NetworkConfig.AES_KEY_PATH, "rb") as f:
             self.key = f.read()
@@ -21,8 +21,13 @@ class AesUtils:
 
 
     def decrypt(self, cipher_text) -> (str):
-        data = self.cipher.decrypt(binascii.unhexlify(cipher_text))
-        return unpad(data, AES.block_size).decode()
+        try: 
+            data = self.cipher.decrypt(binascii.unhexlify(cipher_text))
+            return unpad(data, AES.block_size).decode()
+        
+        except:
+            Logger.log_warning("[AesUtils] Failed to decrypt message.")
+            return None
 
 
 if __name__ == "__main__":
