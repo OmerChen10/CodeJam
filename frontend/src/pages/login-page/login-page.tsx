@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { TextField, Button } from "@mui/material";
 import React from "react";
 import "./login.css"
@@ -6,11 +6,15 @@ import { useAuth } from "../../utils";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { RouteConfig } from "../../config/constants";
+import { EmailVerificationDialog } from "../../utils/components/dialogs/email-verification-dialog";
 
 export function LoginPage() {
     const [signup, setSignUp] = useState(false);
+    const [emailVerificationOpen, setEmailVerificationOpen] = useState(false);
     const auth = useAuth();
     const navigate = useNavigate();
+
+    const emailRef = useRef("");
     
     useEffect(() => {
         if (auth.isLoggedIn()) {
@@ -22,14 +26,20 @@ export function LoginPage() {
         e.preventDefault();
         const data = new FormData(e.currentTarget);
         const email = data.get("email") as string;
+        emailRef.current = email;
         const password = data.get("password") as string;
-        auth.login(email, password);
+        auth.login(email, password).then((success) => {
+            if (success) {
+                setEmailVerificationOpen(true);
+            }
+        });
     }
 
     function createAccount(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
         const data = new FormData(e.currentTarget);
         const email = data.get("email") as string;
+        emailRef.current = email;
         const password = data.get("password") as string;
         const confirmPassword = data.get("confirm-password") as string;
         const username = data.get("username") as string;
@@ -38,7 +48,11 @@ export function LoginPage() {
             return;
         }
 
-        auth.createAccount(password, email, username);
+        auth.createAccount(password, email, username).then((success) => {
+            if (success) {
+                setEmailVerificationOpen(true);
+            }
+        });
     }
 
     function renderForm() {
@@ -76,6 +90,7 @@ export function LoginPage() {
             <div id="login-container">
                 {renderForm()}
             </div>
+            <EmailVerificationDialog open={emailVerificationOpen} setOpen={setEmailVerificationOpen} email={emailRef.current}/>
         </div>
     );
 }

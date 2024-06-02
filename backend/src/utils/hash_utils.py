@@ -1,4 +1,4 @@
-from constants import NetworkConfig
+from constants import SecurityConfig
 import hashlib
 import secrets
 
@@ -7,7 +7,7 @@ class HashUtils:
 
     @staticmethod
     def hash_password(text: str, salt: str) -> str:
-        text = NetworkConfig.PEPPER + salt + text
+        text = SecurityConfig.PEPPER + salt + text
         return hashlib.sha256(text.encode()).hexdigest()
     
 

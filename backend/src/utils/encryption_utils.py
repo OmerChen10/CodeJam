@@ -1,14 +1,14 @@
 from Crypto.Cipher import AES
 from Crypto.Random import get_random_bytes
 from Crypto.Util.Padding import pad, unpad
-from constants import NetworkConfig
+from constants import SecurityConfig
 import binascii
 from utils import Logger
 
 
 class AesUtils:
     def __init__(self) -> None:
-        with open(NetworkConfig.AES_KEY_PATH, "rb") as f:
+        with open(SecurityConfig.AES_KEY_PATH, "rb") as f:
             self.key = f.read()
 
         self.cipher = AES.new(self.key, AES.MODE_ECB)

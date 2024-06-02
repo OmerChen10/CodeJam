@@ -1,9 +1,9 @@
 from network.sessions import SessionManager, Session
-from constants import Account, Project
+from constants import Account, Project, EmailConfig
 from executer import StorageManager
 from shareDB import ShareDBManager
 from database import DBManager
-from utils import HashUtils, AesUtils
+from utils import HashUtils, AesUtils, EmailUtils
 from utils import Logger
 import secrets
 import time 
@@ -19,32 +19,36 @@ class ClientHandler():
         self.session_manager: SessionManager = SessionManager.get_instance()
         self.storage_manager: StorageManager = StorageManager()
         self.shareDB_manager: ShareDBManager = ShareDBManager.get_instance()
+        self.email_utils = EmailUtils.get_instance()
         self.aes = AesUtils()
         
         self.account: Account = None
+        self.account_pending_email: Account = None
         self.project: Project = None
         self.session: Session = None
 
-        @self.socket.event_handler
-        def createUser(props):
-            if self.db_manager.get_user_by_email(props['email']) != None:
-                return False
-            
-            if self.db_manager.get_user_by_username(props['username']) != None:
-                return False
-            
-            salt = HashUtils.generate_salt()
-            hashed_password = HashUtils.hash_password(props['password'], salt)
-            user_id = self.db_manager.create_user(props['username'], props['email'], hashed_password, salt)
-            self.account = Account(user_id, props['username'], props['email'])
+        self._on_verify_email_code = None
 
-            token = secrets.token_hex(16)
-            self.db_manager.create_token(user_id, token, time.time())
-            return {
-                "token": self.aes.encrypt(token + " " + self.socket.socket.remote_address[0]),
-                "user": self._formatAccountToJson()
-            }
-        
+        @self.socket.event_handler
+        def createUser(user_props: dict):
+            if self.db_manager.get_user_by_email(user_props['email']) != None:
+                return False
+            
+            if self.db_manager.get_user_by_username(user_props['username']) != None:
+                return False
+            
+            self.account_pending_email = Account(-1, user_props['username'], user_props['email'])
+            self._sendEmailCode()
+            
+            @self._set_verify_email_code_callback
+            def callback():
+                salt = HashUtils.generate_salt()
+                hashed_password = HashUtils.hash_password(user_props['password'], salt)
+                user_id = self.db_manager.create_user(user_props['username'], user_props['email'], hashed_password, salt)
+                self.account = Account(user_id, user_props['username'], user_props['email'])
+
+            return True
+
         @self.socket.event_handler
         def loginUser(props):
             ret = self.db_manager.get_user_by_email(props['email'])
@@ -55,13 +59,22 @@ class ClientHandler():
             if password != HashUtils.hash_password(props['password'], salt):
                 return False
             
-            self.account = Account(id, username, props["email"])
-            token = secrets.token_hex(16)
-            self.db_manager.create_token(id, token, time.time())
-            return {
-                "token": self.aes.encrypt(token + " " + self.socket.socket.remote_address[0]),
-                "user": self._formatAccountToJson()
-            }
+            self.account_pending_email = Account(id, username, props["email"])
+            self._sendEmailCode()
+            
+            return True
+        
+        @self.socket.event_handler
+        def resendEmailCode(props):
+            if self.account_pending_email is None: return False
+            email_code = secrets.token_hex(3) # 6 digit code
+            self.db_manager.create_email_code(self.account_pending_email.id, 
+                                              self.account_pending_email.email,
+                                              email_code)
+            
+            return True
+        
+        
         
         @self.socket.event_handler
         def autoLogin(props: dict):
@@ -82,6 +95,22 @@ class ClientHandler():
             return {
                 "user": self._formatAccountToJson()
             }
+        
+        @self.socket.event_handler
+        def verifyEmailCode(props):
+            user_id = self._verifyEmailCode(props["code"])
+            if user_id is None: return False
+
+            # Delete the email code
+            self.db_manager.delete_email_codes_for_email(self.account_pending_email.email)
+
+            self.account = self.account_pending_email
+            token = secrets.token_hex(16)
+            self.db_manager.create_token(user_id, token, time.time())
+            return {
+                "token": self.aes.encrypt(token + " " + self.socket.socket.remote_address[0]),
+                "user": self._formatAccountToJson()
+                }
         
         @self.socket.event_handler
         def updateUserCredentials(props):
@@ -269,7 +298,37 @@ class ClientHandler():
                                               self.storage_manager.get_metadata(self.project.id))
             return True
         
+        @self.socket.event_handler
+        def authenticateEmailCode(props):
+            user_id, timestamp = self.db_manager.get_email_code(props["code"])
+            if user_id is None: return False
+            if time.time() - timestamp > EmailConfig.CODE_EXPIRATION: return False
+
+            return True
     
+    @Logger.catch_exceptions
+    def _sendEmailCode(self):
+        """ Sends an email code to the user, based on the account_pending_email."""
+        email_code = secrets.token_hex(3) # 6 digit code
+        self.db_manager.create_email_code(self.account_pending_email.id, 
+                                            self.account_pending_email.email,
+                                            email_code)
+        self.email_utils.send_code(self.account_pending_email.email, "CodeJam Email Verification", email_code)
+
+    @Logger.catch_exceptions
+    def _verifyEmailCode(self, code):
+        user_id, timestamp = self.db_manager.get_user_id_by_email_code(code)
+        if user_id is None: return None
+        if time.time() - float(timestamp) > EmailConfig.CODE_EXPIRATION: return False
+        if self._on_verify_email_code is not None: 
+            self._on_verify_email_code()
+            self._on_verify_email_code = None
+
+        return user_id
+    
+    def _set_verify_email_code_callback(self, callback):
+        self._on_verify_email_code = callback
+
     def _formatAccountToJson(self):
         return {
             "username": self.account.name,
@@ -286,5 +345,3 @@ class ClientHandler():
 
     def _metadataToProject(self, metadata, admin=False):
         return Project(metadata["id"], metadata["name"], metadata["author"], metadata["description"], admin)
-    
-        

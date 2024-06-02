@@ -9,9 +9,10 @@ import { LoadingScreen } from "../components";
 
 interface authProviderProps {
     user: UserInterface;
-    createAccount: (password: string, email: string, username: string) => void;
-    login: (email: string, password: string) => void;
+    createAccount: (password: string, email: string, username: string) => Promise<boolean>;
+    login: (email: string, password: string) => Promise<boolean>;
     logout: () => void;
+    verifyEmailCode: (code: string) => void;
     isLoggedIn: () => boolean;
     withAuth: (callback: () => void) => void;
 }
@@ -51,23 +52,41 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
     }, []);
 
     function createAccount(password: string, email: string, username: string) {
-        // Send request to create account
-        nm.send<UserResponse>("createUser", { password: password, email: email, username: username })
-            .then((response) => {
-                if (response.success) {
-                    LocalStorageController.setUserToken(response.data.token);
-                    setUser(response.data.user);
-                    navigate(RouteConfig.HOME);
-                    toast.success("Account created successfully!");
-                }
-                else {
-                    toast.error("Username or email already exists!");
-                }
+        return new Promise<boolean>((resolve, reject) => {
+            // Send request to create account
+            nm.send<UserResponse>("createUser", { password: password, email: email, username: username })
+                .then((response) => {
+                    if (response.success) {
+                        toast.info("Check your email for the verification code!");
+                        resolve(true);
+                    }
+                    else {
+                        toast.error("Username or email already exists!");
+                        resolve(false);
+                    }
+                })
             })
     }
 
     function login(email: string, password: string) {
-        nm.send<UserResponse>("loginUser", { email: email, password: password })
+        return new Promise<boolean>((resolve, reject) => {
+            nm.send<UserResponse>("loginUser", { email: email, password: password })
+                .then((response) => {
+                    if (response.success) {
+                        toast.info("Check your email for the verification code!");
+                        resolve(true);
+                    }
+                    else {
+                        toast.error("Invalid credentials!");
+                        resolve(false);
+                    }
+                })
+            })
+        
+    }
+
+    function verifyEmailCode(code: string) {
+        nm.send<UserResponse>("verifyEmailCode", { code: code })
             .then((response) => {
                 if (response.success) {
                     LocalStorageController.setUserToken(response.data.token);
@@ -76,7 +95,7 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
                     toast.success("Logged in successfully!");
                 }
                 else {
-                    toast.error("Invalid credentials!");
+                    toast.error("Invalid code!");
                 }
             })
     }
@@ -104,7 +123,7 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
 
     return (
         // Provide the auth context, and display a loading screen while the user is being authenticated
-        <AuthContext.Provider value={{user, createAccount, login, logout, isLoggedIn, withAuth}}>
+        <AuthContext.Provider value={{user, createAccount, login, logout, verifyEmailCode, isLoggedIn, withAuth}}>
             {loading ? <LoadingScreen>Authenticating... </LoadingScreen> : children}
         </AuthContext.Provider>
     );

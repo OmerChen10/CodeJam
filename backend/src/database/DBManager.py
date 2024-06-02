@@ -1,3 +1,4 @@
+import time
 from constants import DatabaseConfig
 from utils import Logger
 import sqlite3
@@ -23,6 +24,7 @@ class DBManager:
             DBManager.INSTANCE = DBManager()
         return DBManager.INSTANCE
 
+    @Logger.catch_exceptions
     def create_tables(self):
         self.execute(
             "CREATE TABLE users (id INTEGER, username TEXT, email TEXT, password TEXT, salt TEXT DEFAULT NULL)"
@@ -35,6 +37,9 @@ class DBManager:
         )
         self.execute(
             "CREATE TABLE user_invites (user_id INTEGER, project_id INTEGER)"
+        )
+        self.execute(
+            "CREATE TABLE email_codes (user_id INTEGER, email TEXT, code TEXT, timestamp TEXT)"
         )
     
     def execute(self, query: str, *args):
@@ -159,5 +164,15 @@ class DBManager:
 
     def get_user_salt(self, user_id: int):
         return self.execute(f"SELECT salt FROM users WHERE id = {user_id}")[0]
-
     
+    def get_user_id_by_email_code(self, code: str):
+        ret = self.execute(f"SELECT user_id, timestamp FROM email_codes WHERE code = '{code}'")
+        if ret is None: return None
+        return ret
+    
+    def create_email_code(self, user_id: int, email: str, code: str):
+        self.execute(f"INSERT INTO email_codes (user_id, email, code, timestamp) VALUES {user_id, email, code, time.time()}")
+
+    def delete_email_codes_for_email(self, email: str):
+        # Delete all email codes for a given email.
+        self.execute(f"DELETE FROM email_codes WHERE email = '{email}'")
