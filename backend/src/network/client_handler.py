@@ -114,6 +114,7 @@ class ClientHandler():
         
         @self.socket.event_handler
         def updateUserCredentials(props):
+            if self.db_manager.get_user_by_email(props["email"]) is not None: return False
             self.db_manager.update_user_credentials(self.account.id, props["username"], props["email"])
             self.account = Account(self.account.id, props["username"], props["email"])
             return True
@@ -304,6 +305,11 @@ class ClientHandler():
             if user_id is None: return False
             if time.time() - timestamp > EmailConfig.CODE_EXPIRATION: return False
 
+            return True
+        
+        @self.socket.event_handler
+        def broadcastChatMessage(message):
+            self.session.broadcast(self, "chatMessage", {"message": message, "name": self.account.name})
             return True
     
     @Logger.catch_exceptions

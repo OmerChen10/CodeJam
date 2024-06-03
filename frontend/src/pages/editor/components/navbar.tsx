@@ -6,6 +6,7 @@ import { PermissionPopup } from "./permission-popup";
 import { IconButton, Paper } from "@mui/material";
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import { useProject } from "../../../utils";
+import { ChatDrawer } from "./chat-popup";
 
 interface props {
     runCurrentFile: () => void
@@ -39,6 +40,7 @@ export function EditorNavbar({ runCurrentFile, selectedProject, runEnabled, file
                         <PlayArrowIcon sx={runEnabled ? {color: "lightgreen"} : {color: "gray"}}/>
                     </IconButton>
                 </Paper>
+                <ChatDrawer />
                 {currentProject.isAdmin ? <PermissionPopup /> : null}
                 <NotificationPopup />
                 <ProfileDialog/>
