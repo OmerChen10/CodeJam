@@ -29,10 +29,10 @@ class Session():
 
 
     @Logger.catch_exceptions
-    def broadcast(self, curr_socket, event_name: str, server_msg) -> None:
+    def broadcast(self, curr_handler, event_name: str, server_msg) -> None:
         """ Broadcast a message to all clients in the session. """
         for handler in self._clientHandlers:
-            if handler is curr_socket: continue
+            if handler is curr_handler: continue
             handler.socket.send(event_name, server_msg)
 
     @Logger.catch_exceptions

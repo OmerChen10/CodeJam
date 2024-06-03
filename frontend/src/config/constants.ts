@@ -43,6 +43,11 @@ export interface UserInterface {
     email: string;
 }
 
+export interface MessageInterface {
+    name: string;
+    message: string;
+}
+
 interface SuccessResponse<T> {
     success: true;
     data: T;
