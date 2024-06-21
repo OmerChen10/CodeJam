@@ -8,7 +8,8 @@ import { EditorConfig } from "../../config/constants"
 import { EditorNavbar } from "./components/navbar"
 import { ConfirmDialog } from "../../utils/components"
 import React from "react"
-import { Button, Container, Dialog, DialogActions, DialogContentText, DialogTitle, Stack, TextField } from "@mui/material"
+import { Button, Container, Dialog, DialogActions, DialogContentText, DialogTitle, IconButton, Stack, TextField } from "@mui/material"
+import NoteAddIcon from '@mui/icons-material/NoteAdd';
 
 
 export const LoadingContext = createContext<(loading: boolean) => void>(() => {})
@@ -117,7 +118,9 @@ export function EditorPage() {
                 <div id="editor-nav">
                     <div id="file-list-title">
                         <h3>Files:</h3>
-                        <img src="../../assets/images/new-file-icon.png" id="create-file-icon" onClick={(e) => {setAnchorEl(e.currentTarget)}} />
+                        <IconButton onClick={(event) => setAnchorEl(event.currentTarget)}>
+                            <NoteAddIcon/>
+                        </IconButton>
                     </div>
                     <Stack direction="column" spacing={1.5} sx={{p: '0.5rem 0.5rem'}}>
                         {renderFileList()}
