@@ -177,10 +177,6 @@
     outline: none;
 } 
 
-.file-name-input:hover {
-    background-color: #323c42;
-}
-
 .file-button:hover .file-name-input {
     background-color: #323c42;
 }

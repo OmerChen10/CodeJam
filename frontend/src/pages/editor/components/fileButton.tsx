@@ -10,9 +10,10 @@ interface props {
     onOpen: () => void
     onRename: (oldName: string, newName: string) => void
     onDelete: () => void
+    selected?: boolean
 }
 
-export function FileButton({fileName, onOpen, onRename, onDelete}: props) {
+export function FileButton({fileName, onOpen, onRename, onDelete, selected}: props) {
     const [fileTypeImgSrc, setFileTypeImgSrc] = useState<string>("")
     const [inputDisplayedText, setInputDisplayedText] = useState<string>("")
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
@@ -71,6 +72,7 @@ export function FileButton({fileName, onOpen, onRename, onDelete}: props) {
                 fileName = inputDisplayedText
             }
         })
+        setInputDisabled(true)
     }
 
     function handleClose() {
@@ -86,7 +88,6 @@ export function FileButton({fileName, onOpen, onRename, onDelete}: props) {
     
         // focus on the input field inside the currentTarget
         inputRef.current?.focus();    
-        console.log(inputRef.current)
     }
 
     function handleDelete() {
@@ -95,12 +96,19 @@ export function FileButton({fileName, onOpen, onRename, onDelete}: props) {
     }
 
     return (
-        <Box>
-            <Stack direction="row" spacing={2} alignItems="center" onContextMenu={handleMenuOpen} onClick={onOpen}>
-                <input type="text" value={inputDisplayedText} className="file-name-input" onChange={
-                    (e) => {setInputDisplayedText(e.target.value)}
-                } disabled={inputDisabled} ref={inputRef} onBlur={saveFileName}/>
+        <Box sx={{'&:hover': {bgcolor: '#323c42', cursor: 'pointer'}, 
+            width: 'fit-content', p: '0.35rem', paddingRight: '1.5rem', borderRadius: '0.3rem', bgcolor: selected ? '#4e5d66': ''}} 
+            onClick={onOpen}>
+                
+            <Stack direction="row" spacing={2} alignItems="center" onContextMenu={handleMenuOpen}>
                 <img src={fileTypeImgSrc} alt="file icon" className="file-extension-img"/>
+                {
+                    inputDisabled ?
+                    <Typography fontWeight='bold'>{inputDisplayedText}</Typography> :
+                    <input value={inputDisplayedText} className="file-name-input" style={{backgroundColor: 'inherit'}} onChange={
+                        (e) => {setInputDisplayedText(e.target.value)}
+                    } disabled={inputDisabled} ref={inputRef} onBlur={saveFileName}/>
+                }
             </Stack>
             <Menu
                 anchorEl={anchorEl}

@@ -8,7 +8,7 @@ import { EditorConfig } from "../../config/constants"
 import { EditorNavbar } from "./components/navbar"
 import { ConfirmDialog } from "../../utils/components"
 import React from "react"
-import { Button, Container, Dialog, DialogActions, DialogContentText, DialogTitle, TextField } from "@mui/material"
+import { Button, Container, Dialog, DialogActions, DialogContentText, DialogTitle, Stack, TextField } from "@mui/material"
 
 
 export const LoadingContext = createContext<(loading: boolean) => void>(() => {})
@@ -40,7 +40,7 @@ export function EditorPage() {
 
     function renderFileList() {
         return fileList.map((fileName) => {
-            return <FileButton fileName={fileName} key={fileName} 
+            return <FileButton fileName={fileName} key={fileName} selected={fileName === currentFileName}
                 onOpen={() => {
                     setCurrentFileName(fileName)
                     runEnabled.current = fileName.split(".")[1] in EditorConfig.supportedLanguagesCommands
@@ -119,9 +119,9 @@ export function EditorPage() {
                         <h3>Files:</h3>
                         <img src="../../assets/images/new-file-icon.png" id="create-file-icon" onClick={(e) => {setAnchorEl(e.currentTarget)}} />
                     </div>
-                    <div id="file-list">
+                    <Stack direction="column" spacing={1.5} sx={{p: '0.5rem 0.5rem'}}>
                         {renderFileList()}
-                    </div>
+                    </Stack>
                 </div>
                 <LoadingContext.Provider value={setLoading}>
                     <CodeEditor fileSaved={setFileSaved} currFileName={currentFileName}/>
