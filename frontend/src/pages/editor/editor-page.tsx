@@ -8,6 +8,7 @@ import { EditorConfig } from "../../config/constants"
 import { EditorNavbar } from "./components/navbar"
 import { ConfirmDialog } from "../../utils/components"
 import React from "react"
+import { Button, Container, Dialog, DialogActions, DialogContentText, DialogTitle, TextField } from "@mui/material"
 
 
 export const LoadingContext = createContext<(loading: boolean) => void>(() => {})
@@ -18,6 +19,9 @@ export function EditorPage() {
     const [isLoading, setLoading] = useState<boolean>(false)
     const [fileSaved, setFileSaved] = useState<boolean>(true)
     const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false)
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+    const createFileMenuOpen = Boolean(anchorEl)
+
     const fileNameToDelete = useRef<string>("")
 
 
@@ -61,21 +65,6 @@ export function EditorPage() {
         })
     }
 
-    function createNewFile() {
-        let name = prompt("Enter the name of the new file:")
-        if (!name) return
-        
-        nm.send("createFile", {name: name}).then((response) => {
-            if (response.success) {
-                toast.success("File created successfully!")
-                setFileList([...fileList, name])
-            }
-            else {
-                toast.error("Failed to create file!")
-            }
-        })
-    }
-
     function runCurrentFile() {
         const fileType = currentFileName.split(".")[1]
         if (EditorConfig.supportedLanguagesCommands[fileType]) {
@@ -101,6 +90,25 @@ export function EditorPage() {
         })
     }
 
+    function onSubmitCreateFile(event: React.FormEvent<HTMLFormElement>) {
+        setAnchorEl(null)
+        console.log("submit")
+        event.preventDefault()
+        const formData = new FormData(event.target as HTMLFormElement)
+        const name = formData.get("name") as string
+        if (!name) return
+        
+        nm.send("createFile", {name: name}).then((response) => {
+            if (response.success) {
+                toast.success("File created successfully!")
+                setFileList([...fileList, name])
+            }
+            else {
+                toast.error("Failed to create file!")
+            }
+        })
+    }
+
     if (!currentProject) return null
     return (
         <div id="main-editor">
@@ -109,7 +117,7 @@ export function EditorPage() {
                 <div id="editor-nav">
                     <div id="file-list-title">
                         <h3>Files:</h3>
-                        <img src="../../assets/images/new-file-icon.png" id="create-file-icon" onClick={createNewFile} />
+                        <img src="../../assets/images/new-file-icon.png" id="create-file-icon" onClick={(e) => {setAnchorEl(e.currentTarget)}} />
                     </div>
                     <div id="file-list">
                         {renderFileList()}
@@ -121,9 +129,35 @@ export function EditorPage() {
             </div>
             <div id="loading-spinner" className="spinner-border" role="status" 
             style={isLoading ? {} : { display: "none" }}/>
+
             <ConfirmDialog openDialog={openDeleteDialog} setOpenDialog={setOpenDeleteDialog} onConfirm={() => deleteFile(fileNameToDelete.current)}>
                 Delete
             </ConfirmDialog>
+
+            <Dialog
+                open={createFileMenuOpen}
+                onClose={() => setAnchorEl(null)}
+            >
+                <Container component="form" onSubmit={onSubmitCreateFile}>
+                    <DialogTitle>Create New File</DialogTitle>
+                    <DialogContentText>
+                        Please enter the name of the new file:
+                    </DialogContentText>
+                    <TextField
+                        autoFocus
+                        margin="dense"
+                        id="name"
+                        label="File Name"
+                        name="name"
+                        type="text"
+                        fullWidth
+                    />
+                    <DialogActions>
+                        <Button variant='contained' onClick={() => setAnchorEl(null)}>Cancel</Button>
+                        <Button variant='contained' type="submit">Create</Button>
+                    </DialogActions>
+                </Container>
+            </Dialog>
         </div>
     )
 }
