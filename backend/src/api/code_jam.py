@@ -1,5 +1,5 @@
 from network import NetworkManger
-from constants import WebsiteServerConfig
+from constants import WebsiteServerConfig, ShareDBConfig
 from utils import Logger
 import subprocess
 import os
@@ -45,7 +45,7 @@ class CodeJamServer():
 
     def start_shareDB_server(self):
         Logger.log_info("Starting ShareDB server")
-        subprocess.Popen(['node', './src/shareDB/server.cjs'],
+        subprocess.Popen(['node', ShareDBConfig.SERVER_PATH],
                          shell=True, cwd=self.root_dir,
                          stdout=subprocess.DEVNULL,
                          stderr=subprocess.DEVNULL)

@@ -6,7 +6,6 @@ class WebsiteServerConfig:
     SERVER_PATH = os.path.normpath(
         os.path.join(os.path.dirname(os.path.abspath(__file__)), "../website")
     )
-    print(SERVER_PATH)
 
 class EmailConfig:
     CODE_EXPIRATION = 60 * 5 # 5 minutes
@@ -51,6 +50,9 @@ class StorageConfig:
 
 class ShareDBConfig:
     ID_HEADER = "file:///"
+    SERVER_PATH = os.path.normpath(
+        os.path.join(os.path.dirname(os.path.abspath(__file__)), "shareDB/server.cjs")
+    )
 
 
 class ExecuterConfig:

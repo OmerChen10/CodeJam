@@ -44,7 +44,7 @@ export function ChatDrawer() {
     function renderMessages() {
         return messageList.map((message) => {
             return (
-                <Box sx={{ borderRadius: "0.5rem", 
+                <Box key={message.message} sx={{ borderRadius: "0.5rem", 
                            bgcolor: "#454b50", 
                            width: "fit-content", 
                            p: 1,
