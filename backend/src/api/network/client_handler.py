@@ -322,6 +322,11 @@ class ClientHandler():
         def recreateContainer(props):
             self.session.controller.recreate_container()
             return True
+        
+        @self.socket.event_handler
+        def terminateContainerCommand(props):
+            self.session.controller.send_input('\x03')
+            return True
     
     @Logger.catch_exceptions
     def _sendEmailCode(self):

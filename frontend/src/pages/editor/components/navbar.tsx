@@ -9,6 +9,7 @@ import { useNetwork, useProject } from "../../../utils";
 import { ChatDrawer } from "./chat-popup";
 import { toast } from "sonner";
 import LoopIcon from '@mui/icons-material/Loop';
+import SquareIcon from '@mui/icons-material/Square';
 
 interface props {
     runCurrentFile: () => void
@@ -52,6 +53,11 @@ export function EditorNavbar({ runCurrentFile, selectedProject, runEnabled, file
                 <Paper elevation={3} sx={{borderRadius: "100%"}}>
                     <IconButton onClick={runCurrentFile} disabled={!runEnabled}>
                         <PlayArrowIcon sx={runEnabled ? {color: "lightgreen"} : {color: "gray"}}/>
+                    </IconButton>
+                </Paper>
+                <Paper elevation={3} sx={{borderRadius: "100%"}}>
+                    <IconButton onClick={() => {nm.send("terminateContainerCommand")}}>
+                        <SquareIcon sx={{color: '#b31105', fontSize: "1.4rem", p: '0.2rem'}}/>
                     </IconButton>
                 </Paper>
                 <IconButton onClick={handleRecreateContainer}>
