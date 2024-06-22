@@ -114,7 +114,13 @@ class ClientHandler():
         
         @self.socket.event_handler
         def updateUserCredentials(props):
-            if self.db_manager.get_user_by_email(props["email"]) is not None: return False
+            # Check if the email received has been changed
+            if (props["email"] != self.account.email):
+                if self.db_manager.get_user_by_email(props["email"]) is not None: return False, "Email already in use"
+
+            if (props["username"] != self.account.name):
+                if self.db_manager.get_user_by_username(props["username"]) is not None: return False, "Username already in use"
+                
             self.db_manager.update_user_credentials(self.account.id, props["username"], props["email"])
             self.account = Account(self.account.id, props["username"], props["email"])
             return True

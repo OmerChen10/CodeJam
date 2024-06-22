@@ -28,7 +28,7 @@ export function ProfileDialog() {
                 if (response.success) {
                     toast.success("Profile updated successfully!")
                 } else {
-                    toast.error("Profile update failed!")
+                    toast.error(response.message)
                 }
             })
     }

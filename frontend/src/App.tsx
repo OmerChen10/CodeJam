@@ -6,7 +6,7 @@ import { HomePage } from "./pages/home/home-page"
 import React from "react"
 import { ConditionalRoute } from "./utils/components"
 import { LocalStorageController, ShareDBManager } from "./utils"
-import { ThemeProvider } from "@emotion/react"
+import { Container, Typography } from "@mui/material"
 
 function App() {
     ShareDBManager.getInstance()
@@ -18,6 +18,11 @@ function App() {
                 <ConditionalRoute condition={LocalStorageController.getUserToken() != null} fallback={RouteConfig.HOME}>
                     <EditorPage />
                 </ConditionalRoute>
+            } />
+            <Route path="*" element={
+                <Container sx={{width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+                    <Typography variant="h2"> {'Page Not Found :('}</Typography>
+                </Container>
             } />
         </Routes>
     )

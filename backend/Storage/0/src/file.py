@@ -1,1 +1,4 @@
-print("file.py")
+def main():
+    print("test")
+
+main()

@@ -32,7 +32,7 @@ export function ProjectPropEditor({ setPopUpMenuMode, fetchProjects, project }: 
         </div>
     )
 
-    function updateMetadata() {
+    function updateMetadata() {  
         // Send the request to update the project
         let nm = useNetwork();
         nm.send("updateProjectMetadata", {id: project.id, name: name, description: description}).then((response) => {
