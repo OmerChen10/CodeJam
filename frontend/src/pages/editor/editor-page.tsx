@@ -8,7 +8,7 @@ import { EditorConfig } from "../../config/constants"
 import { EditorNavbar } from "./components/navbar"
 import { ConfirmDialog } from "../../utils/components"
 import React from "react"
-import { Button, Container, Dialog, DialogActions, DialogContentText, DialogTitle, IconButton, Stack, TextField } from "@mui/material"
+import { Button, Container, Dialog, DialogActions, DialogContentText, DialogTitle, IconButton, Stack, TextField, Typography } from "@mui/material"
 import NoteAddIcon from '@mui/icons-material/NoteAdd';
 
 
@@ -93,7 +93,6 @@ export function EditorPage() {
 
     function onSubmitCreateFile(event: React.FormEvent<HTMLFormElement>) {
         setAnchorEl(null)
-        console.log("submit")
         event.preventDefault()
         const formData = new FormData(event.target as HTMLFormElement)
         const name = formData.get("name") as string
@@ -126,9 +125,10 @@ export function EditorPage() {
                         {renderFileList()}
                     </Stack>
                 </div>
-                <LoadingContext.Provider value={setLoading}>
+                {currentFileName !== "" ? <LoadingContext.Provider value={setLoading}>
                     <CodeEditor fileSaved={setFileSaved} currFileName={currentFileName}/>
-                </LoadingContext.Provider>
+                </LoadingContext.Provider> :
+                <Typography variant="h5" sx={{margin: "auto"}}>Select a file to edit</Typography>} 
             </div>
             <div id="loading-spinner" className="spinner-border" role="status" 
             style={isLoading ? {} : { display: "none" }}/>

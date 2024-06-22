@@ -34,8 +34,6 @@ class CodeJamServer():
 
         else:
             Logger.log_info("Running in prod mode")
-            subprocess.Popen(['npm', 'run', 'build'],
-                             shell=True, cwd=self.root_dir).wait()
             
             Logger.log_info("Starting server")
             subprocess.Popen(['node', os.path.join(WebsiteServerConfig.SERVER_PATH, 'server.cjs')],

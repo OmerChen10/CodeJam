@@ -15,7 +15,7 @@ export function CodeEditor({ fileSaved, currFileName }: props) {
 
     const setLoading = useContext(LoadingContext)
     const nm = useNetwork()
-    const [editor, setEditor] = useState<monaco.editor.IStandaloneCodeEditor>()
+    const editorRef = useRef<monaco.editor.IStandaloneCodeEditor>()
     const fileChangeTimestamp = useRef<number>(0)
     const otController = ShareDBManager.getInstance()
     const projectProvider = useProject()
@@ -23,6 +23,17 @@ export function CodeEditor({ fileSaved, currFileName }: props) {
     const currFileNameRef = useRef<string>(currFileName)
 
     useEffect(() => {
+        initializeEditor()
+    }, [])
+
+    useEffect(() => {
+        // Update on file change
+        currFileNameRef.current = currFileName
+        updateBinding()
+
+    }, [currFileName])
+
+    function initializeEditor() {
         const editor = monaco.editor.create(document.getElementById("editor-wrapper")!, {
             theme: "vs-dark"
         })
@@ -40,28 +51,22 @@ export function CodeEditor({ fileSaved, currFileName }: props) {
                 }
             }, EditorConfig.AUTO_SAVE_TIME)
         })
-        setEditor(editor)
-    }, [])
-
-    useEffect(() => {
-        // Update on file change
-        currFileNameRef.current = currFileName
-        updateBinding()
-
-    }, [currFileName])
+        editorRef.current = editor
+    }
 
     function updateBinding() {
         if (currFileNameRef.current === "") return
+        if (!editorRef.current) return
 
         let uri = monaco.Uri.file(currFileNameRef.current)
         let model = monaco.editor.getModel(uri)
         if (!model) {
             model = monaco.editor.createModel("", getLanguage()!, uri)
-            editor!.setModel(model)
-            otController.initialize_model(editor!, projectProvider.currentProject.id)
+            editorRef.current!.setModel(model)
+            otController.initialize_model(editorRef.current!, projectProvider.currentProject.id)
         }
 
-        editor!.setModel(model)
+        editorRef.current!.setModel(model)
     }
 
     function getLanguage() {

@@ -83,7 +83,6 @@ export function NetProvider({ children }: { children: React.ReactNode }) {
     function setupBaseEventHandlers() {
         // Setup base event handlers 
         onEvent<GenericResponse<string>>("showInfoToast", (response) => {
-            console.log(response);
             if (response.success) {
                 toast.info(response.data);
             }
