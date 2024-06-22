@@ -112,7 +112,12 @@ export function EditorPage() {
     if (!currentProject) return null
     return (
         <div id="main-editor">
-            <EditorNavbar runCurrentFile={runCurrentFile} selectedProject={currentProject} runEnabled={runEnabled.current} fileSaved={fileSaved}/>
+            <EditorNavbar 
+                runCurrentFile={runCurrentFile}
+                selectedProject={currentProject} 
+                runEnabled={runEnabled.current} 
+                fileSaved={fileSaved}
+            />
             <div id="editor-container" className={isLoading ? "disabled" : ""}>
                 <div id="editor-nav">
                     <div id="file-list-title">

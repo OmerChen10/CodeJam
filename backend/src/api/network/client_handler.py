@@ -120,7 +120,7 @@ class ClientHandler():
 
             if (props["username"] != self.account.name):
                 if self.db_manager.get_user_by_username(props["username"]) is not None: return False, "Username already in use"
-                
+
             self.db_manager.update_user_credentials(self.account.id, props["username"], props["email"])
             self.account = Account(self.account.id, props["username"], props["email"])
             return True
@@ -316,6 +316,11 @@ class ClientHandler():
         @self.socket.event_handler
         def broadcastChatMessage(message):
             self.session.broadcast(self, "chatMessage", {"message": message, "name": self.account.name})
+            return True
+        
+        @self.socket.event_handler
+        def recreateContainer(props):
+            self.session.controller.recreate_container()
             return True
     
     @Logger.catch_exceptions

@@ -22,19 +22,17 @@ class ContainerController:
         self.client = docker.from_env()
         self.container = self.get_container()
 
-        atexit.register(self.close)
+        self.initialize_container(self.container)
 
-        # Setup the container's stdout and stderr
+    @Logger.catch_exceptions
+    def initialize_container(self, container):
+        self.container = container
         self.stdout = self.container.logs(
             stream=True, stdout=True, stderr=True)
-
-        # Attach to the container's stdin
         self.stdin = self.container.attach_socket(
             params={"stdin": 1, "stream": 1})
-
         self.stdout_thread = threading.Thread(
             target=self.handle_output, args=(self.stdout,))
-
         self.stdout_thread.start()
 
     @Logger.catch_exceptions
@@ -92,6 +90,13 @@ class ContainerController:
             working_dir=f"/app/{self.project.name}", 
             environment={"PYTHONUNBUFFERED": "1", "TERM": "dumb", "PS1": "$ "}
         )
+    
+    @Logger.catch_exceptions
+    def recreate_container(self):
+        self.container.stop()
+        self.container.remove()
+        self.container = self.create_container()
+        self.initialize_container(self.container)
 
     @Logger.catch_exceptions
     def broadcast(self, event_name: str, server_msg) -> None:

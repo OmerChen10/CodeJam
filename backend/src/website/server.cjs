@@ -23,6 +23,6 @@ app.get('*', (req, res) => {
 });
 
 // Start the server
-https_server.listen(443, () => {
-  console.log('Server started on https://localhost:443');
+https_server.listen(443, '0.0.0.0', () => {
+  console.log('Server started on https://0.0.0.0:443');
 });
