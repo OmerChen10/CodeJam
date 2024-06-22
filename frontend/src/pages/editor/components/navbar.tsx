@@ -30,7 +30,6 @@ export function EditorNavbar({ runCurrentFile, selectedProject, runEnabled, file
     }
 
     function handleRecreateContainer() {
-        console.log("Recreating container")
         nm.send("recreateContainer").then((response) => {
             if (response.success) {
                 toast.success("Container recreated successfully!")
