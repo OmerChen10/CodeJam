@@ -37,7 +37,9 @@ class ClientHandler():
             if self.db_manager.get_user_by_username(user_props['username']) != None:
                 return False
             
-            self.account_pending_email = Account(-1, user_props['username'], user_props['email'])
+            user_id = self.db_manager.get_max_user_id() + 1
+            
+            self.account_pending_email = Account(user_id, user_props['username'], user_props['email'])
             self._sendEmailCode()
             
             @self._set_verify_email_code_callback

@@ -65,6 +65,11 @@ class DBManager:
         self.execute(f"INSERT INTO users (id, username, email, password, salt) VALUES {user_id, username, email, password, salt}")
         return user_id
     
+    def get_max_user_id(self):
+        ret = self.execute("SELECT MAX(id) FROM users")[0]
+        if ret is None: return 0 
+        return ret
+    
     def update_user_credentials(self, user_id: int, username: str, email: str):
         self.execute(f"UPDATE users SET username = '{username}', email = '{email}' WHERE id = {user_id}")
 

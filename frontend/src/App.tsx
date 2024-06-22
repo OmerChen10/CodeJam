@@ -15,7 +15,10 @@ function App() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/" element={<HomePage />}/>
             <Route path="/editor" element={
-                <ConditionalRoute condition={LocalStorageController.getUserToken() != null} fallback={RouteConfig.HOME}>
+                <ConditionalRoute 
+                    condition={() => {return LocalStorageController.getProjectToken() == null}} 
+                    fallback={RouteConfig.HOME}
+                >
                     <EditorPage />
                 </ConditionalRoute>
             } />
