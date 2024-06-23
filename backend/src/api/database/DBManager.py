@@ -43,6 +43,10 @@ class DBManager:
         )
     
     def execute(self, query: str, *args):
+        # Check for characters that could be used for SQL injection.
+        if any([x in query for x in [";", "--", "/*", "*/"]]):
+            return None
+
         self.cursor.execute(query, args)
         self.conn.commit() # Commit the changes to the database.
         ret = self.cursor.fetchall()

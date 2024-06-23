@@ -22,5 +22,11 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(dist_path, 'index.html'));
 });
 
+// Protect against DDOS attacks
+app.use(require('express-rate-limit')({
+  windowMs: 15 * 60 * 1000,
+  max: 100 // 100 requests per 15 minutes
+}));
+
 // Start the server
 https_server.listen(443, '0.0.0.0');
