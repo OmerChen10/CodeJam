@@ -14,12 +14,13 @@ export function ConditionalRoute({condition, fallback, children}: props) {
     const [openRoute, setOpenRoute] = useState<boolean>(false);
 
     useEffect(() => {
+        console.log("Condition: ", condition);
         if (!condition) {
             navigate(fallback);
         } else {
             setOpenRoute(true);
         }
-    }, []);
+    }, [condition]);
 
     return (
         <>{openRoute ? children : null}</>

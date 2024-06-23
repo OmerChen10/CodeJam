@@ -5,13 +5,13 @@ import { Route, Routes } from "react-router-dom"
 import { HomePage } from "./pages/home/home-page"
 import React from "react"
 import { ConditionalRoute } from "./utils/components"
-import { LocalStorageController, ShareDBManager, useAuth, useProject } from "./utils"
+import { ShareDBManager, useProject } from "./utils"
 import { Container, Typography } from "@mui/material"
 
 function App() {
     // Initialize ShareDBManager
     ShareDBManager.getInstance()
-    const auth = useAuth()
+    const project = useProject()
 
     return (
         <Routes>
@@ -19,7 +19,7 @@ function App() {
             <Route path="/" element={<HomePage />}/>
             <Route path="/editor" element={
                 <ConditionalRoute 
-                    condition={auth.userToken !== null}
+                    condition={project.currentProject !== null}
                     fallback={RouteConfig.HOME}
                 >
                     <EditorPage />

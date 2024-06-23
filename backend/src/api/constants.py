@@ -28,6 +28,7 @@ class NetworkConfig:
     COM_PORT = 5800
     EXECUTER_IO_PORT = 5801
     LENGTH_HEADER_SIZE = 4
+    SSL_ENABLED = False
 
     CERT_PATH = os.path.normpath(
         os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../../.credentials/cert.pem"

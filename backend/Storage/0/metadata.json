@@ -1,6 +1,1 @@
-{
-    "author": "John Doe",
-    "id": 0,
-    "name": "John Doe",
-    "description": "John Doe is a fictional character."
-}
+{"id": 0, "name": "project", "description": "test", "author": "Omer1"}

@@ -4,7 +4,6 @@ from utils import Logger
 import threading
 import docker
 import os
-import atexit
 
 
 class ContainerController:

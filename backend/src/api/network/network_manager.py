@@ -32,7 +32,11 @@ class NetworkManger(threading.Thread):
         self.loop.run_forever()
 
     async def start_server(self):
-        await websockets.serve(self.handle_connection, "0.0.0.0", NetworkConfig.COM_PORT, ssl=self.ssl_context)
+        if NetworkConfig.SSL_ENABLED:
+            await websockets.serve(self.handle_connection, "0.0.0.0", NetworkConfig.COM_PORT, ssl=self.ssl_context)
+
+        else:
+            await websockets.serve(self.handle_connection, "0.0.0.0", NetworkConfig.COM_PORT)
 
     async def handle_connection(self, websocket):
         """ Handles a new connection and create a new client handler for it. """

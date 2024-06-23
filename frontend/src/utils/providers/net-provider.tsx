@@ -33,7 +33,7 @@ export function NetProvider({ children }: { children: React.ReactNode }) {
         console.log("[NetworkManager] Connecting to server");
         // get the ip address of the server
         let ip = window.location.hostname;
-        socket.current = new WebSocket("wss://" + ip + ":5800");
+        socket.current = new WebSocket("ws://" + ip + ":5800");
 
         socket.current.onopen = () => {
             console.log("[NetworkManager] Connected to server");

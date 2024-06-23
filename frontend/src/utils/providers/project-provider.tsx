@@ -40,6 +40,10 @@ export function ProjectProvider({children}: {children: React.ReactNode}) {
                 })
             }
         })
+
+        if (LocalStorageController.getProjectToken() !== null) {
+            setCurrentProject({} as ProjectInterface)
+        }
     }, [])
 
     function updateSelectedProject(project: ProjectInterface) {

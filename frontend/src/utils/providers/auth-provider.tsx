@@ -9,7 +9,6 @@ import { LoadingScreen } from "../components";
 
 interface authProviderProps {
     user: UserInterface;
-    userToken: string;
     createAccount: (password: string, email: string, username: string) => Promise<boolean>;
     login: (email: string, password: string) => Promise<boolean>;
     logout: () => void;
@@ -93,7 +92,6 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
             .then((response) => {
                 if (response.success) {
                     LocalStorageController.setUserToken(response.data.token);
-                    setUserToken(response.data.token);
                     // Trigger a re-render
                     setLoading(loading);
 
@@ -117,7 +115,6 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
     function logout() {
         // Send request to logout
         LocalStorageController.clear();
-        setUserToken(null!);
         setUser(null!);
         navigate(RouteConfig.LOGIN);
     }
@@ -131,7 +128,7 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
 
     return (
         // Provide the auth context, and display a loading screen while the user is being authenticated
-        <AuthContext.Provider value={{user, userToken, createAccount, login, logout, verifyEmailCode, isLoggedIn, withAuth}}>
+        <AuthContext.Provider value={{user, createAccount, login, logout, verifyEmailCode, isLoggedIn, withAuth}}>
             {loading ? <LoadingScreen>Authenticating... </LoadingScreen> : children}
         </AuthContext.Provider>
     );
