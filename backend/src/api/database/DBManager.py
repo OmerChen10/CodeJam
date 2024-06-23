@@ -108,7 +108,8 @@ class DBManager:
         return project_id
 
     def add_user_to_project(self, user_id: int, project_id: int):
-        self.execute(f"INSERT INTO projects (project_id, user_id, admin) VALUES {project_id, user_id, False}")
+        container_id = self.get_container_id(project_id)
+        self.execute(f"INSERT INTO projects (project_id, user_id, admin, container_id) VALUES {project_id, user_id, False, container_id}")
 
     def get_projects_for_user(self, user_id: int):
         ret = self.execute(f"SELECT project_id FROM projects WHERE user_id = {user_id}")
@@ -134,7 +135,8 @@ class DBManager:
     def get_container_id(self, project_id: int):
         id = self.execute(f"SELECT container_id FROM projects WHERE project_id = {project_id}")
         if id is None or id[0] is None: return None
-        return id[0][0] 
+        if len(id) == 1: return id[0]
+        return id[0][0]
 
     def create_token(self, user_id: int, token: str, timestamp: str):
         self.execute(f"INSERT INTO user_tokens (user_id, token, timestamp) VALUES {user_id, token, timestamp}")

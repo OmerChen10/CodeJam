@@ -90,6 +90,9 @@ export function AuthProvider({children}: {children: React.ReactNode}) {
             .then((response) => {
                 if (response.success) {
                     LocalStorageController.setUserToken(response.data.token);
+                    // Trigger a re-render
+                    setLoading(loading);
+
                     setUser(response.data.user);
                     navigate(RouteConfig.HOME);
                     toast.success("Logged in successfully!");
