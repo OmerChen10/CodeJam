@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import React from "react";
 
 interface props {
-    condition: () => boolean;
+    condition: boolean;
     fallback: string;
     children: React.ReactNode;
 }
@@ -14,7 +14,7 @@ export function ConditionalRoute({condition, fallback, children}: props) {
     const [openRoute, setOpenRoute] = useState<boolean>(false);
 
     useEffect(() => {
-        if (condition()) {
+        if (!condition) {
             navigate(fallback);
         } else {
             setOpenRoute(true);
