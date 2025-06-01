@@ -1,4 +1,4 @@
-import { ProjectInterface } from "../../../config/constants";
+import { ProjectInterface } from "../../../common"
 import React from "react";
 
 

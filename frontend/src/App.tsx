@@ -1,16 +1,16 @@
-import { RouteConfig } from "./config/constants"
+import { RouteConfig, ConditionalRoute } from "./common"
 import { LoginPage } from "./pages/login-page/login-page"
 import { EditorPage } from "./pages/editor/editor-page"
-import { Route, Routes } from "react-router-dom"
-import { HomePage } from "./pages/home/home-page"
-import React from "react"
-import { ConditionalRoute } from "./utils/components"
-import { ShareDBManager, useProject } from "./utils"
 import { Container, Typography } from "@mui/material"
+import { HomePage } from "./pages/home/home-page"
+import { Route, Routes } from "react-router-dom"
+import { useProject } from "./providers"
+import { SharedbController } from "./controllers"
+import React from "react"
 
 function App() {
     // Initialize ShareDBManager
-    ShareDBManager.getInstance()
+    SharedbController.getInstance()
     const project = useProject()
 
     return (

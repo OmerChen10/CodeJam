@@ -1,12 +1,11 @@
+import { RouteConfig, EmailVerificationDialog } from "../../common";
 import { useEffect, useRef, useState } from "react";
 import { TextField, Button } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../providers";
+import { toast } from "sonner";
 import React from "react";
 import "./login.css"
-import { useAuth } from "../../utils";
-import { toast } from "sonner";
-import { useNavigate } from "react-router-dom";
-import { RouteConfig } from "../../config/constants";
-import { EmailVerificationDialog } from "../../utils/components/dialogs/email-verification-dialog";
 
 export function LoginPage() {
     const [signup, setSignUp] = useState(false);

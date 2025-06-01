@@ -1,11 +1,11 @@
+import { Badge, Box, Drawer, IconButton, Stack, TextField, Typography } from "@mui/material";
+import { GenericResponse, MessageInterface } from "../../../common";
 import { useEffect, useRef, useState } from "react";
-import { GenericResponse, MessageInterface } from "../../../config/constants";
-import { Badge, Box, Drawer, IconButton, Paper, Popover, Popper, Stack, TextField, Typography } from "@mui/material";
+import CloseIcon from '@mui/icons-material/Close';
 import ChatIcon from '@mui/icons-material/Chat';
 import SendIcon from '@mui/icons-material/Send';
+import { useNetwork } from "../../../providers";
 import React from "react";
-import { useNetwork } from "../../../utils/providers/net-provider";
-import CloseIcon from '@mui/icons-material/Close';
 
 export function ChatDrawer() {
     const [messageList, setMessageList] = useState<MessageInterface[]>([]);
@@ -44,12 +44,14 @@ export function ChatDrawer() {
     function renderMessages() {
         return messageList.map((message) => {
             return (
-                <Box key={message.message} sx={{ borderRadius: "0.5rem", 
-                           bgcolor: "#454b50", 
-                           width: "fit-content", 
-                           p: 1,
-                           alignSelf: message.name === "You" ? 'flex-end' : 'flex-start'}}>
-                    <Typography variant="h6" fontWeight={"bold"} sx={{textDecoration: "underline"}}>{message.name}</Typography>
+                <Box key={message.message} sx={{
+                    borderRadius: "0.5rem",
+                    bgcolor: "#454b50",
+                    width: "fit-content",
+                    p: 1,
+                    alignSelf: message.name === "You" ? 'flex-end' : 'flex-start'
+                }}>
+                    <Typography variant="h6" fontWeight={"bold"} sx={{ textDecoration: "underline" }}>{message.name}</Typography>
                     <Typography variant="h6"> {message.message}</Typography>
                 </Box>
             );
@@ -64,14 +66,14 @@ export function ChatDrawer() {
                 </Badge>
             </IconButton>
             <Drawer anchor="right" open={open} variant="persistent">
-                <Box sx={{bgcolor: "#313131"}}>
-                    <IconButton onClick={() => {setOpen(false)}}>
-                        <CloseIcon sx={{bgcolor: "#424242", borderRadius: "1rem", p: 0.1}}/>
+                <Box sx={{ bgcolor: "#313131" }}>
+                    <IconButton onClick={() => { setOpen(false) }}>
+                        <CloseIcon sx={{ bgcolor: "#424242", borderRadius: "1rem", p: 0.1 }} />
                     </IconButton>
                 </Box>
-                <Typography variant="h5" sx={{color: "white", textAlign: "center", bgcolor: "#313131", textDecoration: "underline"}}>Chat</Typography>
-                <Box sx={{bgcolor: "#313131", p: 1, height: "100%", display: "flex", flexDirection: "column-reverse"}}>
-                    <Stack spacing={1} sx={{ p: 1, bgcolor: "#454b50", borderRadius: "0.5rem"}} direction="row">
+                <Typography variant="h5" sx={{ color: "white", textAlign: "center", bgcolor: "#313131", textDecoration: "underline" }}>Chat</Typography>
+                <Box sx={{ bgcolor: "#313131", p: 1, height: "100%", display: "flex", flexDirection: "column-reverse" }}>
+                    <Stack spacing={1} sx={{ p: 1, bgcolor: "#454b50", borderRadius: "0.5rem" }} direction="row">
                         <TextField
                             id="outlined-basic"
                             label="Message"
@@ -84,10 +86,10 @@ export function ChatDrawer() {
                             <SendIcon />
                         </IconButton>
                     </Stack>
-                    <Stack spacing={2} sx={{ p: 1, overflowY: 'auto', height: "95%", maxHeight: 'calc(100vh - 10rem)'}}>
+                    <Stack spacing={2} sx={{ p: 1, overflowY: 'auto', height: "95%", maxHeight: 'calc(100vh - 10rem)' }}>
                         {renderMessages()}
                     </Stack>
-                    
+
                 </Box>
             </Drawer>
         </Box>

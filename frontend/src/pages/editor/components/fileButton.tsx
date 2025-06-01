@@ -1,9 +1,9 @@
+import { Box, Menu, MenuItem, Stack, Typography } from "@mui/material";
 import { useEffect, useRef, useState } from "react"
-import { useNetwork } from "../../../utils/"
+import { useNetwork } from "../../../providers"
+import { Assets } from "../../../common"
 import { toast } from "sonner"
-import { Assets } from "../../../config/constants"
 import React from "react";
-import { Box, Menu, MenuItem, Stack, TextField, Typography } from "@mui/material";
 
 interface props {
     fileName: string

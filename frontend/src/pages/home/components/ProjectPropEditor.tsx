@@ -1,9 +1,8 @@
-import { useState } from "react";
-import { ProjectInterface } from "../../../config/constants";
-import { toast } from "sonner";
-import React from "react";
-import { useNetwork } from "../../../utils";
+import { ProjectInterface } from "../../../common";
+import { useNetwork } from "../../../providers";
 import { TextField } from "@mui/material";
+import React, { useState } from "react";
+import { toast } from "sonner";
 
 interface ProjectPropEditorProps {
     setPopUpMenuMode: (mode: string) => void;

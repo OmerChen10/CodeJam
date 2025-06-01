@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  codejam-server:
+    image: codejam-server
+    build:
+      context: backend/codejam-server
+      dockerfile: dockerfile
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - C:\Users\Omer\Desktop\Projects\CodeJam\.credentials:/etc/codejam/credentials
+    ports:
+      - "5800:5800"
+      - "5801:5801"
+
+  sharedb-server:
+    image: sharedb-server
+    build:
+      context: backend/sharedb-server
+      dockerfile: dockerfile
+    ports:
+      - "5802:5802"
+
+  frontend:
+    image: codejam-nginx
+    build:
+      context: frontend
+      dockerfile: dockerfile
+    volumes:
+      - C:\Users\Omer\Desktop\Projects\CodeJam\.credentials:/etc/nginx/credentials
+    ports:
+      - "80:80"
+      - "443:443"
+    command: nginx -g "daemon off;"
+  
+  mongo:
+    image: mongo
+    volumes:
+      - C:\Program Files\MongoDB\Server\7.0\data:/data/db
+    ports:
+      - "27017:27017"

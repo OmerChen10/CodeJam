@@ -1,15 +1,13 @@
-import { ProjectInterface } from "../../../config/constants"
-import { NotificationPopup } from "../../../utils/components"
-import { ProfileDialog } from "../../../utils/components"
-import React from "react";
-import { PermissionPopup } from "./permission-popup";
-import { IconButton, Paper } from "@mui/material";
+import { NotificationPopup, ProfileDialog, ProjectInterface } from "../../../common"
+import { useNetwork, useProject } from "../../../providers";
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
-import { useNetwork, useProject } from "../../../utils";
+import { PermissionPopup } from "./permission-popup";
+import SquareIcon from '@mui/icons-material/Square';
+import { IconButton, Paper } from "@mui/material";
+import LoopIcon from '@mui/icons-material/Loop';
 import { ChatDrawer } from "./chat-popup";
 import { toast } from "sonner";
-import LoopIcon from '@mui/icons-material/Loop';
-import SquareIcon from '@mui/icons-material/Square';
+import React from "react";
 
 interface props {
     runCurrentFile: () => void

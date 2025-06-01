@@ -1,14 +1,13 @@
-import ReactDOM from 'react-dom/client'
-import App from './App.tsx'
-import 'bootstrap/dist/css/bootstrap.css';
-import "./main.css"
-import { Toaster } from 'sonner';
-import { BrowserRouter } from 'react-router-dom';
-import React from 'react';
-import { AuthProvider, ProjectProvider } from './utils';
-import { NetProvider } from './utils';
+import { AuthProvider, ProjectProvider, NetProvider } from './providers';
 import { ThemeProvider, createTheme } from '@mui/material';
+import { BrowserRouter } from 'react-router-dom';
 import { blueGrey } from '@mui/material/colors';
+import 'bootstrap/dist/css/bootstrap.css';
+import ReactDOM from 'react-dom/client'
+import { Toaster } from 'sonner';
+import App from './App.tsx'
+import React from 'react';
+import "./main.css"
 
 //@ts-ignore
 import editorWorker from 'monaco-editor/esm/vs/editor/editor.worker?worker';

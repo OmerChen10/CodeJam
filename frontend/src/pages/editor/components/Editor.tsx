@@ -1,8 +1,9 @@
-import { useNetwork, ShareDBManager, useProject } from "../../../utils";
-import { EditorConfig } from "../../../config/constants";
-import * as monaco from "monaco-editor";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useNetwork, useProject } from "../../../providers";
+import { useContext, useEffect, useRef } from "react";
+import { SharedbController } from "../../../controllers";
 import { LoadingContext } from "../editor-page";
+import { EditorConfig } from "../../../common"
+import * as monaco from "monaco-editor";
 import { Terminal } from "./Terminal";
 import React from "react";
 
@@ -17,7 +18,7 @@ export function CodeEditor({ fileSaved, currFileName }: props) {
     const nm = useNetwork()
     const editorRef = useRef<monaco.editor.IStandaloneCodeEditor>()
     const fileChangeTimestamp = useRef<number>(0)
-    const otController = ShareDBManager.getInstance()
+    const otController = SharedbController.getInstance()
     const projectProvider = useProject()
     const timeout = useRef<NodeJS.Timeout>()
     const currFileNameRef = useRef<string>(currFileName)

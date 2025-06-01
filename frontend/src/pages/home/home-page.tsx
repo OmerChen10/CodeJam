@@ -1,10 +1,9 @@
-import { NotificationPopup, ProfileDialog } from "../../utils/components";
+import { ProjectInterface, ProjectListResponse, RouteConfig, NotificationPopup, ProfileDialog } from "../../common";
 import { ProjectPropEditor } from "./components/ProjectPropEditor.tsx";
 import { ProjectCreator } from "./components/ProjectCreator.tsx";
 import { ProjectButton } from "./components/ProjectButton.tsx";
-import { ProjectInterface, ProjectListResponse, RouteConfig } from "../../config/constants.ts";
-import { LocalStorageController, useNetwork, useProject } from "../../utils/";
-import { useContext, useEffect, useState } from "react";
+import { useNetwork, useProject } from "../../providers";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import React from "react";

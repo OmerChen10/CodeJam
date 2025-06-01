@@ -1,14 +1,14 @@
 import { Avatar, Box, Dialog, DialogActions, DialogContent, DialogTitle, Stack, styled } from "@mui/material";
-import Divider from "@mui/material/Divider"
-import IconButton from "@mui/material/IconButton"
-import TextField from "@mui/material/TextField"
-import Typography from "@mui/material/Typography"
-import PeopleIcon from '@mui/icons-material/People';
-import SendIcon from '@mui/icons-material/Send';
-import React, { useEffect } from "react";
 import PersonRemoveIcon from '@mui/icons-material/PersonRemove';
-import { useNetwork } from "../../../utils/providers/net-provider";
-import { GenericResponse } from "../../../config";
+import PeopleIcon from '@mui/icons-material/People';
+import Typography from "@mui/material/Typography"
+import { GenericResponse } from "../../../common";
+import IconButton from "@mui/material/IconButton"
+import { useNetwork } from "../../../providers";
+import TextField from "@mui/material/TextField"
+import SendIcon from '@mui/icons-material/Send';
+import Divider from "@mui/material/Divider"
+import React, { useEffect } from "react";
 import { toast } from "sonner";
 
 const StyledDivider = styled(Divider)({

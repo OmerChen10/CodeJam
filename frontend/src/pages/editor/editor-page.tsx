@@ -1,15 +1,14 @@
-import "./editor.css"
-import { CodeEditor } from "./components/Editor"
-import { createContext, useEffect, useRef, useState } from "react"
-import { useNetwork, useProject } from "../../utils/"
-import { FileButton } from "./components/fileButton"
-import { toast } from "sonner"
-import { EditorConfig } from "../../config/constants"
-import { EditorNavbar } from "./components/navbar"
-import { ConfirmDialog } from "../../utils/components"
-import React from "react"
 import { Button, Container, Dialog, DialogActions, DialogContentText, DialogTitle, IconButton, Stack, TextField, Typography } from "@mui/material"
+import { createContext, useEffect, useRef, useState } from "react"
+import { ConfirmDialog, EditorConfig } from "../../common"
+import { useNetwork, useProject } from "../../providers"
 import NoteAddIcon from '@mui/icons-material/NoteAdd';
+import { FileButton } from "./components/fileButton"
+import { EditorNavbar } from "./components/navbar"
+import { CodeEditor } from "./components/Editor"
+import { toast } from "sonner"
+import React from "react"
+import "./editor.css"
 
 
 export const LoadingContext = createContext<(loading: boolean) => void>(() => {})
