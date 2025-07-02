@@ -1,4 +1,6 @@
+from socket import SocketIO
 from common import Project, StorageConfig, ExecuterConfig
+from docker.models.containers import Container  
 from controllers import SQLController
 from utils import Logger
 import threading
@@ -24,11 +26,11 @@ class ContainerController:
         self.initialize_container(self.container)
 
     @Logger.catch_exceptions
-    def initialize_container(self, container):
+    def initialize_container(self, container: Container):
         self.container = container
         self.stdout = self.container.logs(
             stream=True, stdout=True, stderr=True)
-        self.stdin = self.container.attach_socket(
+        self.stdin: SocketIO = self.container.attach_socket(
             params={"stdin": 1, "stream": 1})
         self.stdout_thread = threading.Thread(
             target=self.handle_output, args=(self.stdout,))
@@ -49,9 +51,14 @@ class ContainerController:
                 buffer = b""
 
     @Logger.catch_exceptions
-    def send_input(self, input: str):
-        # Send the input to the container
-        self.stdin.send((input + "\n").encode("utf-8"))
+    def send_input(self, input):
+        data = (input + "\n").encode("utf-8")
+        if hasattr(self.stdin, "send"):
+            self.stdin.send(data)
+        elif hasattr(self.stdin, "_sock") and hasattr(self.stdin._sock, "send"):
+            self.stdin._sock.send(data)
+        else:
+            raise AttributeError("stdin does not support send()")
 
     @Logger.catch_exceptions
     def get_container(self):

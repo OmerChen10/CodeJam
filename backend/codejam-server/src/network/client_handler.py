@@ -151,6 +151,7 @@ class ClientHandler():
         @self.socket.event_handler
         def createProject(props):
             project_id = self.sql_controller.create_project(self.account.id)
+            Logger.log_info(f"Project created with id: {project_id}")
             try: 
                 self.storage_controller.create_project(
                     id=project_id,

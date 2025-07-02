@@ -1,4 +1,5 @@
 from common import StorageConfig
+from utils import Logger
 import json
 import os
 import shutil
@@ -15,12 +16,17 @@ class StorageManager():
         name = kwargs.get("name")
         description = kwargs.get("description")
 
+        Logger.log_info(f"Creating project {id} with name {name} and author {author}")
         path = os.path.join(StorageConfig.PROJECTS_PATH, str(id))
+        Logger.log_info(f"Creating project directory at {path}")
         os.mkdir(path)
+        Logger.log_info(f"Project directory created at {path}")
         # Create the src directory.
         os.mkdir(os.path.join(path, "src"))
+        Logger.log_info(f"Created src directory at {os.path.join(path, 'src')}")
         self.update_metadata(path=path, id=id, author=author,
                              name=name, description=description)
+        Logger.log_info(f"Metadata file created at {os.path.join(path, 'metadata.json')}")
 
     def update_metadata(self, **kwargs):
         """ Update the metadata file of the project. """

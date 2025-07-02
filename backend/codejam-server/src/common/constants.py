@@ -29,12 +29,12 @@ class NetworkConfig:
 
 
 class DatabaseConfig:
-    PATH = os.path.join(APPLICATION_PATH, "database.db")
+    PATH = os.path.join(APPLICATION_PATH, "persistent", "database.db")
 
 
 class StorageConfig:
-    PROJECTS_PATH = os.path.join(APPLICATION_PATH, "Storage")
-    FILES_HEADER_BASE_PATH = "Storage"
+    PROJECTS_PATH = os.path.join(APPLICATION_PATH, "persistent", "storage")
+    FILES_HEADER_BASE_PATH = "storage"
     HIDDEN_FILES = [
         "metadata.json",
         "__pycache__"
@@ -51,3 +51,6 @@ class ExecuterConfig:
     WORKING_DIR = "/app"
     COMMAND = "/bin/bash"
     COMMAND_FINISH_MARKER = "__COMMAND_FINISHED__"
+
+class LoggerConfig:
+    LOG_FILE_PATH = os.path.join(APPLICATION_PATH, "persistent", "server.log")

@@ -8,7 +8,8 @@ services:
       dockerfile: dockerfile
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
-      - C:\Users\Omer\Desktop\Projects\CodeJam\.credentials:/etc/codejam/credentials
+      - .credentials:/etc/codejam/credentials
+      - .persistent:/etc/codejam/persistent
     ports:
       - "5800:5800"
       - "5801:5801"
@@ -27,7 +28,7 @@ services:
       context: frontend
       dockerfile: dockerfile
     volumes:
-      - C:\Users\Omer\Desktop\Projects\CodeJam\.credentials:/etc/nginx/credentials
+      - .credentials:/etc/nginx/credentials
     ports:
       - "80:80"
       - "443:443"

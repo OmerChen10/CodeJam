@@ -1,4 +1,5 @@
 from colorama import Fore, Style
+from common.constants import LoggerConfig
 import traceback
 import logging
 
@@ -10,7 +11,7 @@ class Logger:
     logger.setLevel(logging.DEBUG)
 
     formatter = logging.Formatter(f'[%(asctime)s] %(message)s')
-    fh = logging.FileHandler('Server.log')
+    fh = logging.FileHandler(LoggerConfig.LOG_FILE_PATH)
     fh.setLevel(logging.DEBUG)
     fh.setFormatter(formatter)
 

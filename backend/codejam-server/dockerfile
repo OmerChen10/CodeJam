@@ -8,9 +8,6 @@ curl -fsSL https://get.docker.com -o get-docker.sh && \
 sh get-docker.sh && \
 rm get-docker.sh
 
-RUN apt-get update && apt-get install -y ca-certificates
-RUN update-ca-certificates
-
 COPY requirements.txt .
 
 RUN pip install --no-cache-dir -r requirements.txt
@@ -19,4 +16,4 @@ COPY . .
 
 RUN mkdir -p /etc/codejam/credentials
 
-CMD ["python", "src/__main__.py"]
+CMD ["./run.sh"]

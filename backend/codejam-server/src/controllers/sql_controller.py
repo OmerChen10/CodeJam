@@ -9,12 +9,14 @@ class SQLController:
 
     def __init__(self) -> None:
         if not os.path.exists(DatabaseConfig.PATH):
+            print("AMEN")
             Logger.log_info("Database file not found, creating new file.")
             self.conn = sqlite3.connect(DatabaseConfig.PATH)
             self.cursor = self.conn.cursor()
             self.create_tables()
         
         else:
+            print("Database file found, connecting to existing database.")
             self.conn = sqlite3.connect(DatabaseConfig.PATH)
             self.cursor = self.conn.cursor()
             
